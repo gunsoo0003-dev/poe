@@ -17,7 +17,7 @@ const toolLinks = [
   { label: "CRAFT", href: "#", meta: "PLANNED" },
 ];
 
-export const revalidate = 60 * 60 * 24 * 30;
+export const revalidate = 2592000;
 
 export default async function PoeHome() {
   const latestVideos = await getLatestOfficialVideos(4);

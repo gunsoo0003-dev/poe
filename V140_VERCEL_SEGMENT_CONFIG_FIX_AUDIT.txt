@@ -1,0 +1,4 @@
+
+V140 Vercel segment config fix
+- Changed revalidate expression to static literal 2592000 for Next.js 16 build compatibility.
+- No functional behavior change.
