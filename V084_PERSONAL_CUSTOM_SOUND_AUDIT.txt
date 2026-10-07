@@ -1,0 +1,38 @@
+FIXLGS POE2 FILTER · V084 PERSONAL CUSTOM SOUND
+
+Added without changing NeverSink 0-SOFT defaults or existing built-in sound choices.
+
+Browser-local personal MP3 flow
+- File input: MP3 only
+- Max file size: 2 MB
+- Max duration: 15 sec (guide recommends 1~5 sec)
+- Validates extension/MIME when available
+- Checks ID3/MPEG frame signature
+- Uses Web Audio decodeAudioData to reject corrupt/fake MP3 files
+- Creates browser object URL for preview; no server upload/API
+- Renames internally: custom_sound_01.mp3, custom_sound_02.mp3 ...
+- Multiple personal sounds can be registered
+- One personal sound can be reused across multiple item rows
+- Deleting an in-use sound safely resets affected rows to NeverSink default sound
+- Built-in NeverSink / FIXLGS sounds remain in the same sound selection interface
+
+Export/package preparation
+- Added src/app/filter/customSoundPackage.ts
+- Dependency-free browser ZIP writer
+- createFilterPackageZip(filterText, sounds) packages FIXLGS_POE2.filter + sound files
+- customAlertSoundOptionalLine() helper prepared for the filter engine
+- Final filter-engine button intentionally remains disabled because the existing project still marks filter generation as ENGINE NEXT; no fake/incomplete .filter is emitted.
+
+Guide added in UI
+- MP3 support
+- 1~5 sec recommendation
+- 2 MB / 15 sec hard limits
+- preview requirement
+- ZIP behavior
+- POE2 filter-folder placement
+- copyright responsibility
+- CustomAlertSoundOptional preference
+
+Safety
+- Missing/deleted personal sound cannot leave a dangling UI sound selection.
+- Existing Divine Orb fixed DIVINE POWER behavior is unchanged.

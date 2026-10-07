@@ -1,0 +1,6 @@
+V077 TABLET PREVIEW FIX
+- Fixed TABLETS right-side live preview missing after adding the new category while dev server/Fast Refresh preserved old itemState.
+- selectedState now falls back to the selected item's NeverSink default state when its key is not yet present in preserved React state.
+- This is a general robustness fix for future newly-added categories too.
+- TABLETS 8 items, reset, importance, sound controls remain unchanged.
+- Existing WAYSTONES and all completed in-game categories unchanged.

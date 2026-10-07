@@ -1,0 +1,7 @@
+V073 LINEAGE GEMS TIER FIX
+- Current in-game list: 77 lineage support gems.
+- NeverSink 0.10.4 / 0-SOFT [[2200]] tiers: {'s': 36, 'a': 10, 'b': 12, 'c': 19, 'd': 0, 'e': 0, 'default': 0, 'dynamic': 0}
+- S 36 / A 10 / B 12 / C 19 / NS 0 / DYNAMIC 0.
+- Fixed Zarokh Korean '자로크의 봉기' internal BaseType to 'Zarokh's Revolt'.
+- Current NeverSink also lists Atziri's Call and Dreamer's Knell as A-tier, but they are not in the user's current in-game exchange screenshot, so they were not added to the 77-item UI list.
+- NS legend removed from GEMS.

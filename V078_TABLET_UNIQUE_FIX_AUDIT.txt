@@ -1,0 +1,32 @@
+V078 TABLET UNIQUE FIX AUDIT
+
+변경사항
+- TABLETS 카테고리: 고유 서판 9종 + 일반 서판 8종 = 총 17종
+- 고유 서판 9종 추가
+  1. 포위당한 레이클라스트 균열 서판 / Wraeclast Besieged / Breach Tablet / Unique T3
+  2. 맑은 하늘 환영 서판 / Clear Skies / Delirium Tablet / Unique T3
+  3. 신념의 자유 의식 서판 / Freedom of Faith / Ritual Tablet / Unique T2
+  4. 대공사 방사능 노출 서판 / The Grand Project / Irradiated Tablet / Unique SPECIAL
+  5. 낙원의 환영 방사능 노출 서판 / Visions of Paradise / Irradiated Tablet / Unique SPECIAL
+  6. 통달한 영토 방사능 노출 서판 / Mastered Domain / Irradiated Tablet / Unique SPECIAL
+  7. 사냥철 감독관 서판 / Season of the Hunt / Overseer Tablet / Unique SPECIAL
+  8. 잔혹한 헤게모니 감독관 서판 / Cruel Hegemony / Overseer Tablet / Unique SPECIAL
+  9. 예기치 못한 결과 심연 서판 / Unforeseen Consequences / Abyss Tablet / Unique T1
+- 일반 서판 8종 유지
+- 동일 BaseType 고유 서판은 중요도/활성화/사운드 설정을 동기화
+  - Irradiated Tablet 3종 공유
+  - Overseer Tablet 2종 공유
+- 고유 서판도 기본 NeverSink 중요도(T1/T2/T3/SPECIAL)를 행에 표시
+- 서판 전체 초기화 / 현재 항목 초기화 / 커스텀 사운드 / 오른쪽 미리보기 유지
+
+검증
+- 고유 서판 수: 9
+- 일반 서판 수: 8
+- 총 서판 UI 행: 17
+- TypeScript --noEmit: PASS
+- 현재 항목 초기화 문구 1개 유지
+- NeverSink / 음~ 맛있다 / OISHIE 유지
+- Next build: node_modules의 실행 바이너리 부재로 실행 불가 (코드 변경과 무관)
+
+중요
+- 실제 필터는 동일 BaseType에서 고유 아이템 이름을 구분할 수 없으므로 같은 BaseType의 고유 서판 설정을 함께 변경하도록 구현.

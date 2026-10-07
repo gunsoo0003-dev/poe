@@ -1,0 +1,7 @@
+V066 RITUAL V001
+- 31 items: 징조 24 + 특별 징조 4 + 최종 조각 2 + 의식 1
+- Added RITUAL below RUNES.
+- Conservative default: NS for Ritual entries without a verified simple fixed S/A/B/C/D/E tier.
+- Added top legend for NS and DYNAMIC where relevant.
+- Right preview/reset/custom sound gate checked.
+- ZIP top folder verified: fix-pob

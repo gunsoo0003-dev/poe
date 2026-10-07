@@ -1,0 +1,5 @@
+V060 DELIRIUM V002 SOUND FIX
+- Fixed right preview CUSTOM SOUND gate for DELIRIUM.
+- Delirium now uses NeverSink / 음~ 맛있다 / OISHIE.
+- Selected item reset remains available in preview.
+- Archive top folder: fix-pob.

@@ -1,0 +1,22 @@
+V120 SELECTED FILTER -> WEB LIST LINK
+
+Goal
+- The currently selected filter is the single visible source for the web list.
+- NeverSink original 0-6: list state is materialized from that selected baseline.
+- Saved FIXLGS custom: selected NeverSink baseline is materialized first, then saved custom values are layered on top.
+- FIXLGS-only virtual Rare/Magic and Normal level rules remain disabled unless the user explicitly enables them.
+
+Preserved later logic
+- Rare/Magic custom-mode/export logic unchanged.
+- Exceptional priority/export logic unchanged.
+- User custom overrides still take precedence during export.
+- Sound custom/export ZIP logic unchanged.
+- Local preset slots 00-06 unchanged.
+- Untouched NeverSink export path unchanged.
+
+Implementation
+- Added makeBaselineItemState(bundle).
+- Added makeBaselineNormalState(bundle).
+- Baseline load now populates web item/normal lists directly from selected NeverSink baseline instead of leaving only sparse overrides.
+- Preset load now builds CURRENT FILTER as selected baseline + saved preset values.
+- Reset to original now restores the selected NeverSink baseline directly.

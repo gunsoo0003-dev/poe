@@ -1,0 +1,53 @@
+V112 FILTER EXPORT ENGINE AUDIT
+
+Scope
+- Added real browser-side .filter generation for customized filters.
+- Unmodified export still downloads the selected NeverSink original file directly.
+- Default output filename is FIXLGS_POE2_00 ~ FIXLGS_POE2_06 by selected NeverSink strictness.
+- Filename can be edited before saving; Windows-invalid filename characters are sanitized.
+- When a custom sound is actually used, export becomes ZIP with:
+  <chosen-name>.filter
+  FIXLGS_SOUNDS/<used sound files>
+- Built-in sounds use stable filenames inside FIXLGS_SOUNDS.
+- Personal MP3 files use their existing safe custom_sound_XX.mp3 names.
+
+Generation rules
+1) No custom changes
+   - NeverSink source file is downloaded directly. No regeneration.
+2) Exact BaseType items
+   - Matching NeverSink BaseType blocks are split in-place.
+   - Unchanged items stay in the original block.
+   - Customized BaseType keeps the original NeverSink runtime conditions.
+   - Importance/style override copies an existing NeverSink style template.
+   - Sound override changes only the sound command for the split rule.
+   - Disabled mapped BaseType is removed from its mapped rules so it falls through to later NeverSink rules.
+3) Exceptional
+   - OFF disables only the matching exceptional rule path and lets the item fall through.
+   - Rare/Magic/Normal exceptional UI does not disable twice-corrupted/chancing exceptions.
+4) Rare / Magic FIXLGS mode
+   - Activates only when >=1 tier AND >=1 equipment class are selected.
+   - Selected tier x selected class rules are emitted.
+   - A Rare/Magic equipment fallback Hide is emitted for the rest.
+   - Block is inserted after NeverSink [[0300]] Exceptional Items so exceptional drops remain higher priority.
+5) Normal virtual ItemLevel 82~78
+   - Default OFF.
+   - Enabled rules are inserted after Exceptional Items.
+6) Numeric items such as GemLevel / WaystoneTier
+   - Exact numeric override rules are emitted only when user changes the row.
+
+Download guide shown in UI
+- .filter -> copy/move to Documents > My Games > Path of Exile 2
+- .zip -> extract directly in Documents > My Games > Path of Exile 2
+
+Validation performed
+- TypeScript syntax transpile: PASS for FilterCustomizer.tsx, filterExport.ts, customSoundPackage.ts.
+- Unmodified 6-UBER-PLUS export engine result equals original text exactly: PASS.
+- Rare tier 5 + Bows mode block is positioned after Exceptional and before [[0400]]: PASS.
+- Exceptional Rare overquality OFF removes Rare from the mapped exceptional rarity path: PASS.
+- Built-in DIVINE POWER sound path emitted as FIXLGS_SOUNDS/divine-power.mp3: PASS.
+- ZIP structure test: PASS
+  FIXLGS_POE2_01.filter
+  FIXLGS_SOUNDS/divine-power.mp3
+
+Environment note
+- Full Next.js build was not run because node_modules are not present in this work container.

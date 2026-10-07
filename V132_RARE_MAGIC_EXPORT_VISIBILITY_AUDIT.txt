@@ -1,0 +1,30 @@
+V132 RARE/MAGIC EXPORT + VISIBILITY OVERRIDE AUDIT
+
+Scope
+- Fix Rare/Magic tier mode failing to appear in generated .filter.
+- Fix Rare/Magic tier custom sound omission when mode is selected.
+- Make selected tier exact using NeverSink-compatible numeric bounds (>= tier and <= tier).
+- Add runtime export validation: if UI says a Rare/Magic tier is enabled but generated filter lacks its mode/tier/sound rule, download/install aborts with an error instead of producing a broken filter.
+- Export uses latest tier/class/sound refs captured at click time to avoid stale render state.
+- Fix ordinary mapped item checkbox override semantics: a user checkbox flip now generates a hard top-level Show/Hide visibility override instead of merely editing/removing the original NeverSink BaseType block.
+
+Rare/Magic rule priority
+NeverSink Exceptional -> FIXLGS Rare/Magic exact-tier mode -> ordinary NeverSink rules.
+Selected tier only: Show exact UnidentifiedItemTier.
+Unselected ordinary tiers in controlled classes: fallback Hide.
+No class selection means ALL gear classes.
+
+Standalone export test against NeverSink 6-UBER-PLUS-STRICT
+- Rare tier 5 marker: PASS
+- Magic tier 5 marker: PASS
+- Exact tier lower/upper bounds: PASS
+- Rare fallback Hide: PASS
+- Magic fallback Hide: PASS
+- Rare custom sound path: PASS
+- Magic custom sound path: PASS
+- usedSoundChoices collection: PASS
+- Forced Show for a baseline-hidden currency BaseType: PASS
+
+Notes
+- Existing Exceptional, Normal resolver, preset, ZIP/direct-install, and NeverSink base files were not otherwise redesigned in this patch.
+- Full Next.js build was not run because node_modules is not present in the supplied worktree. filterExport.ts compiled standalone with TypeScript ES2022; FilterCustomizer.tsx syntax parse reached only pre-existing missing React/type-environment errors.

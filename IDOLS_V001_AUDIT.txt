@@ -1,0 +1,8 @@
+V069 IDOLS V001
+- Total 35 = 우상 28 + 의식 7
+- Tiers: {'s': 5, 'a': 7, 'b': 10, 'c': 11, 'd': 2, 'e': 0, 'default': 0, 'dynamic': 0}
+- Main idols: NeverSink [[1900]] fixed S/A/B/C/D.
+- Carved Cunning/Majesty: S; Carved Mischief/Tenacity: A from [[1800]].
+- No NS / DYNAMIC in Idols.
+- Right preview + current-item reset + custom sounds verified.
+- Top-level folder verified: fix-pob

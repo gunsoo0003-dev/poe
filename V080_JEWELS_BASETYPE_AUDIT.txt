@@ -1,0 +1,48 @@
+V080 JEWELS BASETYPE AUDIT
+===========================
+Target: NeverSink 0-SOFT 0.10.4
+
+Purpose
+- Add JEWELS as the next top menu after WAYSTONES and TABLETS.
+- List what the loot filter can actually distinguish at drop time, not individual unique jewel names.
+
+NeverSink unique jewel BaseTypes ([[2902]])
+T1:
+- Emerald
+- Ruby
+- Sapphire
+- Time-Lost Diamond
+T2:
+- Diamond
+- Timeless Jewel
+=> Unique jewel settings: 6 BaseTypes total.
+
+Important consolidation
+- Multiple named unique jewels that share BaseType Sapphire (e.g. the three Voice variants shown in PoE2DB) are ONE filterable drop type: Sapphire.
+- Therefore UI has exactly one Unique Sapphire row.
+
+NeverSink non-unique Jewels ([[2000]])
+- Time-Lost Emerald / Time-Lost Ruby / Time-Lost Sapphire: all Normal/Magic/Rare, special Time-Lost style.
+- Emerald / Ruby / Sapphire: Rare style when Rare.
+- Emerald / Ruby / Sapphire: Normal/Magic style when Normal or Magic.
+
+UI structure
+1) 고유 주얼: 6
+2) 오래된 주얼: 3
+3) 레어 주얼: 3
+4) 일반 / 매직 주얼: 3
+Total UI rows: 15
+
+Feature checklist
+- Active checkbox
+- NeverSink default importance preselected
+- Importance customization
+- Search
+- Whole-category reset
+- Current-item reset (single button)
+- CUSTOM SOUND: NeverSink / 음~ 맛있다 / OISHIE
+- Right-side preview
+- No individual unique jewel-name duplicates
+
+Build note
+- TypeScript full compile could not be completed in this runtime because the packaged node_modules lacks required @types packages (react/node/estree/json-schema/json5). Source-level structure and counts were audited.

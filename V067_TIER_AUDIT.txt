@@ -1,0 +1,6 @@
+V067 NeverSink 0.10.4 0-SOFT tier correction
+RUNES: {'s': 7, 'a': 13, 'b': 14, 'c': 39, 'd': 18, 'e': 6, 'default': 50, 'dynamic': 0}
+RITUAL: {'s': 7, 'a': 7, 'b': 6, 'c': 9, 'd': 2, 'e': 0, 'default': 0, 'dynamic': 0}
+Runes: exact fixed tiers from [[1900]]; NS only for items without fixed S/A/B/C/D/E entries.
+Ritual: exact S/A/B/C/D from [[2704]], plus Head of the King S, An Audience with the King A, Sacred Bloom A.
+Corrected several English BaseTypes from the previous build.

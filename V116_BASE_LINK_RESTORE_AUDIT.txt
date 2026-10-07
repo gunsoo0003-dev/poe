@@ -1,0 +1,6 @@
+V116 BASE LINK RESTORE
+- Restored dedicated BASE FILTER 0~6 selector.
+- BASE FILTER drives selectedStrictness and reloads corresponding NeverSink baseline JSON.
+- EDIT TARGET is now scoped to the currently selected BASE only: original or saved FIXLGS preset.
+- Current edit panel remains visible and reports the exact target/base.
+- Existing export engine and preset storage are unchanged.

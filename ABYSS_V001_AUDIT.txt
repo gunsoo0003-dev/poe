@@ -1,0 +1,8 @@
+V062 ABYSS V001
+- UI order: CURRENCY -> ESSENCE -> DELIRIUM -> BREACH -> ABYSS -> GEMS
+- Total 25 = bones 12 + omens 8 + final fragment 1 + abyss eyes 4
+- Preserved Vertebrae: NeverSink 0.10.4 has no explicit 2600 tier; keep original Remaining Currency rule via NS default option.
+- Kulemak's Invitation: A
+- Amanamu/Tecrod/Kurgal/Ulaman Gaze: S
+- Same UI + sound + selected reset + full reset
+- Top-level folder: fix-pob

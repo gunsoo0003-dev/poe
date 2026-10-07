@@ -1,0 +1,23 @@
+V106 NeverSink baseline architecture
+
+Confirmed product rules implemented in UI state semantics:
+1. Selected NeverSink strictness is the only baseline.
+2. If the user makes zero custom changes, final output must be byte-for-byte the selected NeverSink original.
+3. FIXLGS custom sounds (DIVINE POWER / UM-MASITDA / OISHIE / user MP3) are never defaults. They apply only after explicit user selection.
+4. FIXLGS-only convenience rules are disabled by default.
+   - Rare tier convenience rules: disabled by default.
+   - Magic tier convenience rules: disabled by default.
+   - Normal ItemLevel 82~78 convenience rules: disabled by default.
+5. Reset restores NeverSink baseline and disables FIXLGS-only convenience rules.
+6. User overrides are the only layer above the selected NeverSink original.
+
+Added:
+- public/neversink/0.10.4/manifest.json
+- src/app/filter/neversinkBase.ts
+  - local base loader
+  - VERSION/TYPE header validation
+  - unmodified-output guard
+- scripts/update-neversink.ps1 pinned to commit f4b6b2d with file header validation.
+
+Important environment note:
+The current execution container cannot make outbound GitHub/raw downloads. Therefore the 7 upstream .filter payloads could not be embedded from this environment. The project now has exact pinned source metadata and a validated sync script, but the 7 files still need to be populated before selector-to-engine mapping can be completed and verified.

@@ -1,0 +1,26 @@
+V107 NeverSink originals + baseline linkage audit
+================================================
+Pinned upstream: NeverSinkDev/NeverSink-Filter-for-PoE2
+Version: 0.10.4
+Commit: f4b6b2d
+
+Completed
+- Bundled all seven root DEFAULT NeverSink filters under public/neversink/0.10.4/.
+- Manifest now records upstream filename, exact byte count and SHA-256 for every strictness.
+- Built one baseline UI index per strictness from the pinned originals.
+- Filter list rows now show selected-version source status: NS 표시 / NS 숨김 / NS 조건부 / NS 매칭검토.
+- Normal BaseType rows use the same selected-version baseline index.
+- Right status panel shows the parsed rule count for the selected strictness.
+- All importance controls now start at NS. Old 0-SOFT importance values are reference metadata only.
+- Built-in sounds including DIVINE POWER start as NeverSink default (no FIXLGS sound override).
+- FIXLGS-only item-level/tier convenience rules remain default disabled.
+- When CUSTOM OVERRIDES = 0, the download link points directly to the selected pinned original .filter.
+
+Important precision rule
+- The baseline index is a UI inspection summary only. A BaseType can be governed by multiple conditional rules (ItemLevel, AreaLevel, Rarity, etc.). Such cases are deliberately labelled NS 조건부 instead of guessing one effective state.
+- Unmatched entries are deliberately labelled NS 매칭검토 instead of inventing a mapping.
+- The original .filter remains the source of truth.
+
+Semantic build note
+- TypeScript transpile syntax check passed for modified TS/TSX files.
+- Full tsc could not complete because the bundled node_modules is missing type definition packages (react/node/estree/json-schema/json5). This is an environment/dependency issue, not a reported TSX syntax error.

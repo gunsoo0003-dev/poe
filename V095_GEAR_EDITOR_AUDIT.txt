@@ -1,0 +1,29 @@
+V095 RARE / MAGIC / NORMAL GEAR EDITOR
+
+Base: V094_EXCEPTIONAL_8
+
+Added sections
+- RARE
+  - Tier 5 / 4 / 3 / 2 / 1
+  - Each tier: show/hide + importance override
+  - Gear classes: show/hide only
+- MAGIC
+  - Tier 5 / 4 / 3 / 2 / 1
+  - Each tier: show/hide + importance override
+  - Gear classes: show/hide only
+- NORMAL
+  - No tier controls
+  - Gear classes: show/hide + importance override per class
+
+Gear class UI
+- One Hand Maces / Two Hand Maces
+- Bows / Crossbows
+- Quarterstaves / Staves / Sceptres / Wands / Spears
+- Body Armours / Helmets / Gloves / Boots
+- Shields / Bucklers / Foci
+- Amulets / Rings / Belts / Quivers / Talismans
+
+Priority / exception policy
+- EXCEPTIONAL remains separate and higher-priority for overquality/oversocket rules.
+- TwiceCorrupted / Vaal Unique / other rare NeverSink exceptions remain untouched in the original filter.
+- Filter engine is still NEXT; this version prepares UI/state only.

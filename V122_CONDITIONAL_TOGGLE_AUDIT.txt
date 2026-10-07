@@ -1,0 +1,6 @@
+V122 conditional toggle audit
+- Individual item toggles no longer use HTML indeterminate state for NeverSink conditional rules.
+- Normal BaseType individual toggles no longer use indeterminate state for NeverSink conditional rules.
+- Conditional NeverSink rules remain enabled and retain the small "NS 조건부" reference label.
+- Group-level partial-selection indeterminate UI is intentionally unchanged; it represents mixed child selection, not NeverSink conditional status.
+- Export, Rare/Magic virtual rules, Exceptional priority, preset, sound, and baseline parsing logic were not changed.

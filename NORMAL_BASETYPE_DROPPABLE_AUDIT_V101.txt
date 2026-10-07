@@ -1,0 +1,72 @@
+FIX PoB - NORMAL BaseType Droppable Audit V101
+Date: 2026-10-06
+
+목적
+- 일반 장비(Normal/white gear) 데이터 목록을 현재 드롭/출시 상태 기준으로 정제.
+- V100의 광범위 후보 646개를 기준으로, PoE2DB 현재 일반 BaseType 진행 목록 + RePoE release_state + NeverSink Exotic 분리 기준을 재대조.
+
+핵심 원칙
+1) Runeforged / Runemastered / Runefather 변형 제외
+2) NeverSink [[0200]] Exotic Bases 제외
+3) unique_only / Demigod / 특수 전용 베이스 제외
+4) 동일 BaseType은 1개만 유지
+5) 잘못 분류된 장비 슬롯은 올바른 카테고리로 이동
+6) 필터 매칭 키는 영문 BaseType 유지
+
+V100 -> V101 결과
+- V100 총 BaseType: 646
+- V101 총 BaseType: 807
+- 신규 고유 BaseType명: +162
+- 제거된 고유 BaseType명: -1 (generic "Ring")
+- 최종 순증: +161
+
+주요 수정
+- Rings: generic "Ring" 제거 (실제 일반 드롭 BaseType 아님)
+- Bucklers: +9
+- Foci: +9
+- Shields: +29
+- Boots: +33 항목 반영
+  * 그중 Apostle/Faithful/Cryptic/Shamanistic/Warlock/Weaver Leggings 6개는 Body Armour에서 Boots로 오분류 수정
+- Gloves: +18
+- Helmets: +29
+- Body Armours: +41, 오분류 Leggings 6개 제거
+
+최종 카테고리 수
+- one-hand-maces: 26
+- two-hand-maces: 27
+- bows: 26
+- crossbows: 25
+- quarterstaves: 27
+- staves: 15
+- sceptres: 13
+- wands: 13
+- spears: 24
+- talismans: 25
+- body-armours: 145
+- helmets: 112
+- gloves: 88
+- boots: 88
+- shields: 65
+- bucklers: 22
+- foci: 23
+- amulets: 10
+- rings: 11
+- belts: 11
+- quivers: 11
+
+구조 검사
+- 전체 807개 / 전역 BaseType 중복 0
+- Runeforged 0
+- Runemastered 0
+- Runefather 0
+- NeverSink known Exotic list 잔존 0
+- Leggings의 Body Armour 오분류 잔존 0
+- generic "Ring" 잔존 0
+
+코드 검사
+- `tsc --noEmit --target ES2020 --module ESNext --skipLibCheck src/app/filter/filterData.ts` 통과
+- 전체 Next.js build는 이 환경의 기존 node_modules가 불완전하여 실행 불가 (데이터 파일 TypeScript 문법 검사는 통과)
+
+메모
+- 신규로 보강된 항목 중 한국어 표시명이 아직 확정되지 않은 것은 labelKo에 영문 BaseType을 임시 사용.
+- 다음 데이터 단계는 신규 항목 한국어 로컬라이징 전수 검증.

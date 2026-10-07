@@ -1,0 +1,25 @@
+V087 UNIQUE WEAPON TIER AUDIT
+=============================
+Base: V086_UNIQUE_NS_LEGEND
+NeverSink source: 0.10.4 / 0-SOFT / commit f4b6b2d
+
+Changes
+- Left navigation entry renamed: UNIQUES / 고유 아이템 -> UNIQUE WEAPONS / 고유 무기
+- New category remains at the very top of the category list.
+- All 81 unique weapon BaseTypes now carry their original NeverSink tier metadata.
+- UI default remains NS (no override).
+- Row displays: 기본 NS · 원본 <tier>
+- Top legend explains NS and original tier metadata.
+
+Tier counts among 81 BaseTypes
+- T1: 9
+- T2: 8
+- T3-BOSS: 2
+- T3: 9
+- T4: 52
+- REST catcher: 1 (Runic Fork)
+
+Important
+- originalNeverSinkTier is informational metadata for the fixed NeverSink source.
+- defaultImportance remains "default" so untouched items still preserve original NeverSink behavior.
+- Runic Fork is not listed in T1/T2/T3-BOSS/T3/T4 in the fixed 2900 unique lists and therefore falls through to the final unique catcher (REST).

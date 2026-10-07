@@ -1,0 +1,9 @@
+V065 RUNES V001
+- UI order: ... FRAGMENTS -> RUNES -> GEMS
+- Total 147 = 룬 46 + 완벽한 룬 15 + 상위 룬 86
+- Korean labels follow the user's current in-game screenshots.
+- English BaseType keys are separated from Korean display names.
+- NeverSink 1900 explicit S/B entries use S/B; non-simple/hide/catcher rules use NS(default) to preserve original behavior instead of inventing tiers.
+- The two Korean items named '분해의 수호하는 룬' remain separate internal BaseTypes: Disintegration / Salvaging.
+- Right preview + current-item reset + custom sounds verified.
+- Top-level folder: fix-pob

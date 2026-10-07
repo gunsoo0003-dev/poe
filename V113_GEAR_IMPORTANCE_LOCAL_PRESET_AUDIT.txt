@@ -1,0 +1,29 @@
+V113 · Gear importance + fixed-slot local preset
+
+1. Rare/Magic/Normal importance UI
+- Common order: NS -> S(top) -> NeverSink-derived gear styles.
+- Rare: NS / S / A(cyan high) / B(cyan mid) / C(weak dark) / D(rare jewellery yellow).
+- Magic: NS / S / A(cyan high) / B(cyan mid) / C(purple background).
+- Normal: NS / S / A(gold border) / B(purple background) / C(normal basic).
+- S is FIXLGS top visual: white background + red text/border.
+- A~D visual data is copied from active NeverSink 0.10.4 gear rules; alert sound remains independently controlled by Sound Custom.
+
+2. Export mapping
+- Rare/Magic tier export uses rarity-specific NeverSink visual templates.
+- Normal item-level and BaseType overrides use normal-specific NeverSink visual templates.
+- Unmodified NS state remains untouched.
+
+3. Local preset
+- Fixed browser slots: FIXLGS_POE2_00 ~ FIXLGS_POE2_06, one per NeverSink strictness.
+- Save overwrites the same slot; seasons do not create additional slots.
+- Saved metadata: NeverSink version + saved timestamp.
+- Saved data stores only real baseline overrides for mapped item/normal rows so a newer NeverSink baseline can still flow through.
+- Virtual Rare/Magic/Normal convenience settings are restored as user settings.
+- Built-in sound choices are restored. Personal MP3 File objects are not stored in localStorage and must be registered again.
+- Individual slot delete + all 00~06 delete included.
+- Old NeverSink version preset shows a warning after loading.
+
+4. Verification
+- TypeScript transpile syntax check: FilterCustomizer.tsx / filterData.ts / filterExport.ts PASS.
+- Standalone TypeScript compile: filterData.ts / filterExport.ts / neversinkBase.ts PASS.
+- Export spot tests: Rare S/A/B/C/D, Magic S/A/B/C, Normal S/A/B/C generated expected visual lines.

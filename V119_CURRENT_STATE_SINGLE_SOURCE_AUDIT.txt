@@ -1,0 +1,18 @@
+V119 CURRENT STATE SINGLE SOURCE
+
+Goal
+- CURRENT FILTER selection must be the single source for the list.
+- NeverSink original: list = selected NeverSink baseline + no user overrides.
+- Saved FIXLGS preset: list = selected NeverSink baseline + saved overrides.
+
+Changes
+1) itemState now stores user overrides only, not a copied NeverSink baseline snapshot.
+2) normalGear now stores user overrides only, not a copied NeverSink baseline snapshot.
+3) On NeverSink base change, overrides are cleared and the list reads the newly loaded baseline directly.
+4) On preset load, only saved overrides are restored on top of the selected baseline.
+5) Returning a row to its current NeverSink default removes its override entry.
+6) Export engine continues to receive only changed itemState entries, which matches its existing behavior.
+
+Invariant
+CURRENT FILTER = selected NeverSink baseline + overrides
+LIST = CURRENT FILTER

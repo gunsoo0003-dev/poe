@@ -1,0 +1,7 @@
+V063 ATZIRI V001
+- UI order: CURRENCY -> ESSENCE -> DELIRIUM -> BREACH -> ABYSS -> ATZIRI'S TEMPLE -> GEMS
+- Total 19 = currency 15 + ancient soul cores 4
+- Currency tiers mapped from NeverSink 2600.
+- Ancient soul cores use A-tier (NeverSink release notes: new soul cores all A-tier for now).
+- Same UI + custom sound + selected reset + full reset.
+- Top-level folder: fix-pob.

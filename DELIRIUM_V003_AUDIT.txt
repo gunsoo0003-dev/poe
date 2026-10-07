@@ -1,0 +1,7 @@
+V060 DELIRIUM V003
+- Simulacrum Splinter default importance changed to DYNAMIC.
+- DYNAMIC means NeverSink stack-size rule remains active until user overrides with fixed tier.
+- Liquid Obsession corrected to Liquid Paranoia -> 액체 집착 -> B.
+- Ancient Liquid Obsession corrected to Ancient Liquid Paranoia -> 고대 액체 집착 -> C.
+- Custom sounds preserved: NeverSink / 음~ 맛있다 / OISHIE.
+- Top-level folder: fix-pob.

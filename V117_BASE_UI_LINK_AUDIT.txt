@@ -1,0 +1,7 @@
+V117 BASE UI LINK
+- BASE FILTER 선택 단계와 화면 내 원본 참조 표기를 동일한 selectedStrictness로 연결.
+- 기존 하드코딩 `0-SOFT 참고` 제거.
+- 각 아이템 원본 참고값은 현재 선택한 baseline JSON의 tiers를 표시.
+- 섹션 설명의 0-SOFT 문구는 현재 선택 단계로 동적 치환.
+- NS 범례도 현재 선택 단계 기준으로 표시.
+- 생성 엔진/원본 파일/커스텀 로직은 변경하지 않음.

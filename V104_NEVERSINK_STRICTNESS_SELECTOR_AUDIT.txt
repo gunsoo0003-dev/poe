@@ -1,0 +1,28 @@
+V104 NeverSink strictness selector
+
+Source verified: NeverSinkDev/NeverSink-Filter-for-PoE2
+Pinned release: 0.10.4
+Commit: f4b6b2d
+Official strictness files confirmed:
+- 0-SOFT
+- 1-REGULAR
+- 2-SEMI-STRICT
+- 3-STRICT
+- 4-VERY-STRICT
+- 5-UBER-STRICT
+- 6-UBER-PLUS-STRICT
+
+Implemented:
+- Added global NeverSink strictness selector to BASE FILTER sidebar.
+- Selected strictness is reflected in sidebar header, preview, sound-default copy, and base info.
+- Added strictness metadata with local target paths and pinned official source URLs.
+- Added scripts/update-neversink.ps1 to sync all 7 official .filter files into public/neversink/<version>/.
+- Existing customizer state is preserved when changing strictness UI.
+
+Important next step:
+- Connect selected strictness to the actual filter generation engine and per-strictness default/tier parsing.
+- The execution sandbox used for this patch cannot fetch raw GitHub bytes into the project container, so the seven .filter payloads are not embedded in this ZIP. The included sync script downloads the exact pinned 0.10.4 files in a normal networked Windows environment.
+
+Validation:
+- Official GitHub release 0.10.4 and all 7 filenames were verified from the repository/release.
+- TypeScript full build could not be completed because node_modules are not present in the supplied archive. No new parser/syntax errors specific to the selector changes were surfaced by the available TypeScript check.

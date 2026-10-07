@@ -1,0 +1,55 @@
+FIX PoB V100 - NORMAL BaseType data audit
+
+Policy
+- Scope: white/Normal equipment BaseTypes for 21 equipment categories.
+- Seed: V099 existing 333 names + NeverSink neutral BaseType tier lists + current PoE2DB equipment pages.
+- Excluded: NeverSink [[0200]] Exotic Bases, Runeforged/Runemastered variants, duplicate BaseType rows.
+- Exact ItemLevel 82/81/80/79/78 priority rules unchanged.
+
+V099 source count: 333
+V100 candidate count: 646
+New names added: 326
+V099 names removed as Exotic Base: 13
+
+Category counts
+- one-hand-maces: 9 -> 26 (added 17, removed 0)
+- two-hand-maces: 13 -> 27 (added 15, removed 1)
+- bows: 10 -> 26 (added 16, removed 0)
+- crossbows: 5 -> 25 (added 20, removed 0)
+- quarterstaves: 7 -> 27 (added 21, removed 1)
+- staves: 9 -> 15 (added 8, removed 2)
+- sceptres: 4 -> 13 (added 9, removed 0)
+- wands: 8 -> 13 (added 7, removed 2)
+- spears: 10 -> 24 (added 14, removed 0)
+- talismans: 6 -> 25 (added 19, removed 0)
+- body-armours: 65 -> 110 (added 47, removed 2)
+- helmets: 48 -> 83 (added 36, removed 1)
+- gloves: 35 -> 70 (added 35, removed 0)
+- boots: 25 -> 55 (added 31, removed 1)
+- shields: 19 -> 36 (added 17, removed 0)
+- bucklers: 8 -> 13 (added 5, removed 0)
+- foci: 8 -> 14 (added 6, removed 0)
+- amulets: 11 -> 10 (added 0, removed 1)
+- rings: 14 -> 12 (added 0, removed 2)
+- belts: 11 -> 11 (added 0, removed 0)
+- quivers: 8 -> 11 (added 3, removed 0)
+
+Removed from NORMAL because NeverSink classifies them under [[0200]] Exotic Bases
+- two-hand-maces: Aberrant Sledge
+- quarterstaves: Warding Quarterstaff
+- staves: Perching Staff
+- staves: Reflecting Staff
+- wands: Runic Fork
+- wands: Twisted Wand
+- body-armours: Ancient Mail
+- body-armours: Sacrificial Regalia
+- helmets: Tenebrous Crown
+- boots: Ancient Leggings
+- amulets: Veridical Chain
+- rings: Abyssal Signet
+- rings: Two-Stone Ring
+
+Localization note
+- Existing V099 Korean labels are preserved.
+- New BaseTypes currently use canonical English BaseType as display fallback until official Korean label verification.
+- Filter matching uses canonical BaseType, so localization does not affect rule correctness.

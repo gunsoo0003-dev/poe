@@ -1,0 +1,26 @@
+V111 RARE / MAGIC / EXCEPTIONAL RULE AUDIT
+
+Confirmed product rule
+1. Rare/Magic tier UI is a FIXLGS convenience filter and starts inactive.
+2. Rare/Magic custom mode becomes active only when BOTH:
+   - at least one tier is selected, and
+   - at least one gear type is selected.
+3. While custom mode is active:
+   - only selected tier × selected gear type combinations are intended to Show,
+   - all other ordinary Rare/Magic combinations are intended to Hide.
+4. If custom mode is incomplete/off, selected NeverSink original remains untouched.
+5. Exceptional rules stay above the Rare/Magic convenience filter and are not suppressed by it.
+
+Exceptional source verification (NeverSink 0.10.4)
+- [[0300]] Exceptional Items appears before ordinary unidentified Rare/Magic equipment rules.
+- overqual1q1 and oversockt1s3 / oversockt1s2 are active Show rules in [[0300]].
+- UI exceptional Rare/Magic entries are stored separately from rareTiers/magicTiers and rareGear/magicGear.
+- Therefore, a Rare/Magic item that matches an exceptional overquality/oversocket rule is intended to retain the higher NeverSink exceptional display even when the ordinary Rare/Magic custom filter would otherwise hide it.
+
+UI changes
+- Added explicit Rare/Magic custom-mode ON/OFF summary.
+- Added "종류 전체 활성" and "종류 전체 해제" controls.
+- Updated text so unchecked tiers/types mean exclusion from the active custom selection, not alteration of the NeverSink baseline while custom mode is off.
+
+Important
+- The custom .filter override generator is still not connected in this build. These rules are now encoded in UI/state semantics and documented for the upcoming override engine.

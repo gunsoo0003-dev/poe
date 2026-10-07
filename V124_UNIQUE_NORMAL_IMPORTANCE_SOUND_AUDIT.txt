@@ -1,0 +1,38 @@
+V124 UNIQUE/NORMAL IMPORTANCE + SOUND AUDIT
+============================================
+Base: V123
+NeverSink: 0.10.4 / f4b6b2d
+
+Scope only
+- Selected-filter -> Unique BaseType original importance linkage
+- Selected-filter -> Normal BaseType original importance linkage
+- Gear custom-sound ZIP omission fix
+- Existing Rare/Magic virtual rules, Exceptional precedence, export override logic unchanged
+
+Unique baseline
+- Direct active NeverSink Unique BaseType tier rule is used for original list display.
+- t1 -> T1, t2 -> T2, multispecial(high) -> SPECIAL, t3/t3boss -> T3, hideable -> T4.
+- Direct tier rule action is also used for Unique Show/Hide instead of unrelated generic conditional matches.
+- 0-SOFT unique mapped: T1 17 / T2 20 / SPECIAL 1 / T3 67 / T4 183 / fallback 1.
+- 6-UBER-PLUS status among mapped weapon/armour uniques: Show 38 / Hide 250 / Conditional fallback 1.
+
+Normal baseline
+- Dedicated active NeverSink BaseType tier lists are mapped to A/B/C for list display.
+- Runtime ItemLevel/AreaLevel/quality/socket conditions remain NeverSink internal conditions and are not converted into FIXLGS virtual rules.
+- 0-SOFT: A 63 / B 110 / C 634.
+- 6-UBER-PLUS: A 3 / C 804.
+- FIXLGS 82/81/80/79/78 virtual rules remain OFF by default.
+
+UI/state safety
+- Baseline importance is display-only when there is no user override.
+- Internal custom state remains "default" so an untouched item is NOT exported as a customization.
+- User-selected importance still overrides the selected NeverSink base.
+
+Sound ZIP
+- Gear-mode sound choices are now registered in usedSoundChoices.
+- A referenced masitda/oishie/divine-power gear sound is therefore included in FIXLGS_SOUNDS during ZIP export.
+
+Validation
+- build-neversink-baseline.cjs completed for all 7 strictness files.
+- TypeScript transpile syntax check: FilterCustomizer.tsx / filterExport.ts / filterData.ts = 0 syntax errors.
+- Full Next.js build not executed because this working copy has no local next/react dependencies installed.

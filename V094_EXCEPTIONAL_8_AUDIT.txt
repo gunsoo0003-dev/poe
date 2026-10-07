@@ -1,0 +1,32 @@
+V094 EXCEPTIONAL / 특출난 8종 추가
+
+기준: NeverSink 0.10.4 / 0-SOFT 고정본
+
+UI 항목 (총 8개)
+- 고유 과퀄리티
+- 고유 과소켓
+- 레어 과퀄리티
+- 레어 과소켓
+- 매직 과퀄리티
+- 매직 과소켓
+- 일반 과퀄리티
+- 일반 과소켓
+
+원본 조건 기준
+- Unique 과퀄: Quality >= 21
+- Unique 과소켓: 클래스별 Sockets >= 3 / >= 2
+- Normal/Magic/Rare 공통 특출난 과퀄: Corrupted False + Quality >= 27
+- Normal/Magic/Rare 공통 과소켓: Corrupted False + 클래스별 Sockets >= 3 / >= 2
+- UI에서는 공통 규칙을 Rare/Magic/Normal로 분리하여 8종으로 단순화
+
+의도적 원본 유지 (UI 비노출/비커스텀)
+- TwiceCorrupted
+- HasVaalUniqueMod
+- Normal chancing base 전용 Quality >= 24 / oversocket 추가 예외
+- 기타 NeverSink 희귀 예외
+
+체크 해제 의미
+- 특출난 항목 자체를 숨기는 것이 아님
+- 해당 특출난 override만 비활성화하고 아래 NeverSink 원본 규칙으로 복귀
+
+필터 생성 엔진은 아직 미완성. 본 버전은 UI/데이터 구조 반영.

@@ -1,0 +1,7 @@
+V011 CLEAN FIX
+- Currency item count: 37
+- Header button text: 화폐 전체 초기화
+- Current item reset: inside right preview stage
+- Custom sound: NeverSink / 음~ 맛있다 / OISHIE
+- Divine Orb: DIVINE POWER! fixed
+- OISHIE file: public/sounds/oishie-poe-final.mp3

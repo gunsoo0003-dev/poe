@@ -1,0 +1,10 @@
+V115 · EDIT TARGET SELECTOR
+
+- Replaced ambiguous base/preset workflow with one explicit EDIT TARGET selector.
+- Selector lists all 7 NeverSink originals and every locally-saved FIXLGS custom slot.
+- Selecting an original opens that strictness as a clean NeverSink baseline.
+- Selecting a saved custom opens its matching strictness and applies that local preset after baseline load.
+- Added always-visible CURRENT EDIT status: source, base strictness, NeverSink version, and current changed count.
+- LOCAL PRESET remains for save / re-apply / delete; '불러오기' renamed to '저장본 다시 적용'.
+- Switching edit targets warns before discarding the current on-screen custom state.
+- File/export naming policy and generation engine are unchanged.

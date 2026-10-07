@@ -1,0 +1,6 @@
+V138 NORMAL SEARCH
+- Added NORMAL section to the existing shared SEARCH UI.
+- Normal BaseType filtering uses the existing search state and only narrows rendered rows.
+- Matches Korean drop name and internal English BaseType label.
+- Search does not alter check/importance/sound/preset state.
+- Group counts reflect visible search results.

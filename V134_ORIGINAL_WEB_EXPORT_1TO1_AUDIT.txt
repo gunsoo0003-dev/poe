@@ -1,0 +1,44 @@
+V134 ORIGINAL ↔ WEB ↔ EXPORT 1:1 AUDIT
+========================================
+
+FINAL RULE
+- NeverSink plain/default Show => web checked.
+- NeverSink plain/default Hide => web unchecked.
+- Runtime exceptions remain NS conditional metadata only; they do not create a third checkbox state.
+- If user changes checkbox, generated filter follows web state exactly: checked => hard Show, unchecked => hard Hide.
+- Rare/Magic tier modes remain intentional range overrides; FIXLGS virtual rules remain default OFF.
+
+BASELINE FIXES
+1) Multiple sourceSection values are treated as alternative real sections, preserving NeverSink order.
+2) Conditional rules no longer force checkbox ON. The first fully-resolved fallback Show/Hide determines `enabled` while status may stay `conditional`.
+3) Normal/Magic jewel rows are evaluated as Magic for the shared NeverSink Rarity Normal Magic rule.
+4) BaseType without == supports NeverSink partial selectors (e.g. "Medium" for Medium Life Flask).
+5) If catalogue section metadata is stale and has no exact BaseType rule, exact BaseType rules elsewhere in the original filter are used as a narrow 1:1 fallback.
+6) Currency/category presentation helpers no longer override the common visibility result.
+
+CONFIRMED 6-UBER-PLUS EXAMPLES
+- Magic Ruby/Emerald/Sapphire jewels: unchecked + NS conditional (plain rule Hide, corrupted exceptions retained in NS).
+- Delirium special items: Simulacrum Splinter / Simulacrum / Raven's Reflection / Raven-Touched Shard all checked.
+- Perfect Desert Rune / Emergent Vigour: checked from current exact NeverSink rule.
+- Sacred Bloom: checked from current fragment rule.
+- Uncut Support Gem L1~L5: unchecked + NS conditional.
+- Gold: unchecked + NS conditional.
+
+EXPORT FIX
+- Numeric rows (GemLevel / WaystoneTier): when user flips checkbox, output is now a hard exact selector Show/Hide and no AreaLevel/runtime gate is carried over.
+- When user does not change visibility and only changes style/sound, original NeverSink runtime conditions remain intact.
+
+INSTALL FIX
+- First direct install asks for Path of Exile 2 folder and stores the directory handle in IndexedDB.
+- Subsequent installs reuse the saved folder after permission check; no folder picker is needed unless permission is lost.
+- Added explicit "설치 폴더 변경" button.
+
+AUTOMATED AUDIT
+- NeverSink 0~6: every mapped item has explicit boolean enabled; 6 baseline missing count = 0.
+- Every individual item was flipped against its baseline and exported across all 7 strictnesses: 0 checkbox export failures.
+- Every Normal BaseType flip across all 7 strictnesses: 0 export failures.
+- Rare 5-only and Magic 5-only: Show tier 5 + fallback Hide generated in all 7 strictnesses.
+- Numeric ON override sample: Uncut Support Gem L1 => Show + BaseType + GemLevel only (no AreaLevel).
+- Numeric ON override sample: Waystone T1 => Show + WaystoneTier only.
+- Unmodified 6-UBER-PLUS export remains byte-identical to original. SHA256:
+  1b414cf0cc90d0c29dca1c09495030564fc041adfea3703fd1747a9e746ec4db

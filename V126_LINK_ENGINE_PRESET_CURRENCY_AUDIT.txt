@@ -1,0 +1,36 @@
+V126 LINK ENGINE / PRESET / CURRENCY AUDIT
+==========================================
+
+Goal
+- Stop category state from changing when NeverSink baseline is fetched/re-fetched.
+- Keep one visible rule: selected filter baseline + explicit user overrides.
+- Preserve saved rare/magic virtual tiers and item sound overrides when loading a local preset.
+- Resolve CURRENCY checkboxes from the first active exact BaseType rule in NeverSink order.
+
+Architecture changes
+1. NeverSink baseline fetch no longer clears editor state.
+   React state stores user overrides; list rows fall back to neverSinkBaseline.
+2. Changing CURRENT FILTER explicitly clears the old target once, before switching strictness.
+3. Loading a preset applies payload overrides after the requested baseline arrives.
+   A later baseline re-fetch does not clear rareTiers, magicTiers, soundState, or item overrides.
+4. Original/reset target uses empty item/normal override maps.
+5. Normal preview now falls back to the selected baseline instead of assuming missing override = ON.
+
+Currency resolver
+- CURRENCY_GROUPS are resolved using the first active exact BaseType rule in the preferred NeverSink section.
+- Later exhide / utility_minimize fallback rules cannot turn an earlier Show into "conditional".
+- 6-UBER-PLUS-STRICT result: 24 ON / 13 OFF across 37 currency rows.
+- 0-SOFT result: 37 ON / 0 OFF.
+
+Regression boundaries
+- Rare/Magic custom mode logic unchanged.
+- Exceptional priority logic unchanged.
+- Normal 82/81/80/79/78 virtual rules unchanged and remain user-controlled.
+- Export override logic unchanged.
+- Custom sound ZIP collection unchanged from V125.
+- Unique resolver unchanged.
+
+Checks performed
+- Rebuilt all seven NeverSink baseline JSON files from official 0.10.4 filter files.
+- TypeScript transpile syntax diagnostics: 0 for FilterCustomizer.tsx and filterExport.ts.
+- Node syntax check: baseline builder passed.

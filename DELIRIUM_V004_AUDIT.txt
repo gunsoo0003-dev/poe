@@ -1,0 +1,6 @@
+V060 DELIRIUM V004
+- DYNAMIC added as an actual selectable importance button.
+- Simulacrum Splinter starts with DYNAMIC selected.
+- Selecting S/A/B/C/D/E overrides the dynamic NeverSink rule.
+- Reset returns Simulacrum Splinter to DYNAMIC.
+- Top-level folder: fix-pob.

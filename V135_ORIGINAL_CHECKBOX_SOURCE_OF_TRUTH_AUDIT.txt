@@ -1,0 +1,30 @@
+V135 · ORIGINAL CHECKBOX SOURCE-OF-TRUTH FIX
+
+Scope
+- Fix ONLY issue #1/#2 foundation: NeverSink original Show/Hide -> web checked/unchecked.
+- Do not change preset save/restore or Rare/Magic export in this version.
+
+Rule
+- Web checkbox is two-state only.
+- NeverSink plain/default Show => checked.
+- NeverSink plain/default Hide => unchecked.
+- Runtime exception rules (Corrupted, Mirrored, enchant/mod checks, ItemLevel/AreaLevel etc.) remain NS condition metadata and do not become a third checkbox state.
+- When a rule explicitly names the exact BaseType, missing catalogue Class metadata does not make that deterministic rule conditional.
+- A catalogue row with no rarity does not match an unrelated Rarity-gated rule.
+
+Confirmed V134 defect examples repaired on 6-UBER-PLUS
+- Greater Orb of Transmutation: unchecked -> checked (NeverSink C Show rule wins before exhide).
+- Vaal Orb: unchecked -> checked (NeverSink C Show rule).
+- Magic Ruby Jewel: remains unchecked + NS conditional (plain Normal/Magic jewel rule Hide; corrupted exceptions remain NS).
+- Magic Emerald Jewel: remains unchecked + NS conditional.
+- Magic Sapphire Jewel: remains unchecked + NS conditional.
+- Delirium Tablet: checked (fragment C Show).
+- Simulacrum: checked.
+- Raven's Reflection: checked.
+- Raven-Touched Shard: checked.
+
+Baseline regeneration
+- All 7 NeverSink 0.10.4 strictness baseline JSON files regenerated from original .filter files.
+
+Important
+- This version intentionally does not modify local preset persistence. That is the next separate issue after original->web checkbox mapping is accepted.

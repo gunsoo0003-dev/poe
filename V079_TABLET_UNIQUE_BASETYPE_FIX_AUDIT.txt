@@ -1,0 +1,28 @@
+V079 TABLET UNIQUE BASETYPE FIX
+
+수정 목적
+- 고유 서판 9개 '개별 고유 이름' 표기를 제거.
+- NeverSink가 드랍 순간 실제로 구분 가능한 Unique + BaseType 단위로 고유 서판을 목록화.
+
+고유 서판 BaseType 6종
+1. 균열 서판 / Breach Tablet / Unique / 기본 T3
+2. 환영 서판 / Delirium Tablet / Unique / 기본 T3
+3. 의식 서판 / Ritual Tablet / Unique / 기본 T2
+4. 방사능 노출 서판 / Irradiated Tablet / Unique / 기본 SPECIAL
+5. 감독관 서판 / Overseer Tablet / Unique / 기본 SPECIAL
+6. 심연 서판 / Abyss Tablet / Unique / 기본 T1
+
+일반 서판 8종 유지
+- 균열, 탐험, 환영, 의식, 방사능 노출, 감독관, 심연, 사원
+
+검증
+- TABLETS 고유 행: 6
+- TABLETS 일반 행: 8
+- 개별 고유 이름(Wraeclast Besieged 등): src에서 제거 확인
+- 현재 항목 초기화: 1개 유지
+- NeverSink / 음~ 맛있다 / OISHIE 사운드 UI 유지
+- 고유 중요도 선택: T1 / T2 / SPECIAL / T3 / T4 유지
+
+빌드 참고
+- tsc 실행은 작업환경 node_modules의 타입 패키지 누락(estree/json-schema/json5/node/react/react-dom) 때문에 환경 오류로 중단됨.
+- 이번 수정은 데이터 행/설명 문자열 변경이며 TypeScript 구조 변경 없음.

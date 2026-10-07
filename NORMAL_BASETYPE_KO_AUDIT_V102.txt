@@ -1,0 +1,52 @@
+FIX PoB POE2 - NORMAL BASETYPE KOREAN LABEL AUDIT V102
+======================================================
+
+작업 목적
+- V101의 일반 장비 BaseType 데이터 807개를 그대로 유지하면서 UI용 한국어 표시명(labelKo)을 완성한다.
+- 필터 매칭용 baseType 영문 문자열은 변경하지 않는다.
+- NeverSink를 필터 로직/목록 판정의 최우선 기준으로 유지한다.
+- PoE2DB 한국어 페이지의 BaseType 한국어 표기를 UI 표시명 검증에 사용한다.
+
+결과
+- 일반 장비 BaseType 총수: 807
+- 카테고리 수: 21
+- labelKo가 영문 BaseType 그대로 남은 항목: 0
+- 중복 baseType: 0
+- Runeforged 포함: 0
+- Runemastered 포함: 0
+- Runefather 포함: 0
+
+카테고리별 수량
+- one-hand-maces: 26
+- two-hand-maces: 27
+- bows: 26
+- crossbows: 25
+- quarterstaves: 27
+- staves: 15
+- sceptres: 13
+- wands: 13
+- spears: 24
+- talismans: 25
+- body-armours: 145
+- helmets: 112
+- gloves: 88
+- boots: 88
+- shields: 65
+- bucklers: 22
+- foci: 23
+- amulets: 10
+- rings: 11
+- belts: 11
+- quivers: 11
+
+표시명 검증 원칙
+1) PoE2DB 한국어 개별 BaseType 페이지에 영문/한국어 BaseType이 함께 표시되는 경우 그 한국어명을 사용.
+2) PoE2DB 한국어 개별 페이지 검색이 잡히지 않는 예외 항목은 공식 한국 서비스 패치/아이템 필터 명칭 변경 공지를 보조 확인에 사용.
+3) Cursespeaker's Robe는 최신 한국어 DB 검색 결과의 '저주발화자의 로브'를 사용.
+4) River Raiment / Homeguard Greathelm은 한국 공식 명칭 변경 공지에서 연결된 '고급 케스 의복' / '고급 싸맨 대헬름'을 사용.
+
+주의
+- 이 V102의 핵심 변경은 한국어 UI 표시명 완성이다.
+- V101의 807개 BaseType 멤버십 자체를 이번 단계에서 새로 확정한 것은 아니다.
+- 향후 일반 장비 목록을 NeverSink 전체 strictness(0~6) 기준으로 최종 재감사할 경우, baseType 영문 키를 기준으로 추가/제외하고 labelKo는 본 매핑을 재사용한다.
+- 개별 중요도 커스텀은 표시 스타일만 변경하고 NeverSink의 ItemLevel/AreaLevel/진행도 조건을 보존한다.

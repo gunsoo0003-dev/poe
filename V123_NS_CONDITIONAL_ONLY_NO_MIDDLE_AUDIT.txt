@@ -1,0 +1,8 @@
+V123 audit
+- Every web checkbox is two-state only: checked / unchecked.
+- Removed the Normal BaseType parent checkbox indeterminate/middle state.
+- NeverSink conditional badge is visible only while importance is NS/default.
+- When importance remains NS/default, the selected NeverSink conditional rule is preserved exactly.
+- When a user selects a custom importance on an item whose NeverSink source rule is conditional, a direct FIXLGS Show override is generated so the user's custom setting takes priority instead of inheriting the NS conditional gate.
+- Normal BaseType custom importance follows the same rule and uses the existing Normal gear visual style mapping.
+- Rare/Magic virtual rules, Exceptional priority, sounds, presets, and other export behavior were not changed.

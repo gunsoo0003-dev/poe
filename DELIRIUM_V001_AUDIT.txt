@@ -1,0 +1,7 @@
+V060 DELIRIUM V001
+- UI order: CURRENCY -> ESSENCE -> DELIRIUM -> GEMS
+- Total: 30 (4 Delirium special + 26 Distilled Emotions)
+- NeverSink sources: 2701 + 3000 + 1900
+- Simulacrum Splinter keeps a note that NeverSink is stack-size T1~T5 dynamic.
+- Liquid Obsession / Ancient Liquid Obsession are visible in current in-game category but not explicitly tiered in 2701 v0.10.4; marked neutral D with catcher note for now.
+- Same UI: toggle / importance / sound / selected reset / full reset

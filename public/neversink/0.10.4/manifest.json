@@ -1,0 +1,93 @@
+{
+  "source": "NeverSinkDev/NeverSink-Filter-for-PoE2",
+  "version": "0.10.4",
+  "commit": "f4b6b2d",
+  "strictnesses": [
+    {
+      "id": "0-SOFT",
+      "file": "0-SOFT.filter",
+      "upstream": "NeverSink's filter 2 - 0-SOFT.filter"
+    },
+    {
+      "id": "1-REGULAR",
+      "file": "1-REGULAR.filter",
+      "upstream": "NeverSink's filter 2 - 1-REGULAR.filter"
+    },
+    {
+      "id": "2-SEMI-STRICT",
+      "file": "2-SEMI-STRICT.filter",
+      "upstream": "NeverSink's filter 2 - 2-SEMI-STRICT.filter"
+    },
+    {
+      "id": "3-STRICT",
+      "file": "3-STRICT.filter",
+      "upstream": "NeverSink's filter 2 - 3-STRICT.filter"
+    },
+    {
+      "id": "4-VERY-STRICT",
+      "file": "4-VERY-STRICT.filter",
+      "upstream": "NeverSink's filter 2 - 4-VERY-STRICT.filter"
+    },
+    {
+      "id": "5-UBER-STRICT",
+      "file": "5-UBER-STRICT.filter",
+      "upstream": "NeverSink's filter 2 - 5-UBER-STRICT.filter"
+    },
+    {
+      "id": "6-UBER-PLUS-STRICT",
+      "file": "6-UBER-PLUS-STRICT.filter",
+      "upstream": "NeverSink's filter 2 - 6-UBER-PLUS-STRICT.filter"
+    }
+  ],
+  "files": [
+    {
+      "id": "0-SOFT",
+      "file": "0-SOFT.filter",
+      "upstream": "NeverSink's filter 2 - 0-SOFT.filter",
+      "sha256": "02d6a6f1e6f23895c7af54746db8a6038d300525346e75be55e86d5d5bd8dbce",
+      "bytes": 252598
+    },
+    {
+      "id": "1-REGULAR",
+      "file": "1-REGULAR.filter",
+      "upstream": "NeverSink's filter 2 - 1-REGULAR.filter",
+      "sha256": "cf9efb47ed2ff41216e35a67742b8c0d786534654b03d48862e71d928e9e337c",
+      "bytes": 252630
+    },
+    {
+      "id": "2-SEMI-STRICT",
+      "file": "2-SEMI-STRICT.filter",
+      "upstream": "NeverSink's filter 2 - 2-SEMI-STRICT.filter",
+      "sha256": "994b9bf3d9cb3a0a8a5986d0a73c90c57f0d38cda38a87b67dd1806be38c36cd",
+      "bytes": 252673
+    },
+    {
+      "id": "3-STRICT",
+      "file": "3-STRICT.filter",
+      "upstream": "NeverSink's filter 2 - 3-STRICT.filter",
+      "sha256": "2fa89e0099611ed156b4dcf14cc1017047209d06d65b016a7f8e8d33aae40cd7",
+      "bytes": 252713
+    },
+    {
+      "id": "4-VERY-STRICT",
+      "file": "4-VERY-STRICT.filter",
+      "upstream": "NeverSink's filter 2 - 4-VERY-STRICT.filter",
+      "sha256": "8c0e8388a4c7ab8311bc47142374c3a30281280c1668873347523d61eb8b2d90",
+      "bytes": 251558
+    },
+    {
+      "id": "5-UBER-STRICT",
+      "file": "5-UBER-STRICT.filter",
+      "upstream": "NeverSink's filter 2 - 5-UBER-STRICT.filter",
+      "sha256": "e121daf2ff742fbf69ec14719d2ddc66d9c93b23bdb0b01dd60b1478d76fd970",
+      "bytes": 251231
+    },
+    {
+      "id": "6-UBER-PLUS-STRICT",
+      "file": "6-UBER-PLUS-STRICT.filter",
+      "upstream": "NeverSink's filter 2 - 6-UBER-PLUS-STRICT.filter",
+      "sha256": "1b414cf0cc90d0c29dca1c09495030564fc041adfea3703fd1747a9e746ec4db",
+      "bytes": 250502
+    }
+  ]
+}

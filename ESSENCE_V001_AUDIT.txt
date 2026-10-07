@@ -1,0 +1,9 @@
+V059 ESSENCE V001
+- UI order: CURRENCY -> ESSENCE -> GEMS ...
+- Essence total: 82
+- Groups: Lesser 19 / Regular 19 / Greater 19 / Perfect 19 / Corrupted 6
+- NeverSink tier counts: {'s': 1, 'a': 2, 'b': 6, 'c': 21, 'd': 50, 'e': 2}
+- Custom sound reused: NeverSink / 음~ 맛있다 / OISHIE
+- Top reset: 에센스 전체 초기화
+- Right preview reset reused
+- Root-fixed package: unzip directly into project root

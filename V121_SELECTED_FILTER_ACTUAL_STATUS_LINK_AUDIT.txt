@@ -1,0 +1,16 @@
+V121 SELECTED FILTER ACTUAL STATUS LINK
+
+Purpose
+- Make the visible web list follow the ACTUAL state of the currently selected NeverSink/custom filter.
+
+Rules
+- NeverSink Show => web item ON
+- NeverSink Hide => web item OFF
+- NeverSink Conditional => web item ON + indeterminate marker (original conditions remain authoritative)
+- Missing/unmapped => web item OFF
+- FIXLGS-only virtual Rare/Magic tier and Normal item-level convenience rules remain OFF by default.
+- Existing export/custom override/Exceptional priority/sound/local preset logic is retained.
+
+Scope
+- Only baseline interpretation + conditional checkbox visualization changed from V120.
+- No export priority or Rare/Magic/Exceptional generation logic was replaced.

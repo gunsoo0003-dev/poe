@@ -1,0 +1,9 @@
+V083 MISC / 기타
+- Last sidebar category: MISC / 기타
+- Gold: 1 row (Gold / 골드), NeverSink 0100, DYNAMIC by StackSize/AreaLevel
+- Sekhemas chest keys: Bronze Key / Silver Key / Gold Key (동/은/금 열쇠)
+- Trial / Ascendancy keys: Djinn Barya, Test of Strength/Will/Cunning/Time Barya, Inscribed Ultimatum
+- Djinn Barya and Inscribed Ultimatum default to DYNAMIC because NeverSink uses ItemLevel conditions
+- Test Barya and Sanctum chest keys use HIGH as their NeverSink special-key baseline
+- Quest/Instance Local items, Breach Ring, Fishing Rods, legacy splinters remain outside UI and therefore preserve NeverSink original behavior
+- Existing Reliquary Keys remain under FRAGMENTS; not duplicated here

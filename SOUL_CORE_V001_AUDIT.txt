@@ -1,0 +1,7 @@
+V068 SOUL CORE V001
+- Total 47 Soul Cores from current in-game exchange screenshots.
+- NeverSink 0.10.4 / 0-SOFT [[1900]] tiers: {'s': 4, 'a': 25, 'b': 10, 'c': 8, 'd': 0, 'e': 0, 'default': 0, 'dynamic': 0}
+- S: 4, A: 25, B: 10, C: 8. No NS / DYNAMIC required.
+- Korean labels follow current in-game localization / PoE2DB.
+- Right preview + current reset + custom sound gate verified.
+- ZIP top folder verified: fix-pob

@@ -1,0 +1,22 @@
+V099 NORMAL ITEMLEVEL PRIORITY AUDIT
+====================================
+Base: V098_NORMAL_BASETYPE_HIERARCHY
+
+Implemented
+- Added exact Normal ItemLevel priority rows: 82, 81, 80, 79, 78.
+- Each row has ON/OFF + NS/S/A/B/C/D/E importance.
+- These five exact-level rules are defined as top-priority exceptions above category/BaseType settings.
+- If a top-level ItemLevel row is ON, it can show that exact ItemLevel even when a lower category/BaseType is OFF.
+- If a top-level ItemLevel row is OFF, that exact ItemLevel is hidden regardless of lower category/BaseType settings.
+- BaseType importance customization remains style-only: it must not replace NeverSink ItemLevel/AreaLevel/progression conditions.
+- Levels outside 82~78 are not collapsed into a custom 77-or-lower bucket; they remain under NeverSink original conditions.
+- Exceptional overquality/oversocket rules remain separate.
+
+Planned filter-engine precedence
+1) Normal exact ItemLevel 82/81/80/79/78 override
+2) Normal category/BaseType show/hide customization
+3) Normal BaseType importance/style customization
+4) NeverSink 0-SOFT original conditions
+
+Note
+- Current project still labels download engine as FILTER ENGINE NEXT; this V099 change is UI/state semantics ready for the later generator.

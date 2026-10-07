@@ -1,0 +1,9 @@
+V114 · Export Button Visible
+
+- Moved filter export/download controls from the bottom of the right preview panel to directly below LIVE STATUS.
+- The primary action is now visible without scrolling:
+  - No customization: "필터 다운로드 · <NeverSink tier>"
+  - Customized: "필터 생성 및 다운로드"
+- File name edit remains available beside the visible action.
+- Export guide remains directly under the action.
+- Existing export engine behavior is unchanged.

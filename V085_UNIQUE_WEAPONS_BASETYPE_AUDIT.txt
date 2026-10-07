@@ -1,0 +1,48 @@
+V085 UNIQUE WEAPONS BASETYPE AUDIT
+=================================
+Base: V084 PERSONAL CUSTOM SOUND
+Target: POE2 웹 필터 커스터마이저 > UNIQUES > 고유 무기
+
+DATA MODEL
+- 개별 고유 이름이 아니라 드롭 시 필터가 구분 가능한 BaseType을 UI 행으로 사용.
+- 고유 이름은 관련 고유 확인용 metadata(uniqueNamesKo)로 보관.
+- Rarity = Unique.
+- 사용자가 변경하지 않으면 NeverSink 0-SOFT 원본 규칙 유지.
+- 현재 필터 생성 엔진은 미완성이므로 다운로드 엔진 상태는 기존 그대로 유지.
+
+WEAPON COUNTS
+- 한손 철퇴: 고유 10 / BaseType 9
+- 양손 철퇴: 고유 13 / BaseType 13
+- 창: 고유 10 / BaseType 10
+- 육척봉: 고유 7 / BaseType 7
+- 마법봉: 고유 8 / BaseType 8
+- 지팡이: 고유 10 / BaseType 9
+- 활: 고유 11 / BaseType 10
+- 석궁: 고유 5 / BaseType 5
+- 셉터: 고유 8 / BaseType 4
+- 부적: 고유 6 / BaseType 6
+TOTAL: 고유 88 / BaseType 81
+
+DUPLICATE BASETYPE MERGES
+- Torment Club / 고통 곤봉: 2 uniques -> 1 row
+- Chiming Staff / 차임벨 지팡이: 2 uniques -> 1 row
+- Shortbow / 단궁: 2 uniques -> 1 row
+- Shrine Sceptre / 성소 셉터: 5 uniques -> 1 row
+
+UI CHANGES
+- 좌측 카테고리에 UNIQUES / 고유 아이템 추가.
+- 고유 무기를 10개 무기군으로 구분.
+- 각 행에서 한글 BaseType + 영문 BaseType + 관련 고유 이름 표시.
+- 검색에 BaseType/고유 이름 모두 포함.
+- 기존 중요도 선택, 사운드 선택, 현재 항목 초기화, 고유 무기 전체 초기화 구조에 연결.
+- 기존 PC wide layout과 디자인 유지.
+
+VALIDATION
+- UNIQUE_GROUPS rows: 81
+- related unique names: 88
+- filterData.ts syntax transpile: OK
+- FilterCustomizer.tsx syntax transpile: OK
+- full Next.js build: 미실행 (전달본에 node_modules가 없고 npm 의존성 설치가 현재 작업환경에서 완료되지 않음)
+
+CORRECTION
+- 이전 대화에서 BaseType 최종 수를 82개라고 계산했으나 Shortbow / 단궁 중복 1건을 추가 확인하여 최종 수는 81개가 맞음.

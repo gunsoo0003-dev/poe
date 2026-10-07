@@ -1,0 +1,42 @@
+FIXLGS POE2 FILTER CUSTOMIZER · V075 WAYSTONES V001
+
+기준
+- NeverSink 0.10.4 / 0-SOFT
+- Waystone rules: sections 2300 / 2403
+
+변경
+1. 기존 메뉴 삭제
+   - UNIQUE
+   - NORMAL
+   - MAGIC
+   - RARE
+2. WAYSTONES(경로석)을 최상단 01 메뉴로 추가
+3. 경로석 1등급~16등급 16개를 개별 행으로 추가
+4. NeverSink 기본 중요도 그룹 연결
+   - 16등급 -> 16+
+   - 15등급 -> 15
+   - 12~14등급 -> 12-14
+   - 7~11등급 -> 7-11
+   - 1~6등급 -> 1-6
+5. 각 경로석 등급
+   - 활성화 체크
+   - 중요도 변경
+   - 현재 항목 초기화
+   - 경로석 전체 초기화
+   - CUSTOM SOUND: NeverSink / 음~ 맛있다 / OISHIE
+   - 오른쪽 미리보기 연결
+6. Waystone 전용 preview style 추가
+7. 기존 완료 인게임 카테고리는 순서 유지, 경로석 뒤로 재번호화
+
+검증
+- SECTION_META: 15개
+- 첫 메뉴: WAYSTONES
+- 삭제 메뉴 UNIQUE/NORMAL/MAGIC/RARE: SECTION_META에서 제거
+- Waystone rows: 16
+- '현재 항목 초기화' 문자열: 1개
+- 3개 커스텀 사운드 파일 존재 확인
+- TypeScript transpile syntax: PASS
+- 실제 Next build는 런타임 의존성 설치 제한으로 이번 환경에서 미실행
+
+주의
+- 필터 생성 엔진은 아직 ENGINE NEXT 상태이며 이번 버전도 UI/데이터 연결 단계임.

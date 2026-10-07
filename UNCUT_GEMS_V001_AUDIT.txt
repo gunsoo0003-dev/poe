@@ -1,0 +1,11 @@
+V070 UNCUT GEMS V001
+- Total 42 = Support 5 + Spirit 17 + Skill 20.
+- UI defaults: {'s': 2, 'a': 0, 'b': 0, 'c': 0, 'd': 0, 'e': 0, 'default': 2, 'dynamic': 38}
+- Support 1-5: DYNAMIC because NeverSink behavior depends on AreaLevel.
+- Spirit/Skill 4/1-18: DYNAMIC due GemLevel + AreaLevel progression/campaign/map rules.
+- Spirit/Skill 19: NS, fixed Level19 special rule that is not an S/A/B/C/D/E economy tier.
+- Spirit/Skill 20: S, NeverSink Level20 top highlight.
+- Added gemLevel field so later filter generation can emit exact GemLevel conditions.
+- NS + DYNAMIC legend enabled on this category.
+- Right preview + current-item reset + custom sounds verified.
+- ZIP top folder verified: fix-pob

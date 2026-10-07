@@ -1,0 +1,23 @@
+V092 OTHER UNIQUE AUDIT
+=======================
+Baseline: uploaded V091_KO_UI_UNIQUE_NAMES
+
+Purpose
+- Add only PoE2DB Other uniques not already covered by dedicated categories.
+- Existing JEWELS / FLASKS / CHARMS / TABLETS remain unchanged.
+- Group duplicate unique entries by drop-time BaseType.
+
+Added OTHER category
+- Relics: 5 BaseTypes
+- Quivers: 8 BaseTypes
+- Amulets: 11 BaseTypes
+- Rings: 14 BaseTypes
+- Belts: 11 BaseTypes
+- Total: 49 BaseTypes
+
+Rules
+- Korean UI hides English BaseType in item rows.
+- Internal English BaseType retained for matching/search/generation.
+- Related unique names stored in uniqueNamesKo and searchable.
+- NeverSink 0-SOFT original tier shown as default; untouched items remain original-preserve semantics.
+- No duplicate JEWELS / FLASKS / CHARMS / TABLETS added to OTHER.

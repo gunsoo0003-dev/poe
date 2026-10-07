@@ -1,0 +1,12 @@
+V076 TABLETS V001
+
+Changes
+- Added TABLETS as menu #02 directly under WAYSTONES.
+- Added 8 in-game Tablet items: Breach, Expedition, Delirium, Ritual, Irradiated, Overseer, Abyss, Temple.
+- Default NeverSink importance: Expedition/Ritual=B; the other six=C.
+- Added search, per-item enable/importance customization, whole-category reset, current-item reset, right preview, and custom sound panel.
+- Existing menu items shift down automatically because sidebar numbering is generated from SECTION_META order.
+- UNIQUE/NORMAL/MAGIC/RARE remain removed.
+
+Packaging
+- Top-level folder must be exactly fix-pob.

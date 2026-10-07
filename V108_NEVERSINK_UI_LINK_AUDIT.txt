@@ -1,0 +1,38 @@
+V108 NeverSink UI baseline linkage audit
+========================================
+Base: NeverSink 0.10.4 / commit f4b6b2d
+
+Implemented
+- Selected strictness baseline JSON now drives real-item checkbox states.
+  - show        -> checked
+  - hide        -> unchecked
+  - conditional -> checked + indeterminate switch + NS 조건부 label
+  - missing     -> NS 매칭검토 label (no invented hide rule)
+- Importance remains NS until the user explicitly overrides it.
+- Baseline tier tokens are shown beside NS status when available.
+- Selected item preview now reports selected strictness + actual NS status/tier.
+- NS sound preview reports source PlayAlertSound data when the baseline entry has it.
+- Normal 807 BaseTypes now follow selected strictness baseline states.
+- Rare/Magic convenience class controls default OFF because they are FIXLGS virtual rules.
+- Rare/Magic 1~5 convenience tiers remain OFF by default.
+- Normal ItemLevel 82~78 convenience rules remain OFF by default.
+- Switching strictness updates untouched baseline fields only; user overrides remain.
+  - Visibility follows the new baseline if visibility was untouched.
+  - Importance override is preserved independently.
+  - Sound override is preserved independently.
+- Category/current-item reset restores selected NeverSink baseline for real items.
+- Custom counter compares against the selected NeverSink baseline, so baseline-hidden items do not count as user changes.
+
+Static verification
+- TSX syntax transpile: PASS
+- Original 7 filter files SHA-256/byte size: PASS against manifest
+- Filter headers VERSION/TYPE: PASS for all 0~6
+- 6-UBER-PLUS Currency baseline sample:
+  show=11, hide=13, conditional=13, missing=0 (37 total)
+  Therefore the Currency UI must not render all 37 as checked.
+- Full item baseline at 6-UBER-PLUS:
+  show=322, hide=444, conditional=332, missing=30 (1128 total)
+
+Important
+- This version links the UI baseline to the stored NeverSink originals/baseline index.
+- The final override .filter writer remains a separate next-stage engine.

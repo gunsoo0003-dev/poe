@@ -1,0 +1,36 @@
+V133 CHECKBOX EXPORT / STICKY SIDEBAR AUDIT
+============================================
+Scope agreed after conference
+- Verify checkbox ON/OFF export behavior across all exposed item categories.
+- Preserve V132 Rare/Magic tier + sound behavior.
+- Fix any confirmed checkbox export defect found by the audit.
+- Keep the left category panel visible while scrolling long desktop lists.
+
+Confirmed defect found
+- NORMAL BaseType rows were still different from the common item lists.
+- 704/807 Normal rows on 6-UBER-PLUS could change on screen but had no hard Show override when the NeverSink baseline was Hide.
+- Root cause: Normal export tried only an exact BaseType split-in-place, while many Normal bases are controlled by broader Class-level NeverSink rules.
+
+V133 fix
+- Normal checkbox changes are now hard visibility overrides:
+  baseline Hide + user ON  => top FIXLGS Show for exact BaseType + Rarity Normal
+  baseline Show + user OFF => top FIXLGS Hide for exact BaseType + Rarity Normal
+- When an originally hidden Normal base is turned ON with NS importance, V133 reuses the baseline Normal importance mapping when available.
+- Existing Normal ItemLevel virtual rules remain separate and default OFF.
+- Rare/Magic tier mode, Exceptional priority, sound packaging, preset loading, and direct game-folder install were not changed.
+
+Automated export audit
+- Strictnesses tested: 0-SOFT through 6-UBER-PLUS-STRICT.
+- Every exposed non-Exceptional list row was flipped against its baseline and generated filter action checked.
+- Result on every strictness: 0 checkbox visibility failures.
+- Normal BaseTypes: all 807 rows tested per strictness; 0 failures after V133 fix.
+- Rare tier-5 mode: Show rule + fallback Hide generated on all 7 strictnesses.
+- Magic tier-5 mode: Show rule + fallback Hide generated on all 7 strictnesses.
+- Shared custom sound path test passed for representative rows across every list category plus Normal/Rare/Magic gear.
+
+Sticky UI
+- Desktop left sidebar is now sticky with its own vertical overflow.
+- At narrower layout breakpoint it returns to normal/static flow.
+
+Notes
+- Exceptional checkboxes intentionally have different semantics: OFF removes that Exceptional rule and falls through to lower NeverSink rules; OFF does not mean a hard Hide.

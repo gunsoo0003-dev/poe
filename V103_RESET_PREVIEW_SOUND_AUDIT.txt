@@ -1,0 +1,36 @@
+V103 RESET / PREVIEW / SOUND AUDIT
+=================================
+Base: V102 NORMAL_KOREAN_NAMES
+
+Applied
+1. RARE / MAGIC / NORMAL section-wide reset buttons added.
+   - Rare: tier state + gear type checks + tier sound overrides reset.
+   - Magic: tier state + gear type checks + tier sound overrides reset.
+   - Normal: ItemLevel 82~78 rules + BaseType checks + BaseType importance + sound overrides reset.
+   - Personal MP3 library itself is preserved by section reset.
+
+2. RARE / MAGIC / NORMAL preview/sound completion.
+   - Rare/Magic tier preview now has current-item reset + sound customization.
+   - Normal BaseType preview now has current-item reset + sound customization.
+   - Normal ItemLevel 82~78 rows now open a live preview and can have sound customization.
+
+3. OTHER UNIQUE sound/custom reset completion.
+   - Other Unique now participates in the same current-item reset and custom-sound panel as other item categories.
+
+4. DIVINE POWER behavior changed.
+   - DIVINE POWER! is now available as a public built-in sound option in all sound-customizable areas.
+   - Divine Orb keeps DIVINE POWER! as its default sound.
+   - Divine Orb is no longer locked; users may switch it to NeverSink / other built-ins / personal MP3.
+   - Resetting Divine Orb returns it to DIVINE POWER!.
+   - Deleting a personal MP3 used by Divine Orb also returns Divine Orb to its DIVINE POWER! default.
+
+5. Existing common sound options remain.
+   - NeverSink default
+   - 음~ 맛있다
+   - OISHIE
+   - DIVINE POWER!
+   - User MP3
+
+Validation
+- TypeScript TSX parse/transpile syntax check: PASS.
+- Full `next build` was not run in this container because project npm dependencies were not available locally and offline install could not complete.

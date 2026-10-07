@@ -1,0 +1,9 @@
+V127 ZIP INSTALL GUIDE FIX
+
+- ZIP 내부 구조는 이미 루트 엔트리(.filter + FIXLGS_SOUNDS/)로 정상 생성되고 있음.
+- Windows 기본 "모두 추출"은 아카이브명 하위 폴더를 자동 생성할 수 있어 코드만으로 강제 방지할 수 없음.
+- 사용 안내를 실제 Windows 동작에 맞게 수정:
+  1) ZIP 열기
+  2) 내부 .filter + FIXLGS_SOUNDS를
+  3) Documents/My Games/Path of Exile 2 바로 아래로 복사
+- 필터 생성/사운드 패키징 로직은 변경하지 않음.

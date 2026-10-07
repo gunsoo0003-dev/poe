@@ -1,0 +1,17 @@
+V118 CURRENT FILTER SINGLE SOURCE
+
+Goal
+- One selector is the single source for the list state.
+- Selecting a NeverSink original loads that strictness baseline and links the whole list to it.
+- Selecting a saved FIXLGS preset loads that preset's strictness baseline first, then applies only its saved overrides.
+
+UI
+- Replaced separate BASE FILTER + EDIT TARGET controls with one CURRENT FILTER selector.
+- Shows all NeverSink originals 0~6.
+- Shows only existing local FIXLGS presets 00~06.
+- Current edit card always shows the exact target and base version.
+- Unsaved edits on an original are explicitly shown as '원본 · 수정 중'.
+
+State rule
+CURRENT FILTER -> selectedStrictness/editSource -> baseline load -> list state.
+No secondary UI baseline selector exists.

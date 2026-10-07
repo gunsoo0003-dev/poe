@@ -1,0 +1,26 @@
+V131 audit
+
+1) Rare/Magic tier-only custom mode
+- Before: custom mode required BOTH a tier and at least one gear class.
+- Result: checking only tier 5 generated no FIXLGS gear rules, so NeverSink could still show tier 4.
+- Now: one or more selected tiers activates custom mode.
+- If no gear class is selected, the selected tier(s) apply to ALL supported gear classes.
+- If one or more gear classes are selected, those are the Show target; the fallback hides ordinary Rare/Magic outside the selected tier set.
+- Exceptional rules remain above FIXLGS gear overrides.
+
+Validated against NeverSink 6-UBER-PLUS-STRICT with synthetic export state:
+- Rare tier 5 only + zero class selections => Show UnidentifiedItemTier == 5 + Hide Rare fallback generated.
+- Magic tier 5 only + zero class selections => Show UnidentifiedItemTier == 5 + Hide Magic fallback generated.
+- Overrides are inserted before [[0400]], after [[0300]] Exceptional Items.
+
+2) Direct game-folder install
+- Added "게임 폴더에 설치 (권장)".
+- Uses browser File System Access API on supported Chrome/Edge browsers.
+- User selects Documents/My Games/Path of Exile 2 once.
+- Writes FIXLGS_POE2_XX.filter directly into that directory.
+- Creates/reuses FIXLGS_SOUNDS and writes only used custom MP3 assets.
+- Existing ZIP/filter download remains as fallback/manual installation.
+
+3) Static validation
+- FilterCustomizer.tsx TypeScript/JSX transpile syntax errors: 0
+- filterExport.ts TypeScript syntax errors: 0

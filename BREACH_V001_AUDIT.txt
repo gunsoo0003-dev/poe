@@ -1,0 +1,9 @@
+V061 BREACH V001
+- UI order: CURRENCY -> ESSENCE -> DELIRIUM -> BREACH -> GEMS
+- Total: 29 items = 균열 2 + 기폭제 26 + 최종 조각 1
+- Breach Splinter: DYNAMIC (NeverSink StackSize rule)
+- Breachstone: A
+- Breachlord Sac: S
+- Catalyst tiers: {'a': 4, 'b': 12, 'c': 10}
+- Same UI + custom sounds + selected reset + full reset
+- Top-level folder: fix-pob

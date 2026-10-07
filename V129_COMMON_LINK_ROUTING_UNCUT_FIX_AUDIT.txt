@@ -1,0 +1,33 @@
+V129 COMMON LINK ROUTING / UNCUT GEM FIX
+========================================
+Goal
+- Keep one baseline entry point for web-list linkage.
+- Preserve already-validated V128 behavior for all non-Uncut categories.
+- Fix Uncut Gems being misrouted through the generic currency shortcut.
+
+Root cause
+- filterData intentionally uses family="currency" for many option rows, including UNCUT_GEM_GROUPS.
+- V126/V128 currencyBaselineInfo() treated every family="currency" item as regular currency.
+- That shortcut matched BaseType only and ignored GemLevel, so every Uncut Spirit/Skill Gem could match the first level-20 rule and appear enabled.
+
+V129 changes
+1) allItems() annotates every row with its source catalogue (_catalog).
+2) resolveBaselineEntry() is the single generation entry point.
+3) Regular proven mappings (normal / unique / currency) are preserved.
+4) UNCUT_GEM_GROUPS is explicitly excluded from the regular-currency shortcut.
+   It therefore uses the common ordered NeverSink evaluator, which already understands GemLevel and treats AreaLevel as runtime conditional.
+5) No export, preset, sound, Rare/Magic, Exceptional, or Normal logic changed.
+
+6-UBER-PLUS verification
+- Uncut Spirit 4..18: Hide / unchecked
+- Uncut Spirit 19..20: Show / checked
+- Uncut Skill 1..18: Hide / unchecked
+- Uncut Skill 19..20: Show / checked
+- Uncut Support 1..5: Conditional (AreaLevel-dependent), NS preserves original condition
+- Regular currency remains 24 Show / 13 Hide
+- Normal remains 3 enabled / 804 disabled
+- Non-Uncut baseline entries: 0 changes versus V128
+
+Architecture note
+- This is a central baseline routing fix, not another UI-state patch.
+- Catalogue identity is now explicit, preventing one UI family alias from hijacking another catalogue's NeverSink interpretation.

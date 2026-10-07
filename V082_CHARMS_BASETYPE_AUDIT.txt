@@ -1,0 +1,7 @@
+V082 CHARMS AUDIT
+- Added CHARMS as menu #05, after FLASKS.
+- Unique Charm BaseTypes: 12 (NeverSink unique tiers): T1 Golden/Silver, T2 Stone/Thawing, T3 Amethyst/Antidote/Dousing/Grounding/Ruby/Sapphire/Staunching/Topaz.
+- Normal/Magic Charm BaseTypes: 13: above 12 + Cleansing Charm.
+- UI uses BaseType, not individual unique names.
+- NeverSink 1000/3503 dynamic rules retained by default for normal/magic charms.
+- Added search/reset/current preview/custom sound.

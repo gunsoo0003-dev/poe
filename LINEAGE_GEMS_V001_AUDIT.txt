@@ -1,0 +1,9 @@
+V072 LINEAGE SUPPORT GEMS V001
+- In-game GEMS category replaced with 77 Lineage Support Gems.
+- NeverSink 0.10.4 / 0-SOFT current explicit tiers: {'s': 0, 'a': 10, 'b': 12, 'c': 19, 'd': 0, 'e': 0, 'default': 36, 'dynamic': 0}
+- Fixed tiers present in current filter: A 10, B 12, C 19.
+- Remaining 36 use NS because current 0-SOFT has no explicit A/B/C fixed BaseType entry for them.
+- No DYNAMIC entries.
+- Old skill/spirit 1-20 grid removed from GEMS; Uncut Gems remains a separate category.
+- Whole reset, current-item reset, custom sounds and preview gate verified.
+- ZIP top folder verified: fix-pob

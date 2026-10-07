@@ -1,0 +1,14 @@
+0-SOFT items: conditional=437, missing=28, show=663
+0-SOFT normal: missing=225, show=582
+1-REGULAR items: conditional=437, missing=28, show=663
+1-REGULAR normal: missing=225, show=582
+2-SEMI-STRICT items: conditional=436, hide=1, missing=28, show=663
+2-SEMI-STRICT normal: missing=225, show=582
+3-STRICT items: conditional=435, hide=3, missing=28, show=662
+3-STRICT normal: missing=225, show=582
+4-VERY-STRICT items: conditional=453, hide=5, missing=28, show=642
+4-VERY-STRICT normal: missing=281, show=526
+5-UBER-STRICT items: conditional=412, hide=240, missing=28, show=448
+5-UBER-STRICT normal: conditional=24, hide=170, missing=281, show=332
+6-UBER-PLUS-STRICT items: conditional=332, hide=444, missing=30, show=322
+6-UBER-PLUS-STRICT normal: conditional=30, hide=250, missing=350, show=177

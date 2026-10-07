@@ -1,0 +1,23 @@
+V128 DIVINE SOUND EXPORT FIX
+
+Scope
+- Fix sound-only item export (e.g. Divine Orb -> DIVINE POWER!)
+- Fix ZIP asset collection for non-gear item sounds
+- No changes to NeverSink baseline linkage, Rare/Magic virtual rules, Exceptional priority, presets, or Normal resolver
+
+Root cause found
+1) buildCustomizedFilter skipped any non-exceptional item with no itemState override:
+   const state = input.itemState[item.id]; if (!state) continue;
+   Therefore applying only a sound to Divine Orb did not modify the filter text.
+2) final sound asset registration only considered keys starting with "gear:".
+   Therefore a non-gear sound assignment could be omitted from the ZIP asset list.
+
+Fix
+- When an item has a non-default sound but no itemState override, synthesize
+  { enabled: baselineEnabled(item.id), importance: "default" } and export the sound override.
+- Register all assigned non-default sound choices in usedSoundChoices, not only gear keys.
+
+Expected Divine Orb result
+- Filter contains CustomAlertSoundOptional "FIXLGS_SOUNDS/divine-power.mp3" 300
+  in the Divine Orb-specific override.
+- ZIP contains FIXLGS_SOUNDS/divine-power.mp3.

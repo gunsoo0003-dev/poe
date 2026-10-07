@@ -1,0 +1,33 @@
+V109 NeverSink direct mapping audit
+===================================
+Base: NeverSink 0.10.4 / commit f4b6b2d
+
+Rule policy
+- The selected NeverSink original is the only baseline.
+- Only FIXLGS list items are mapped to their own NeverSink source section.
+- NeverSink rules/items outside the FIXLGS list are not interpreted or rewritten; they remain in the original filter untouched.
+- FIXLGS virtual convenience controls remain disabled by default.
+- No custom sound, visibility, or importance is applied until the user explicitly overrides it.
+
+V109 baseline index changes
+- Rebuilt all 0~6 baseline JSON from the stored original .filter files.
+- Active rules only; commented-out Show/Hide blocks are ignored.
+- Item sourceSection narrows mapping to the section the item was created from, avoiding unrelated rules/decorators from other sections.
+- Known list identity fields are evaluated directly: BaseType, Rarity, Class, GemLevel, WaystoneTier.
+- Runtime-only conditions (AreaLevel, ItemLevel, Corrupted, Quality, etc.) remain NS conditional instead of being guessed.
+- Continue decorator rules do not decide visibility.
+- Internal NeverSink tier/tag rule names and match counts are no longer printed in the normal list UI.
+
+UI states
+- NS 표시: checked
+- NS 숨김: unchecked
+- NS 조건부: neutral/indeterminate (NeverSink runtime condition is preserved)
+- NS 원본 유지: neutral/indeterminate (no direct list mapping; original file remains untouched)
+
+Spot check: 6-UBER-PLUS-STRICT
+- Waystone T1~T14: NS 숨김 (2403 fallback exhide)
+- Waystone T15: NS 표시
+- Waystone T16: NS 표시
+- Uncut Skill Gem L1~L18: NS 숨김
+- Uncut Skill Gem L19~L20: NS 표시
+- Uncut Support Gem: NS 조건부 where AreaLevel decides the original outcome

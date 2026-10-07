@@ -1,0 +1,9 @@
+V071 EXPEDITION V001
+- Total 54 = Flux 21 + Expedition 3 + Sagas 5 + Verisium 7 + Alloys 13 + Starlit Ore 5.
+- Tier distribution: {'s': 11, 'a': 8, 'b': 12, 'c': 14, 'd': 8, 'e': 0, 'default': 0, 'dynamic': 1}
+- Fixed tiers use NeverSink 0.10.4 [[1800]] first-match rules.
+- Expedition Logbook = S via special map-like rule; The Triskelion Reforged = A via [[3000]].
+- Verisium = DYNAMIC because StackSize changes its NeverSink presentation.
+- No NS entries in this category.
+- Right preview/current reset/custom sounds/DYNAMIC legend verified.
+- ZIP top folder: fix-pob

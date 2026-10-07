@@ -1,0 +1,13 @@
+V105 NeverSink selector visibility fix
+
+- Moved NeverSink strictness selector from bottom of the long left category list to immediately below FILTER EDITOR.
+- Selector is now visible without scrolling to the bottom of the sidebar.
+- Options remain 0-SOFT through 6-UBER-PLUS-STRICT.
+- selectedStrictness state binding preserved.
+- Sidebar current strictness label remains synchronized with the dropdown.
+- Right-side BASE / BASE FILE / preview references continue to use the same selectedStrictness state.
+- Removed the duplicate bottom selector.
+- Added stronger visual treatment for the top selector.
+
+Validation note:
+- npm ci/build could not complete in this execution environment because dependency installation timed out.

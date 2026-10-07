@@ -1,0 +1,12 @@
+V137 SAVE PERSISTENCE / INSTALL COMMIT
+
+Plan implemented:
+1. Preset persistence is independent from folder-handle persistence.
+2. A single persistCurrentPreset() writes the exact editor state.
+3. Explicit game-folder install also commits the current preset.
+4. The last committed preset slot is remembered and reopened after reload.
+5. A newly chosen install folder is remembered only after the filter was successfully written.
+6. Changing the install folder performs write -> remember folder -> preserve preset, in that order.
+7. Existing remembered folder is permission-checked on every install.
+
+Personal user MP3 file bytes are intentionally not persisted; their sound choice falls back to default on reload for browser security reasons.

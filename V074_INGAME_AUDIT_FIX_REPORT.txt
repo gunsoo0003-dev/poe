@@ -1,0 +1,26 @@
+V074 IN-GAME AUDIT FIX
+1. ATZIRI'S TEMPLE
+- Guatelitzi's Thesis: A -> S
+- Citaqualotl's Thesis: A -> S
+- Jiquani's Thesis: A -> S
+- Quipolatl's Thesis: A -> S
+
+2. RUNES
+- Corrected distribution: {'s': 8, 'a': 32, 'b': 14, 'c': 39, 'd': 18, 'e': 6, 'default': 30, 'dynamic': 0}
+- Perfect Runes 15: NS -> A
+- Emergent Possibility: NS -> S
+- Emergent Instinct / Protection / Vigour: NS -> A
+- Kolr's Hunt: NS -> A
+- Remaining NS 30 are low/base rune rules that do not have a simple fixed S/A/B/C/D/E mapping.
+
+3. FRAGMENTS
+- Corrected item count from 23 to 24.
+- Reliquary Keys corrected from 13 to 14.
+- Added Zarokh's Reliquary Key: Against the Darkness / 자로크의 성유물 보관실 열쇠: 어둠 저항.
+- Verified exact BaseTypes for Sandstorm Visage, Blessed Bonds, Sekhema's Resolve, Temporalis.
+
+4. UI
+- Removed duplicate preview-header '현재 항목 초기화'.
+- Kept one current-item reset inside preview stage.
+- Custom sound controls retained.
+- ZIP top folder: fix-pob

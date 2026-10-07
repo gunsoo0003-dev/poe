@@ -1,0 +1,42 @@
+V125 NORMAL VISIBILITY RESOLVER AUDIT
+
+Scope
+- Fix NORMAL BaseType checkbox linkage only, based on the currently selected NeverSink filter.
+- Preserve Unique linkage, Rare/Magic virtual modes, Exceptional priority, presets, sound/custom export logic.
+
+Root cause
+- Previous normal baseline used the generic classifier.
+- Quality/socket/AlwaysShow/endgame Hide Layer rules were all collected together, so most normal BaseTypes became `conditional`.
+- UI treated every `conditional` entry as checked, making NORMAL look unchanged between strictness levels.
+
+Fix
+1. Added a dedicated normalBaselineInfo resolver in scripts/build-neversink-baseline.cjs.
+2. NORMAL checkbox state is now resolved independently from conditional NS metadata:
+   - Active exact BaseType Show/Hide in sections 1102~1106 => checkbox follows that rule.
+   - Otherwise section 1200 normal/magic Hide Layer first active Show/Hide => checkbox follows that fallback.
+   - Quality/socket/corruption/AlwaysShow decorators are excluded from the checkbox decision and remain internal NeverSink behavior.
+3. Baseline entries can now carry `enabled: boolean`.
+4. FilterCustomizer baselineEnabled() uses explicit `enabled` when present; all other categories keep their previous Show/Hide/Conditional behavior.
+5. Existing normal importance resolver remains unchanged.
+
+Generated NORMAL checkbox counts (807 BaseTypes)
+- 0-SOFT: 807 ON / 0 OFF
+- 1-REGULAR: 266 ON / 541 OFF
+- 2-SEMI-STRICT: 266 ON / 541 OFF
+- 3-STRICT: 182 ON / 625 OFF
+- 4-VERY-STRICT: 79 ON / 728 OFF
+- 5-UBER-STRICT: 79 ON / 728 OFF
+- 6-UBER-PLUS-STRICT: 3 ON / 804 OFF
+
+6-UBER-PLUS ON BaseTypes
+- Solar Amulet
+- Amethyst Ring
+- Prismatic Ring
+These are active NeverSink jt1ideallevel rules; their exact ItemLevel/AreaLevel conditions remain under NS.
+
+Validation
+- 0-SOFT vs 6-UBER-PLUS NORMAL checkbox state differs for 804/807 BaseTypes.
+- All non-NORMAL baseline `items` objects are byte-equivalent JSON structures before/after regeneration for all seven strictness levels.
+- FilterCustomizer.tsx TypeScript transpile syntax diagnostics: 0 errors.
+- filterExport.ts TypeScript transpile syntax diagnostics: 0 errors.
+- FIXLGS-only Normal ItemLevel 82~78 rules remain OFF by default.

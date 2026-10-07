@@ -1,0 +1,11 @@
+V064 FRAGMENTS V001
+- UI order: ... ATZIRI'S TEMPLE -> FRAGMENTS -> GEMS
+- Total 23 = Ultimatum Fates 3 + Final/Pinnacle fragments 7 + Reliquary Keys 13
+- Fates: A (NeverSink 3000 explicit)
+- Origin Spark: S (NeverSink 3000 explicit)
+- Call of the Shadows: A (NeverSink 3000 explicit)
+- Crisis fragments / Origin Cradle / Origin Core: A via NeverSink 2800 Pinnacle Keys class rule
+- Twilight Reliquary Key: B (NeverSink 2800 explicit)
+- Other current in-game Reliquary Keys: A via explicit or Pinnacle Keys class rule
+- Right preview + custom sounds + selected reset verified
+- Top-level folder: fix-pob

@@ -1,0 +1,6 @@
+V062 ABYSS V002 PREVIEW FIX
+- Fixed right preview gate for ABYSS.
+- Abyss now shows current-item reset in preview.
+- Abyss now shows CUSTOM SOUND in preview.
+- Sounds: NeverSink / 음~ 맛있다 / OISHIE.
+- Top-level folder: fix-pob.
