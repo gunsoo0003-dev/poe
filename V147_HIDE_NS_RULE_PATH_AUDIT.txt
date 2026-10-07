@@ -1,0 +1,5 @@
+V147 - Hide NeverSink internal rule path
+
+- Removed the visible NeverSink internal tier/rule path string from item rows.
+- Kept NS status badges and all filtering, importance, save, export, sound, and baseline logic unchanged.
+- UI-only visibility cleanup.

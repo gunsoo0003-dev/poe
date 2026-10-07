@@ -345,11 +345,6 @@ function ItemToggle({
           </small>
         ) : null}
         {item.uniqueNamesKo?.length ? <small className="filter-v2-unique-names">관련 고유: {item.uniqueNamesKo.join(" / ")}</small> : null}
-        {(item.family === "exceptional" || item.family === "currency" || item.family === "waystone" || item.family === "unique" || item.family === "flask" || item.family === "misc") && baseline?.tiers?.length ? (
-          <em>
-            {selectedStrictness} 원본 {baseline.tiers.join(" / ")}
-          </em>
-        ) : null}
       </div>
 
       {state.enabled && item.family ? (
