@@ -8055,19 +8055,28 @@ footer strong { color: #a99ab8; }
 .filter-v2-section-nav button > span {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
+/* V141: Korean is the primary sidebar label; English is secondary. */
 .filter-v2-section-nav button strong {
+  order: 2;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 21px;
+  font-size: 10px;
   font-weight: 400;
-  letter-spacing: -.02em;
+  line-height: 1.15;
+  letter-spacing: .035em;
+  color: rgba(255,255,255,.30);
 }
 
 .filter-v2-section-nav button em {
-  color: rgba(255,255,255,.32);
-  font-size: 8px;
+  order: 1;
+  color: inherit;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 650;
+  line-height: 1.18;
+  letter-spacing: -.025em;
   font-style: normal;
 }
 

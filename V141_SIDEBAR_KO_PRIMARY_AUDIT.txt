@@ -1,0 +1,6 @@
+V141 sidebar typography adjustment
+
+- Scope: left filter category navigation only
+- Korean label (item.ko): moved visually to first line and enlarged to 17px / 650 weight
+- English label (item.label): moved visually to second line and reduced to 10px
+- No section IDs, click handlers, filter logic, storage, export, or data changed
