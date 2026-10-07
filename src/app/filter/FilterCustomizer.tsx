@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   EXCEPTIONAL_GROUPS,
@@ -2759,16 +2760,20 @@ export default function FilterCustomizer() {
             </button>
           </div>
           <p>기본 이름은 FIXLGS_POE2_00~06입니다. 필요하면 저장 전에 파일명을 수정할 수 있습니다.</p>
-          <div className="filter-v2-export-guide">
-            <strong>사용 방법</strong>
-            <span>권장: 최초 1회만 Path of Exile 2 폴더를 선택하면 이후에는 저장된 폴더에 바로 설치합니다.</span>
-            <span>설치 폴더 변경은 새 폴더에 현재 필터를 먼저 정상 저장한 뒤 그 폴더를 기억합니다. 게임 폴더 설치 시 현재 커스텀 설정도 함께 보존됩니다.</span>
-            <span>사이트가 .filter와 필요한 FIXLGS_SOUNDS MP3를 선택한 폴더에 직접 저장합니다.</span>
-            {installFolderName ? <span>현재 설치 폴더: {installFolderName}</span> : null}
-            <span>수동 설치가 필요하면 ZIP/필터 다운로드를 사용하세요.</span>
-            <small>폴더 직접 설치는 Chrome/Edge 계열 브라우저에서 지원됩니다.</small>
-          </div>
+
+          <Link className="filter-v2-guide-link" href="/filter/guide">
+            <span>처음 오셨나요?</span>
+            <strong>사용 가이드 보기</strong>
+          </Link>
+
           {exportMessage ? <div className="filter-v2-export-message">{exportMessage}</div> : null}
+
+          <div className="filter-v2-save-final">
+            <button type="button" disabled={exportBusy} onClick={handleInstallToGameFolder}>
+              {exportBusy ? "처리 중..." : "현재 필터 저장"}
+            </button>
+            <small>현재 커스텀 설정을 게임 필터 폴더에 저장·적용합니다.</small>
+          </div>
         </div>
 
         <div className="filter-v2-preview-stage">

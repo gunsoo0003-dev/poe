@@ -1,0 +1,6 @@
+V143 GUIDE PAGE
+- Replaced inline collapsible guide in filter export panel with link to /filter/guide.
+- Added dedicated large-text Korean guide page.
+- Added back-to-filter buttons at top and bottom.
+- Kept current-filter-save behavior unchanged.
+- No filter logic, export logic, sound logic, or persistence logic changed.

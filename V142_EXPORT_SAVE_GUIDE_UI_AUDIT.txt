@@ -1,0 +1,9 @@
+V142 EXPORT SAVE / GUIDE UI
+
+Scope
+- Removed the always-visible long "사용 방법" block from FILTER EXPORT.
+- Added a compact collapsible "사용 가이드" control.
+- Added a visually emphasized bottom CTA: "현재 필터 저장".
+- "현재 필터 저장" intentionally calls the same handleInstallToGameFolder function as "게임 폴더에 설치 (권장)".
+- Existing ZIP/filter download and install-folder change functions are unchanged.
+- Existing filter customization, presets, local persistence, NeverSink logic, and export engine are unchanged.
