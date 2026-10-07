@@ -1,0 +1,27 @@
+V139 VERCEL TYPESCRIPT BUILD FIX AUDIT
+
+Purpose
+- Preserve V138 UI and runtime behavior.
+- Fix TypeScript-only build failures observed on Vercel.
+
+Changes
+1) src/app/filter/FilterCustomizer.tsx
+   - Normal gear search now references existing item.baseType instead of non-existent item.label.
+   - Search semantics remain Korean label + English BaseType.
+   - Removed duplicated activeSection comparisons that triggered TypeScript narrowing errors.
+   - Removed impossible nested 'gems' comparison from a legend branch whose outer condition never includes gems.
+
+2) src/app/filter/customSoundPackage.ts
+   - ZIP byte chunks are concatenated into one Uint8Array before Blob creation.
+   - ZIP bytes/order/content are preserved; change is for modern TypeScript BlobPart compatibility only.
+
+Functional-change policy
+- No intended UI behavior change.
+- No intended filter rule change.
+- No intended localStorage/save behavior change.
+- No intended sound assignment change.
+- No intended ZIP file content/format change.
+
+Verification note
+- Source-level verification completed against the Vercel error locations supplied by the user.
+- Local npm dependency installation exceeded the execution time limit in this environment, so the definitive build verification should be the next Vercel build after push.

@@ -83,5 +83,14 @@ export async function createFilterPackageZip(
     ...u32(centralSize), ...u32(centralStart), ...u16(0),
   ]);
 
-  return new Blob([...localParts, ...centralParts, end], { type: "application/zip" });
+  const zipParts = [...localParts, ...centralParts, end];
+  const zipSize = zipParts.reduce((total, part) => total + part.byteLength, 0);
+  const zipBytes = new Uint8Array(zipSize);
+  let zipOffset = 0;
+  for (const part of zipParts) {
+    zipBytes.set(part, zipOffset);
+    zipOffset += part.byteLength;
+  }
+
+  return new Blob([zipBytes.buffer], { type: "application/zip" });
 }

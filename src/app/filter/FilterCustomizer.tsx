@@ -1977,7 +1977,7 @@ export default function FilterCustomizer() {
         const query = search.trim().toLowerCase();
         const items = query
           ? group.items.filter((item) =>
-              `${item.labelKo} ${item.label ?? ""}`.toLowerCase().includes(query),
+              `${item.labelKo} ${item.baseType}`.toLowerCase().includes(query),
             )
           : group.items;
         if (items.length === 0) return null;
@@ -2205,7 +2205,7 @@ export default function FilterCustomizer() {
           </div>
 
           <div className="filter-v2-head-actions">
-            {(activeSection === "normal" || activeSection === "exceptional" || activeSection === "waystones" || activeSection === "unique-armour" || activeSection === "unique" || activeSection === "other-unique" || activeSection === "tablets" || activeSection === "jewels" || activeSection === "flasks" || activeSection === "charms" || activeSection === "currency" || activeSection === "essence" || activeSection === "delirium" || activeSection === "breach" || activeSection === "uncutgems" || activeSection === "expedition" || activeSection === "abyss" || activeSection === "atziri" || activeSection === "fragments" || activeSection === "runes" || activeSection === "ritual" || activeSection === "soulcores" || activeSection === "idols" || activeSection === "uncutgems" || activeSection === "expedition" || activeSection === "gems" || activeSection === "misc") && (
+            {(activeSection === "normal" || activeSection === "exceptional" || activeSection === "waystones" || activeSection === "unique-armour" || activeSection === "unique" || activeSection === "other-unique" || activeSection === "tablets" || activeSection === "jewels" || activeSection === "flasks" || activeSection === "charms" || activeSection === "currency" || activeSection === "essence" || activeSection === "delirium" || activeSection === "breach" || activeSection === "uncutgems" || activeSection === "expedition" || activeSection === "abyss" || activeSection === "atziri" || activeSection === "fragments" || activeSection === "runes" || activeSection === "ritual" || activeSection === "soulcores" || activeSection === "idols" || activeSection === "gems" || activeSection === "misc") && (
               <label>
                 <span>SEARCH</span>
                 <input
@@ -2346,7 +2346,7 @@ export default function FilterCustomizer() {
               {(activeSection === "unique-armour" || activeSection === "unique" || activeSection === "other-unique" || activeSection === "runes" || activeSection === "abyss" || activeSection === "uncutgems") && (
                 <span><strong>NS</strong> = NeverSink {selectedStrictness} 원본 중요도/스타일 유지 · <strong>원본 분류</strong> = 현재 선택한 베이스에서 해당 항목이 연결된 실제 NeverSink 규칙</span>
               )}
-              {(activeSection === "flasks" || activeSection === "charms" || activeSection === "misc" || activeSection === "delirium" || activeSection === "breach" || activeSection === "uncutgems" || activeSection === "expedition" || activeSection === "gems" || activeSection === "misc") && (
+              {(activeSection === "flasks" || activeSection === "charms" || activeSection === "misc" || activeSection === "delirium" || activeSection === "breach" || activeSection === "uncutgems" || activeSection === "expedition") && (
                 <span><strong>DYNAMIC</strong> = 조건에 따라 NeverSink 중요도가 자동 변경</span>
               )}
             </div>
@@ -2793,7 +2793,7 @@ export default function FilterCustomizer() {
                 <small className="filter-v2-default-note">{selectedItem.defaultNote}</small>
               ) : null}
 
-              {(activeSection === "exceptional" || activeSection === "waystones" || activeSection === "unique-armour" || activeSection === "unique" || activeSection === "other-unique" || activeSection === "tablets" || activeSection === "jewels" || activeSection === "flasks" || activeSection === "charms" || activeSection === "currency" || activeSection === "essence" || activeSection === "delirium" || activeSection === "breach" || activeSection === "uncutgems" || activeSection === "expedition" || activeSection === "abyss" || activeSection === "atziri" || activeSection === "fragments" || activeSection === "runes" || activeSection === "ritual" || activeSection === "soulcores" || activeSection === "idols" || activeSection === "uncutgems" || activeSection === "expedition" || activeSection === "gems" || activeSection === "misc") ? (
+              {(activeSection === "exceptional" || activeSection === "waystones" || activeSection === "unique-armour" || activeSection === "unique" || activeSection === "other-unique" || activeSection === "tablets" || activeSection === "jewels" || activeSection === "flasks" || activeSection === "charms" || activeSection === "currency" || activeSection === "essence" || activeSection === "delirium" || activeSection === "breach" || activeSection === "uncutgems" || activeSection === "expedition" || activeSection === "abyss" || activeSection === "atziri" || activeSection === "fragments" || activeSection === "runes" || activeSection === "ritual" || activeSection === "soulcores" || activeSection === "idols" || activeSection === "gems" || activeSection === "misc") ? (
                 <button
                   type="button"
                   className="filter-v2-current-reset filter-v2-current-reset-preview"
@@ -2803,7 +2803,7 @@ export default function FilterCustomizer() {
                 </button>
               ) : null}
 
-              {(activeSection === "exceptional" || activeSection === "waystones" || activeSection === "unique-armour" || activeSection === "unique" || activeSection === "other-unique" || activeSection === "tablets" || activeSection === "jewels" || activeSection === "flasks" || activeSection === "charms" || activeSection === "currency" || activeSection === "essence" || activeSection === "delirium" || activeSection === "breach" || activeSection === "uncutgems" || activeSection === "expedition" || activeSection === "abyss" || activeSection === "atziri" || activeSection === "fragments" || activeSection === "runes" || activeSection === "ritual" || activeSection === "soulcores" || activeSection === "idols" || activeSection === "uncutgems" || activeSection === "expedition" || activeSection === "gems" || activeSection === "misc") ? (
+              {(activeSection === "exceptional" || activeSection === "waystones" || activeSection === "unique-armour" || activeSection === "unique" || activeSection === "other-unique" || activeSection === "tablets" || activeSection === "jewels" || activeSection === "flasks" || activeSection === "charms" || activeSection === "currency" || activeSection === "essence" || activeSection === "delirium" || activeSection === "breach" || activeSection === "uncutgems" || activeSection === "expedition" || activeSection === "abyss" || activeSection === "atziri" || activeSection === "fragments" || activeSection === "runes" || activeSection === "ritual" || activeSection === "soulcores" || activeSection === "idols" || activeSection === "gems" || activeSection === "misc") ? (
                 <div className="filter-v2-sound-panel">
                   <div className="filter-v2-sound-title">
                     <span>CUSTOM SOUND</span>
