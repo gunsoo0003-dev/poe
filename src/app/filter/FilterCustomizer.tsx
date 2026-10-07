@@ -2773,6 +2773,10 @@ export default function FilterCustomizer() {
               {exportBusy ? "처리 중..." : "현재 필터 저장"}
             </button>
             <small>현재 커스텀 설정을 게임 필터 폴더에 저장·적용합니다.</small>
+            <a className="filter-v2-feedback-mail" href="mailto:lgs9211@naver.com">
+              <span>오류 제보 / 건의사항</span>
+              <strong>lgs9211@naver.com</strong>
+            </a>
           </div>
         </div>
 

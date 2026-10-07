@@ -10037,6 +10037,22 @@ footer strong { color: #a99ab8; }
   text-align:center;
 }
 
+
+.filter-v2-feedback-mail{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  margin-top:12px;
+  color:rgba(255,255,255,.44);
+  font-size:8px;
+  line-height:1.4;
+  text-decoration:none;
+}
+.filter-v2-feedback-mail span{color:rgba(255,255,255,.38)}
+.filter-v2-feedback-mail strong{color:#cdb887;font-size:9px;font-weight:700}
+.filter-v2-feedback-mail:hover strong{color:#ead29c;text-decoration:underline}
+
 /* ===== FIX POE2 filter · V143 · separate guide page ===== */
 .filter-v2-guide-link{
   display:flex;
