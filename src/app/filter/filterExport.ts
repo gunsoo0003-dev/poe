@@ -9,7 +9,7 @@ import type { NeverSinkBasePayload } from "./neversinkBase";
 export type ExportItemState = { enabled: boolean; importance: string };
 export type ExportTierState = { enabled: boolean; importance: string };
 export type ExportNormalLevelState = { enabled: boolean; importance: string };
-export type ExportSoundChoice = "default" | "masitda" | "oishie" | "divine-power" | `user:${string}`;
+export type ExportSoundChoice = "default" | "masitda" | "oishie" | "divine-power" | "risenne-geoje-yaho" | "risenne-gripgam" | "risenne-neo-do-na-do" | "risenne-sori-jilleo" | "risenne-drama" | "risenne-an-ttaeryeosseo" | "risenne-niga-mwonde" | "risenne-onaka-ippai-zenbu-tabeta" | `user:${string}`;
 
 export type ExportSoundDescriptor = {
   choice: ExportSoundChoice;

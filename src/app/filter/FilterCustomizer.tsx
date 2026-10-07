@@ -59,7 +59,7 @@ type ItemState = { enabled: boolean; importance: string };
 type TierState = { enabled: boolean; importance: string };
 type NormalLevelState = { enabled: boolean; importance: string };
 type GearPreviewState = { kind: "tier" | "normal" | "normal-level"; rarity: "Rare" | "Magic" | "Normal"; id: string; label: string; note: string; enabled: boolean; importance: string };
-type BuiltInSoundChoice = "default" | "masitda" | "oishie" | "divine-power";
+type BuiltInSoundChoice = "default" | "masitda" | "oishie" | "divine-power" | "risenne-geoje-yaho" | "risenne-gripgam" | "risenne-neo-do-na-do" | "risenne-sori-jilleo" | "risenne-drama" | "risenne-an-ttaeryeosseo" | "risenne-niga-mwonde" | "risenne-onaka-ippai-zenbu-tabeta";
 type UserSoundChoice = `user:${string}`;
 type SoundChoice = BuiltInSoundChoice | UserSoundChoice;
 type UserCustomSound = {
@@ -71,6 +71,17 @@ type UserCustomSound = {
   size: number;
   objectUrl: string;
 };
+
+const RISENNE_SOUNDS: Array<{ choice: BuiltInSoundChoice; label: string; src: string; fileName: string }> = [
+  { choice: "risenne-geoje-yaho", label: "거제 야호", src: "/sounds/risenne-geoje-yaho.mp3", fileName: "risenne-geoje-yaho.mp3" },
+  { choice: "risenne-gripgam", label: "그립감이 좋다", src: "/sounds/risenne-gripgam.mp3", fileName: "risenne-gripgam.mp3" },
+  { choice: "risenne-neo-do-na-do", label: "너도 나도", src: "/sounds/risenne-neo-do-na-do.mp3", fileName: "risenne-neo-do-na-do.mp3" },
+  { choice: "risenne-sori-jilleo", label: "소리 질러", src: "/sounds/risenne-sori-jilleo.mp3", fileName: "risenne-sori-jilleo.mp3" },
+  { choice: "risenne-drama", label: "드라마도 끊겠어요", src: "/sounds/risenne-drama.mp3", fileName: "risenne-drama.mp3" },
+  { choice: "risenne-an-ttaeryeosseo", label: "안 때렸는데 때렸어", src: "/sounds/risenne-an-ttaeryeosseo.mp3", fileName: "risenne-an-ttaeryeosseo.mp3" },
+  { choice: "risenne-niga-mwonde", label: "니가 뭔데", src: "/sounds/risenne-niga-mwonde.mp3", fileName: "risenne-niga-mwonde.mp3" },
+  { choice: "risenne-onaka-ippai-zenbu-tabeta", label: "오나까 이빠이 젠부타베타", src: "/sounds/risenne-onaka-ippai-zenbu-tabeta.mp3", fileName: "risenne-onaka-ippai-zenbu-tabeta.mp3" },
+];
 
 type NeverSinkBaselineStatus = "show" | "hide" | "conditional" | "missing";
 type NeverSinkBaselineEntry = {
@@ -622,6 +633,8 @@ export default function FilterCustomizer() {
     if (choice === "masitda") return "음~ 맛있다";
     if (choice === "oishie") return "OISHIE";
     if (choice === "divine-power") return "DIVINE POWER!";
+    const risenne = RISENNE_SOUNDS.find((sound) => sound.choice === choice);
+    if (risenne) return risenne.label;
     return customSounds.find((sound) => `user:${sound.id}` === choice)?.safeName ?? "내 커스텀 사운드";
   };
 
@@ -1291,6 +1304,9 @@ export default function FilterCustomizer() {
       "oishie": { choice: "oishie", filterPath: "FIXLGS_SOUNDS/oishie-poe-final.mp3" },
       "divine-power": { choice: "divine-power", filterPath: "FIXLGS_SOUNDS/divine-power.mp3" },
     };
+    RISENNE_SOUNDS.forEach((sound) => {
+      map[sound.choice] = { choice: sound.choice, filterPath: `FIXLGS_SOUNDS/${sound.fileName}` };
+    });
     customSounds.forEach((sound) => {
       map[`user:${sound.id}`] = { choice: `user:${sound.id}`, filterPath: `FIXLGS_SOUNDS/${sound.safeName}` };
     });
@@ -1301,9 +1317,11 @@ export default function FilterCustomizer() {
     const unique = [...new Set(choices)].filter((choice) => choice !== "default");
     const assets: FilterSoundAsset[] = [];
     for (const choice of unique) {
-      if (choice === "masitda" || choice === "oishie" || choice === "divine-power") {
-        const source = choice === "masitda" ? "/sounds/um-masitda.mp3" : choice === "oishie" ? "/sounds/oishie-poe-final.mp3" : "/sounds/divine-power.mp3";
-        const target = choice === "masitda" ? "FIXLGS_SOUNDS/um-masitda.mp3" : choice === "oishie" ? "FIXLGS_SOUNDS/oishie-poe-final.mp3" : "FIXLGS_SOUNDS/divine-power.mp3";
+      if (choice === "masitda" || choice === "oishie" || choice === "divine-power" || choice.startsWith("risenne-")) {
+        const risenne = RISENNE_SOUNDS.find((sound) => sound.choice === choice);
+        const source = risenne?.src ?? (choice === "masitda" ? "/sounds/um-masitda.mp3" : choice === "oishie" ? "/sounds/oishie-poe-final.mp3" : "/sounds/divine-power.mp3");
+        const fileName = risenne?.fileName ?? (choice === "masitda" ? "um-masitda.mp3" : choice === "oishie" ? "oishie-poe-final.mp3" : "divine-power.mp3");
+        const target = `FIXLGS_SOUNDS/${fileName}`;
         const response = await fetch(source, { cache: "no-store" });
         if (!response.ok) throw new Error(`공용 사운드를 불러오지 못했습니다: ${source}`);
         assets.push({ fileName: target, file: await response.blob() });
@@ -2840,6 +2858,19 @@ export default function FilterCustomizer() {
                         <div><strong>DIVINE POWER!</strong><small>FIXLGS 공용 특수 드롭 사운드 · 사용자가 선택할 때만 적용</small></div>
                         <button type="button" className="filter-v2-sound-apply" onClick={() => applySoundChoice("divine-power")}>적용</button>
                       </div>
+                      <div className="filter-v2-risenne-head">
+                        <strong>리센느 모음</strong>
+                        <small>7개 · 목록을 스크롤해서 선택</small>
+                      </div>
+                      <div className="filter-v2-risenne-list">
+                        {RISENNE_SOUNDS.map((sound) => (
+                          <div className={`filter-v2-sound-option filter-v2-risenne-option${selectedSound === sound.choice ? " is-selected" : ""}`} key={sound.choice}>
+                            <button type="button" onClick={() => playSound(sound.src, sound.label)}>▶</button>
+                            <div><strong>{sound.label}</strong><small>리센느 커스텀 드롭 사운드</small></div>
+                            <button type="button" className="filter-v2-sound-apply" onClick={() => applySoundChoice(sound.choice)}>적용</button>
+                          </div>
+                        ))}
+                      </div>
                       <div className="filter-v2-user-sound-head">
                         <div>
                           <strong>내 커스텀 사운드</strong>
@@ -2963,6 +2994,22 @@ export default function FilterCustomizer() {
                     if (!gearPreview) return;
                     setSoundState((current) => ({ ...current, [gearSoundKey(gearPreview)]: "divine-power" }));
                   }}>적용</button>
+                </div>
+                <div className="filter-v2-risenne-head">
+                  <strong>리센느 모음</strong>
+                  <small>7개 · 목록을 스크롤해서 선택</small>
+                </div>
+                <div className="filter-v2-risenne-list">
+                  {RISENNE_SOUNDS.map((sound) => (
+                    <div className={`filter-v2-sound-option filter-v2-risenne-option${selectedGearSound === sound.choice ? " is-selected" : ""}`} key={sound.choice}>
+                      <button type="button" onClick={() => playSound(sound.src, sound.label)}>▶</button>
+                      <div><strong>{sound.label}</strong><small>리센느 커스텀 드롭 사운드</small></div>
+                      <button type="button" className="filter-v2-sound-apply" onClick={() => {
+                        if (!gearPreview) return;
+                        setSoundState((current) => ({ ...current, [gearSoundKey(gearPreview)]: sound.choice }));
+                      }}>적용</button>
+                    </div>
+                  ))}
                 </div>
 
                 <div className="filter-v2-user-sound-head">

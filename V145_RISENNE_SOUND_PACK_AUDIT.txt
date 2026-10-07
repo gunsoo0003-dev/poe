@@ -1,0 +1,6 @@
+V145 RISENNE SOUND PACK
+- Added 7 built-in Ris enne sound clips under public/sounds with stable ASCII filenames.
+- Added scrollable "리센느 모음" list to both item and gear CUSTOM SOUND panels.
+- Each sound supports preview and apply.
+- Export descriptor/ZIP collection includes selected Ris enne MP3 automatically.
+- Existing NeverSink, common sounds, user custom MP3, filter logic, save/install logic unchanged.

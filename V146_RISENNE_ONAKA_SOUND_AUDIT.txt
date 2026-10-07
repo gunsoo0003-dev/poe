@@ -1,0 +1,6 @@
+V146 RISENNE SOUND ADDITION
+- Added built-in sound: 오나까 이빠이 젠부타베타
+- Internal id: risenne-onaka-ippai-zenbu-tabeta
+- Added to the existing 리센느 모음 scroll list.
+- Preview/apply/export use the same existing built-in sound pipeline.
+- No filter rule, save-slot, or UI layout behavior changed.

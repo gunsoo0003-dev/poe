@@ -10105,3 +10105,11 @@ footer strong { color: #a99ab8; }
   .filter-guide-step p{font-size:15px}
   .filter-guide-step.is-important{padding:26px 18px}
 }
+
+/* V145: Ris enne built-in sound pack */
+.filter-v2-risenne-head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-top:14px;padding:0 2px}
+.filter-v2-risenne-head strong{color:#d7c8a8;font-size:12px}
+.filter-v2-risenne-head small{color:#77707d;font-size:9px}
+.filter-v2-risenne-list{max-height:226px;overflow-y:auto;margin-top:6px;padding-right:4px;scrollbar-width:thin;scrollbar-color:rgba(208,177,121,.32) rgba(255,255,255,.03)}
+.filter-v2-risenne-list::-webkit-scrollbar{width:6px}.filter-v2-risenne-list::-webkit-scrollbar-track{background:rgba(255,255,255,.025)}.filter-v2-risenne-list::-webkit-scrollbar-thumb{background:rgba(208,177,121,.28);border-radius:8px}
+.filter-v2-risenne-option{margin-top:6px}
