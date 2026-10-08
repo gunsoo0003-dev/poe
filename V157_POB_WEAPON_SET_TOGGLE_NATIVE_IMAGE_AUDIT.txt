@@ -1,0 +1,7 @@
+V157 POE2 POB UI
+- Added synchronized weapon-set I / II selectors above both weapon columns.
+- Set I renders Weapon + Offhand.
+- Set II renders Weapon2 + Offhand2.
+- Removed the previous accidental Weapon2 -> Offhand set-I fallback by using exact weapon-set slot matching.
+- Equipment images now preserve their intrinsic poe.ninja image size and only shrink when necessary; they are no longer forced to stretch to 100% of the slot.
+- Other equipment, jewels, flasks, charms and skills are unchanged.

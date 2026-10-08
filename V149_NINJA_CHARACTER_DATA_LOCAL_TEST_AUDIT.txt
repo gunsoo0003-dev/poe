@@ -1,0 +1,24 @@
+V149 NINJA CHARACTER DATA LOCAL TEST
+
+Goal
+- Validate that a poe.ninja character URL can resolve to real character JSON locally.
+- Show received equipment/skills in the existing /pob character screen.
+
+Flow
+1. Parse poe.ninja POE2 character URL.
+2. Verify public character page.
+3. DEV ONLY: GET /poe2/api/data/index-state.
+4. Match snapshotVersions entry by league slug.
+5. DEV ONLY: GET /poe2/api/builds/{version}/character?account=&name=&overview=.
+6. Normalize items[] / skills[] / pathOfBuildingExport defensively.
+7. Show received item count, skill count, actual item cards, and matched equipment slot names.
+
+Important
+- poe.ninja documents builds/character endpoints as internal/unsupported for third-party apps.
+- Therefore this adapter is intentionally disabled when NODE_ENV=production.
+- This version is for local feasibility validation only.
+
+Validation environment limitation
+- Container has no external DNS, so live poe.ninja calls could not be executed here.
+- TypeScript full compile could not be completed because uploaded archive does not include installed node_modules/type definitions.
+- User local npm environment is required for live validation.

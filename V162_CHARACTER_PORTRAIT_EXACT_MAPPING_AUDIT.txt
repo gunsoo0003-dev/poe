@@ -1,0 +1,7 @@
+V162 CHARACTER PORTRAIT EXACT MAPPING
+
+- Removed the incorrect Gemling Legionnaire GGG news-image fallback used in V160/V161.
+- Added an explicit verified 1:1 ascendancy portrait mapping.
+- Gemling Legionnaire -> https://cdn.poe2db.tw/image/poe2/gemling-legionnaire.webp
+- Unknown ascendancies do not guess a portrait URL; they keep the existing FIX fallback until individually verified.
+- Portrait resolution still happens after the final ascendancy is known from the character JSON.

@@ -1,0 +1,9 @@
+V152 - POE2 ninja import equipment-array fix
+
+- Merge payload.equipment + payload.items + nested character/build variants.
+- De-duplicate normalized equipment after merging.
+- Prefer inventoryId over generic slot when resolving equipped positions.
+- Preserve POE2 Flask inventory x mapping: x0 life, x1 mana, x2-4 charms 1-3.
+- Reuse merged equipment source for jewel discovery.
+
+Reason: some character payload views omit Flask/Charm entries from items[] while keeping them in equipment[].

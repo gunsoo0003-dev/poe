@@ -1,0 +1,15 @@
+V156 - POE.NINJA SKILL GEM + DPS IMPORT
+
+Scope
+- Parse root.skills[] from poe.ninja character payload.
+- Use allGems[0] as the primary skill gem.
+- Use remaining allGems entries as support gems.
+- Read skill icon where available.
+- Read/format poe.ninja dps[] numeric value where available.
+- MAIN SKILLS ranks DPS-bearing skills by DPS and shows top two.
+- ALL SKILLS uses actual imported skill sets instead of dummy rows.
+- Existing equipment/flask/charm/jewel import behavior retained.
+
+Notes
+- This is still the local poe.ninja character-json validation path.
+- Conditional/full PoB recalculation is not implemented in this version.

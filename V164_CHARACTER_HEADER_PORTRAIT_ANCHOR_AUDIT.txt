@@ -1,0 +1,6 @@
+V164 CHARACTER HEADER PORTRAIT ANCHOR
+- Portrait extraction now anchors on the exact character name in the poe.ninja profile header.
+- Ascendancy-text proximity matching removed.
+- Rejects poe.ninja logo/favicon/site-brand image candidates.
+- Scores nearby images by distance, preceding position, square aspect ratio, and typical portrait size.
+- Serialized Next.js image fallback is restricted to the character-title window.

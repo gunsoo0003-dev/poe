@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { FormEvent, MouseEvent, ReactNode, useMemo, useState } from "react";
+import type { ImportedCharacter, ImportedCharacterStat, ImportedItem, ImportedSkill } from "./ninjaImport";
 
 const guideLinks = [
   "DPS 이해하기",
@@ -10,56 +11,6 @@ const guideLinks = [
   "패시브 계산 방식",
   "간편 PoB 이용안내",
   "FAQ",
-];
-
-const currentStats = [
-  ["힘 / 민첩 / 지능", "81 / 171 / 122", "triple"],
-  ["이동 속도", "99%", ""],
-  ["아이템 희귀도", "81%", ""],
-  ["차지", "3 / 6 / 3", "triple"],
-  ["생명력", "1,819", ""],
-  ["에너지 보호막", "2,535", ""],
-  ["룬 보호막", "252", ""],
-  ["마나", "708", ""],
-  ["정신력", "273", ""],
-  ["방어도", "-", ""],
-  ["회피", "21,606", ""],
-  ["회피 확률", "73%", ""],
-  ["디플렉션", "19,229", ""],
-  ["디플렉션 확률", "88%", ""],
-  ["물리 피해 감소", "5%", ""],
-  ["저항", "75 / 75 / 75 / 27%", "resist"],
-  ["유효 체력", "59k", ""],
-  ["최대 피격", "5.6k / 19k / 19k / 5.4k", "muted"],
-  ["생명력 재생", "62/s", ""],
-  ["마나 재생", "67/s", ""],
-  ["ES 충전", "370/s", ""],
-  ["충전 지연", "3.39s", ""],
-];
-
-const changedStats = [
-  ["힘 / 민첩 / 지능", "81 / 184 / 122", "triple"],
-  ["이동 속도", "99%", ""],
-  ["아이템 희귀도", "81%", ""],
-  ["차지", "3 / 6 / 3", "triple"],
-  ["생명력", "1,904", "gain"],
-  ["에너지 보호막", "2,482", "loss"],
-  ["룬 보호막", "252", ""],
-  ["마나", "708", ""],
-  ["정신력", "273", ""],
-  ["방어도", "-", ""],
-  ["회피", "23,104", "gain"],
-  ["회피 확률", "75%", "gain"],
-  ["디플렉션", "19,229", ""],
-  ["디플렉션 확률", "88%", ""],
-  ["물리 피해 감소", "5%", ""],
-  ["저항", "75 / 75 / 75 / 35%", "gain"],
-  ["유효 체력", "61k", "gain"],
-  ["최대 피격", "5.9k / 19k / 19k / 5.8k", "gain"],
-  ["생명력 재생", "66/s", "gain"],
-  ["마나 재생", "67/s", ""],
-  ["ES 충전", "363/s", "loss"],
-  ["충전 지연", "3.39s", ""],
 ];
 
 const skills = [
@@ -89,110 +40,274 @@ const equipment = [
   { cls: "flask-b", label: "마나", sub: "플라스크" },
 ];
 
-const jewels = ["눈", "심장", "가시", "목소리", "에메랄드", "구울", "랩처", "실버"];
+
+function normalizedSlotKey(value?: string) {
+  return (value ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function slotMatches(cls: string, slot?: string) {
+  const key = normalizedSlotKey(slot);
+  const rules: Record<string, string[]> = {
+    weapon: ["weapon", "mainhand", "weapon1", "mainweapon"],
+    offhand: ["offhand", "offhand1", "weapon2", "shield"],
+    helm: ["helmet", "helm"],
+    body: ["bodyarmour", "bodyarmor", "chest"],
+    gloves: ["gloves", "glove"],
+    boots: ["boots", "boot"],
+    "ring-a": ["ring", "ring1", "leftring"],
+    "ring-b": ["ring2", "rightring"],
+    amulet: ["amulet"],
+    belt: ["belt"],
+    "charm-a": ["charm1"],
+    "charm-b": ["charm2"],
+    "charm-c": ["charm3"],
+    "flask-a": ["lifeflask"],
+    "flask-b": ["manaflask"],
+  };
+
+  // Flask/Charm slots are already normalized by the importer from inventoryId + x.
+  // These must use exact matching; otherwise `manaflask` also matches the generic
+  // token `flask`, causing both flask UI slots to render the same item.
+  if (cls.startsWith("flask-") || cls.startsWith("charm-")) {
+    return (rules[cls] ?? []).some((token) => key === token);
+  }
+
+  return (rules[cls] ?? []).some((token) => key === token || key.includes(token));
+}
+
+function weaponSlotMatches(cls: "weapon" | "offhand", set: 1 | 2, slot?: string) {
+  const key = normalizedSlotKey(slot);
+  if (cls === "weapon") {
+    return set === 1
+      ? ["weapon", "weapon1", "mainhand", "mainhand1", "mainweapon"].includes(key)
+      : ["weapon2", "mainhand2", "mainweapon2"].includes(key);
+  }
+  return set === 1
+    ? ["offhand", "offhand1", "shield", "shield1"].includes(key)
+    : ["offhand2", "shield2"].includes(key);
+}
 
 export default function Home() {
   const [screen, setScreen] = useState<"landing" | "game">("landing");
-  const [compareReady, setCompareReady] = useState(true);
-  const mainSkills = useMemo(() => skills.slice(0, 2), []);
+  const [ninjaUrl, setNinjaUrl] = useState("");
+  const [importedCharacter, setImportedCharacter] = useState<ImportedCharacter | null>(null);
+  const [importError, setImportError] = useState("");
+  const [importing, setImporting] = useState(false);
+  const [hoveredItem, setHoveredItem] = useState<ImportedItem | null>(null);
+  const [tooltipPos, setTooltipPos] = useState({ x: 24, y: 24 });
+  const [weaponSet, setWeaponSet] = useState<1 | 2>(1);
+  const [simulationWeaponSet, setSimulationWeaponSet] = useState<1 | 2>(1);
+  const [simulationLinks, setSimulationLinks] = useState<Record<string, string>>({});
+  const [simulationSlot, setSimulationSlot] = useState<string | null>(null);
+  const [simulationDraft, setSimulationDraft] = useState("");
+  const [simulationError, setSimulationError] = useState("");
+  const actualSkills = useMemo(() => importedCharacter?.skills ?? [], [importedCharacter]);
+  const actualStats = useMemo(() => importedCharacter?.stats ?? [], [importedCharacter]);
+  const mainSkills = useMemo(() => {
+    if (!actualSkills.length) return skills.slice(0, 2);
+    const ranked = actualSkills
+      .filter((skill) => skill.dpsValue !== undefined)
+      .sort((a, b) => (b.dpsValue ?? 0) - (a.dpsValue ?? 0));
+    const source = ranked.length ? ranked : actualSkills;
+    return source.slice(0, 2).map(toUiSkill);
+  }, [actualSkills]);
+
+  function moveItemTooltip(event: MouseEvent<HTMLElement>, item: ImportedItem) {
+    const tooltipWidth = 360;
+    const tooltipHeight = 460;
+    const gap = 18;
+    const x = Math.min(event.clientX + gap, Math.max(12, window.innerWidth - tooltipWidth - 12));
+    const y = Math.min(event.clientY + gap, Math.max(12, window.innerHeight - tooltipHeight - 12));
+    setTooltipPos({ x, y });
+    if (hoveredItem !== item) setHoveredItem(item);
+  }
+
+  async function handleNinjaImport(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setImportError("");
+    setImporting(true);
+
+    try {
+      const response = await fetch("/api/pob/import-ninja", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ url: ninjaUrl }),
+      });
+      const payload = await response.json();
+      if (!response.ok || !payload?.ok) {
+        throw new Error(payload?.error || "캐릭터 링크를 불러오지 못했습니다.");
+      }
+      setImportedCharacter(payload.character as ImportedCharacter);
+      setWeaponSet(1);
+      setSimulationWeaponSet(1);
+      setSimulationLinks({});
+      setSimulationSlot(null);
+      setSimulationDraft("");
+      setScreen("game");
+    } catch (error) {
+      setImportError(error instanceof Error ? error.message : "캐릭터 링크를 불러오지 못했습니다.");
+    } finally {
+      setImporting(false);
+    }
+  }
+
+  function openSimulationSlot(slot: string) {
+    setSimulationSlot(slot);
+    setSimulationDraft(simulationLinks[slot] ?? "");
+    setSimulationError("");
+  }
+
+  function saveSimulationLink(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!simulationSlot) return;
+    try {
+      const parsed = new URL(simulationDraft.trim());
+      const host = parsed.hostname.toLowerCase();
+      if (parsed.protocol !== "https:" || !(host === "pathofexile.com" || host.endsWith(".pathofexile.com"))) {
+        throw new Error("Path of Exile HTTPS trade link only.");
+      }
+      setSimulationLinks((current) => ({ ...current, [simulationSlot]: parsed.toString() }));
+      setSimulationSlot(null);
+      setSimulationDraft("");
+      setSimulationError("");
+    } catch (error) {
+      setSimulationError(error instanceof Error ? error.message : "Invalid trade link.");
+    }
+  }
+
+  function clearSimulationLink(slot: string) {
+    setSimulationLinks((current) => {
+      const next = { ...current };
+      delete next[slot];
+      return next;
+    });
+    if (simulationSlot === slot) {
+      setSimulationSlot(null);
+      setSimulationDraft("");
+      setSimulationError("");
+    }
+  }
 
   if (screen === "game") {
+    const changedCount = Object.keys(simulationLinks).length;
     return (
       <main className="game-shell">
         <div className="game-frame">
           <aside className="ad-rail left" aria-label="좌측 광고 영역">
-            <div className="ad-placeholder">
-              <small>ADSENSE</small>
-              <strong>좌측 광고 자리</strong>
-            </div>
+            <div className="ad-placeholder"><small>ADSENSE</small><strong>좌측 광고 자리</strong></div>
           </aside>
 
           <div className="game-main">
-            <section className="character-viewport">
-              <header className="character-header">
-                <div className="portrait">FIX</div>
-                <div className="character-title">
-                  <span>FORBIDDEN RITES LEAGUE</span>
-                  <h1>ResurrectResurrected</h1>
-                  <p>Level 100 Gemling Legionnaire</p>
-                </div>
-                <div className="character-head-actions">
-                  <button className="head-button" onClick={() => setScreen("landing")}>메인으로</button>
-                  <button className="head-button accent">다른 캐릭터</button>
-                  <div className="sync-state"><small>LAST FETCHED</small><b>방금 전</b></div>
-                </div>
-              </header>
+            <header className="character-header">
+              <div className={`portrait ${importedCharacter?.portraitUrl ? "has-image" : ""}`}>
+                {importedCharacter?.portraitUrl ? (
+                  <img src={importedCharacter.portraitUrl} alt={`${importedCharacter.character} portrait`} draggable={false} />
+                ) : "FIX"}
+              </div>
+              <div className="character-title">
+                <span>{importedCharacter ? `${importedCharacter.leagueSlug.toUpperCase()} LEAGUE` : "POE2 CHARACTER"}</span>
+                <h1>{importedCharacter?.character ?? "Character"}</h1>
+                <p>
+                  {importedCharacter?.level ? `Level ${importedCharacter.level}` : "Level pending"}
+                  {importedCharacter?.ascendancy ? ` ${importedCharacter.ascendancy}` : ""}
+                  {importedCharacter?.account ? ` · ${importedCharacter.account}` : ""}
+                </p>
+              </div>
+              <div className="character-head-actions">
+                <button className="head-button" onClick={() => setScreen("landing")}>메인으로</button>
+                <button className="head-button accent" onClick={() => setScreen("landing")}>다른 캐릭터</button>
+                <div className="sync-state"><small>LAST FETCHED</small><b>{importedCharacter ? "방금 전" : "-"}</b></div>
+              </div>
+            </header>
 
+            {importedCharacter?.detailMessage && (
+              <div className={`import-source-note ${importedCharacter.verified ? "ok" : "warn"}`}>
+                <b>{importedCharacter.verified ? "poe.ninja 링크 확인 완료" : "링크 정보로 진입"}</b>
+                <span>{importedCharacter.detailMessage}</span>
+              </div>
+            )}
+
+            <section className="build-half current-build">
+              <div className="build-half-label">
+                <div><small>ORIGINAL BUILD</small><strong>CURRENT CHARACTER</strong></div>
+                <span>poe.ninja imported state · read only</span>
+              </div>
               <div className="character-grid">
-                <section className="equipment-card panel-card">
-                  <div className="panel-title">Equipment</div>
-                  <div className="equipment-stage">
-                    {equipment.map((item) => (
-                      <button
-                        className={`equipment-slot ${item.cls}`}
-                        key={item.cls}
-                        title="클릭해서 새 장비 비교"
-                        onClick={() => setCompareReady(true)}
-                      >
-                        <span>{item.label}</span>
-                        {item.sub && <small>{item.sub}</small>}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="jewel-wrap">
-                    <div className="sub-title">BASE JEWELS</div>
-                    <div className="jewel-row">
-                      {jewels.map((name, idx) => (
-                        <button className={`jewel j-${(idx % 4) + 1}`} key={name} title="클릭해서 새 주얼 비교">
-                          <span>{name}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </section>
+                <EquipmentPanel
+                  character={importedCharacter}
+                  weaponSet={weaponSet}
+                  setWeaponSet={setWeaponSet}
+                  onHover={moveItemTooltip}
+                  onLeave={() => setHoveredItem(null)}
+                />
+                <StatsCard title="Stats" stats={actualStats} mainSkills={mainSkills} />
+              </div>
+              <SkillsPanel character={importedCharacter} />
+            </section>
 
-                <StatsCard title="Stats" stats={currentStats} mainSkills={mainSkills} />
+            <div className="simulation-divider" role="separator">
+              <div className="simulation-divider-line" />
+              <div className="simulation-divider-copy">
+                <small>VIRTUAL EQUIPMENT TEST</small>
+                <strong>SIMULATION / CHANGED BUILD</strong>
+                <span>아래 장비 슬롯을 클릭해 거래소 링크를 넣으면 이 영역만 변경됩니다.</span>
+              </div>
+              <div className="simulation-divider-line" />
+            </div>
+
+            <section className="build-half simulation-build">
+              <div className="build-half-label simulation-label">
+                <div><small>AFTER CHANGE</small><strong>SIMULATION</strong></div>
+                <span>{changedCount ? `${changedCount} SLOT${changedCount > 1 ? "S" : ""} LINKED` : "No equipment changed yet"}</span>
+              </div>
+              <div className="character-grid">
+                <EquipmentPanel
+                  character={importedCharacter}
+                  weaponSet={simulationWeaponSet}
+                  setWeaponSet={setSimulationWeaponSet}
+                  onHover={moveItemTooltip}
+                  onLeave={() => setHoveredItem(null)}
+                  simulation
+                  linkedSlots={simulationLinks}
+                  activeSlot={simulationSlot}
+                  onSlotClick={openSimulationSlot}
+                  onClearSlot={clearSimulationLink}
+                >
+                  {simulationSlot && (
+                    <form className="simulation-link-editor" onSubmit={saveSimulationLink}>
+                      <div className="simulation-link-head">
+                        <div><small>TRADE ITEM</small><strong>{simulationSlot.toUpperCase()}</strong></div>
+                        <button type="button" onClick={() => setSimulationSlot(null)}>×</button>
+                      </div>
+                      <input
+                        autoFocus
+                        type="url"
+                        inputMode="url"
+                        placeholder="https://www.pathofexile.com/trade2/..."
+                        value={simulationDraft}
+                        onChange={(event) => setSimulationDraft(event.target.value)}
+                      />
+                      <div className="simulation-link-actions">
+                        <span>{simulationError || "Paste the trade item link for this slot."}</span>
+                        <button type="submit">APPLY LINK</button>
+                      </div>
+                    </form>
+                  )}
+                </EquipmentPanel>
+                <StatsCard title="Stats · After Change" stats={actualStats} mainSkills={mainSkills} />
+              </div>
+              <SkillsPanel character={importedCharacter} simulation />
+              <div className="simulation-stage-note">
+                <b>UI STEP COMPLETE</b>
+                <span>현재는 아래 슬롯별 거래소 링크 입력/보존까지 연결되어 있습니다. 거래소 아이템 파싱과 Stats/DPS 재계산은 다음 단계에서 연결합니다.</span>
               </div>
             </section>
 
-            <section className="comparison-section">
-              <section className="all-skills panel-card">
-                <div className="panel-title">All Skills</div>
-                <div className="skill-list">
-                  {skills.map((skill, idx) => (
-                    <article className="skill-row" key={`${skill.name}-${idx}`}>
-                      <div className={`skill-icon ${skill.tone}`}>{skill.name.slice(0, 1)}</div>
-                      <div className="skill-copy">
-                        <strong>{skill.name}</strong>
-                        <span>{skill.support}</span>
-                      </div>
-                      <b>{skill.dps}</b>
-                    </article>
-                  ))}
-                </div>
-              </section>
-
-              <section className="comparison-note">
-                <div className="compare-box">
-                  <span>장비 비교</span>
-                  <h2>{compareReady ? "새 장비 적용 예시" : "장비를 선택하세요"}</h2>
-                  <p>
-                    왼쪽 장비 또는 BASE JEWELS를 클릭하면 이 영역에서 비교 입력을 시작하게 됩니다.
-                    지금은 디자인 검수용 더미 상태입니다.
-                  </p>
-                  <button onClick={() => setCompareReady((v) => !v)}>더미 비교 상태 전환</button>
-                </div>
-              </section>
-
-              <StatsCard title="변화 후 STATS" stats={changedStats} mainSkills={mainSkills.map((s, i) => ({ ...s, dps: i === 0 ? "445k" : "9.0k" }))} changed />
-            </section>
+            {hoveredItem && <ItemHoverCard item={hoveredItem} x={tooltipPos.x} y={tooltipPos.y} />}
           </div>
 
           <aside className="ad-rail right" aria-label="우측 광고 영역">
-            <div className="ad-placeholder">
-              <small>ADSENSE</small>
-              <strong>우측 광고 자리</strong>
-            </div>
+            <div className="ad-placeholder"><small>ADSENSE</small><strong>우측 광고 자리</strong></div>
           </aside>
         </div>
       </main>
@@ -241,15 +356,29 @@ export default function Home() {
               <p className="panel-kicker">START</p>
               <h2>내 캐릭터 불러오기</h2>
               <p>
-                GGG 계정으로 연결하면 장비·스킬·패시브를 불러와
-                주력 스킬의 DPS를 간단하게 계산합니다.
+                본인의 poe.ninja POE2 캐릭터 링크를 입력하면 캐릭터 정보를 확인하고
+                기존 캐릭터 화면으로 불러옵니다.
               </p>
             </div>
 
-            <div className="character-actions">
-              <button type="button" onClick={() => setScreen("game")}>캐릭터 불러오기</button>
-              <small>현재 시안은 더미 캐릭터로 진입합니다.</small>
-            </div>
+            <form className="character-actions ninja-import" onSubmit={handleNinjaImport}>
+              <label htmlFor="ninja-character-url">poe.ninja 캐릭터 링크</label>
+              <div className="ninja-import-row">
+                <input
+                  id="ninja-character-url"
+                  type="url"
+                  inputMode="url"
+                  placeholder="https://poe.ninja/poe2/builds/.../character/.../..."
+                  value={ninjaUrl}
+                  onChange={(event) => setNinjaUrl(event.target.value)}
+                  disabled={importing}
+                  required
+                />
+                <button type="submit" disabled={importing}>{importing ? "확인 중..." : "확인"}</button>
+              </div>
+              <small>poe.ninja에 등록된 POE2 캐릭터 상세 링크만 지원합니다.</small>
+              {importError && <p className="ninja-import-error" role="alert">{importError}</p>}
+            </form>
 
             <div className="result-preview" aria-hidden="true">
               <div><span>기본 DPS</span><b>420K</b></div>
@@ -287,33 +416,224 @@ export default function Home() {
   );
 }
 
+
+function EquipmentPanel({
+  character,
+  weaponSet,
+  setWeaponSet,
+  onHover,
+  onLeave,
+  simulation = false,
+  linkedSlots = {},
+  activeSlot,
+  onSlotClick,
+  onClearSlot,
+  children,
+}: {
+  character: ImportedCharacter | null;
+  weaponSet: 1 | 2;
+  setWeaponSet: (set: 1 | 2) => void;
+  onHover: (event: MouseEvent<HTMLElement>, item: ImportedItem) => void;
+  onLeave: () => void;
+  simulation?: boolean;
+  linkedSlots?: Record<string, string>;
+  activeSlot?: string | null;
+  onSlotClick?: (slot: string) => void;
+  onClearSlot?: (slot: string) => void;
+  children?: ReactNode;
+}) {
+  return (
+    <section className={`equipment-card panel-card ${simulation ? "simulation-equipment" : ""}`}>
+      <div className="panel-title">{simulation ? "Equipment · Simulation" : "Equipment"}</div>
+      <div className="equipment-stage">
+        <div className="weapon-set-toggle weapon-set-toggle-left" aria-label="왼쪽 무기 세트 선택">
+          <button type="button" className={weaponSet === 1 ? "active" : ""} onClick={() => setWeaponSet(1)}>I</button>
+          <button type="button" className={weaponSet === 2 ? "active" : ""} onClick={() => setWeaponSet(2)}>II</button>
+        </div>
+        <div className="weapon-set-toggle weapon-set-toggle-right" aria-label="오른쪽 무기 세트 선택">
+          <button type="button" className={weaponSet === 1 ? "active" : ""} onClick={() => setWeaponSet(1)}>I</button>
+          <button type="button" className={weaponSet === 2 ? "active" : ""} onClick={() => setWeaponSet(2)}>II</button>
+        </div>
+        {equipment.map((item) => {
+          const importedItem = character?.items?.find((candidate) =>
+            item.cls === "weapon" || item.cls === "offhand"
+              ? weaponSlotMatches(item.cls, weaponSet, candidate.slot)
+              : slotMatches(item.cls, candidate.slot)
+          );
+          const displayName = importedItem?.name || importedItem?.baseType;
+          const linked = Boolean(linkedSlots[item.cls]);
+          return (
+            <div className={`equipment-slot-wrap ${item.cls}`} key={item.cls}>
+              <button
+                type="button"
+                className={`equipment-slot-inner ${importedItem ? "loaded" : ""} ${linked ? "trade-linked" : ""} ${activeSlot === item.cls ? "editing" : ""}`}
+                aria-label={simulation ? `${item.label} 거래소 링크 입력` : `${displayName ?? item.label} 상세 보기`}
+                onClick={() => simulation && onSlotClick?.(item.cls)}
+                onMouseEnter={(event) => !linked && importedItem && onHover(event, importedItem)}
+                onMouseMove={(event) => !linked && importedItem && onHover(event, importedItem)}
+                onMouseLeave={onLeave}
+              >
+                {linked ? (
+                  <div className="trade-slot-copy">
+                    <small>TRADE ITEM</small>
+                    <strong>LINKED</strong>
+                    <span>{item.label}{item.sub ? ` ${item.sub}` : ""}</span>
+                  </div>
+                ) : importedItem?.icon ? (
+                  <img className="equipment-image" src={importedItem.icon} alt="" draggable={false} />
+                ) : (
+                  <>
+                    <span>{displayName ?? item.label}</span>
+                    <small>{importedItem?.baseType && importedItem.baseType !== displayName ? importedItem.baseType : (item.sub || importedItem?.slot || "")}</small>
+                  </>
+                )}
+              </button>
+              {simulation && linked && (
+                <button className="simulation-slot-reset" type="button" onClick={() => onClearSlot?.(item.cls)} title="Reset to current item">↺</button>
+              )}
+            </div>
+          );
+        })}
+        {children}
+      </div>
+
+      <div className="jewel-wrap">
+        <div className="jewel-heading-row">
+          <div className="sub-title">BASE JEWELS</div>
+          {character?.jewels && <small>{character.jewels.length}</small>}
+        </div>
+        {character?.jewels?.length ? (
+          <div className="jewel-row">
+            {character.jewels.map((jewel, idx) => {
+              const jewelName = jewel.name || jewel.baseType || `Jewel ${idx + 1}`;
+              return (
+                <button
+                  type="button"
+                  className="jewel loaded-jewel"
+                  key={`${jewelName}-${jewel.slot ?? "jewel"}-${idx}`}
+                  aria-label={`${jewelName} 상세 보기`}
+                  onMouseEnter={(event) => onHover(event, jewel)}
+                  onMouseMove={(event) => onHover(event, jewel)}
+                  onMouseLeave={onLeave}
+                >
+                  {jewel.icon ? <img src={jewel.icon} alt="" draggable={false} /> : <span>{jewelName}</span>}
+                  <small>{jewelName}</small>
+                </button>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="jewel-empty">No jewel data received.</div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function SkillsPanel({ character, simulation = false }: { character: ImportedCharacter | null; simulation?: boolean }) {
+  const uiSkills = character?.skills?.length ? character.skills.map(toUiSkill) : skills;
+  return (
+    <section className={`all-skills panel-card build-skill-panel ${simulation ? "simulation-skills" : ""}`}>
+      <div className="panel-title">{simulation ? "All Skills · After Change" : "All Skills"}</div>
+      {character?.skills && character.skills.length > 0 && (
+        <div className="actual-skill-note">{character.skills.length} SKILL SETS</div>
+      )}
+      <div className="skill-list">
+        {uiSkills.map((skill, idx) => (
+          <article className="skill-row" key={`${skill.name}-${idx}`}>
+            <SkillIcon skill={skill} />
+            <div className="skill-copy"><strong>{skill.name}</strong><span>{skill.support}</span></div>
+            <b>{skill.dps}</b>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function ItemHoverCard({ item, x, y }: { item: ImportedItem; x: number; y: number }) {
+  const name = item.name || item.baseType || "Unknown Item";
+  const rarity = (item.rarity || "Normal").toLowerCase();
+  return (
+    <aside className={`item-hover-card rarity-${rarity}`} style={{ left: x, top: y }} aria-hidden="true">
+      <div className="item-hover-name">{name}</div>
+      {item.baseType && item.baseType !== name && <div className="item-hover-base">{item.baseType}</div>}
+      <div className="item-hover-meta">
+        {item.rarity && <span>{item.rarity}</span>}
+        {item.itemLevel !== undefined && <span>Item Level {item.itemLevel}</span>}
+        {item.quality && <span>Quality {item.quality}</span>}
+        {item.slot && <span>{item.slot}</span>}
+      </div>
+      {item.mods.length > 0 ? (
+        <div className="item-hover-mods">
+          {item.mods.map((mod, idx) => <div key={`${mod}-${idx}`}>{mod}</div>)}
+        </div>
+      ) : (
+        <div className="item-hover-empty">표시할 옵션 정보가 없습니다.</div>
+      )}
+    </aside>
+  );
+}
+
+type UiSkill = { name: string; support: string; dps: string; tone: string; icon?: string };
+
+function toUiSkill(skill: ImportedSkill): UiSkill {
+  return {
+    name: skill.name,
+    support: skill.supports.join(" · ") || "연결된 서포트젬 없음",
+    dps: skill.dps ?? (skill.dpsValue !== undefined ? Math.round(skill.dpsValue).toLocaleString("en-US") : "Utility"),
+    tone: "gold",
+    icon: skill.icon,
+  };
+}
+
+function SkillIcon({ skill }: { skill: UiSkill }) {
+  if (skill.icon) {
+    return <div className="skill-icon image"><img src={skill.icon} alt="" draggable={false} /></div>;
+  }
+  return <div className={`skill-icon ${skill.tone}`}>{skill.name.slice(0, 1)}</div>;
+}
+
 function StatsCard({
   title,
   stats,
   mainSkills,
-  changed = false,
 }: {
   title: string;
-  stats: string[][];
-  mainSkills: { name: string; support: string; dps: string; tone: string }[];
-  changed?: boolean;
+  stats: ImportedCharacterStat[];
+  mainSkills: UiSkill[];
 }) {
+  const groups = [
+    { key: "overview", label: "CHARACTER" },
+    { key: "defence", label: "DEFENSIVE" },
+    { key: "survival", label: "SURVIVAL" },
+    { key: "recovery", label: "RECOVERY" },
+  ];
+
   return (
-    <section className={`stats-card panel-card ${changed ? "changed" : ""}`}>
+    <section className="stats-card panel-card">
       <div className="panel-title">{title}</div>
       <div className="stats-scroll">
-        <div className="stat-group-label">CHARACTER</div>
-        {stats.slice(0, 4).map(([name, value, cls]) => <StatRow key={name} name={name} value={value} cls={cls} />)}
-        <div className="stat-group-label">DEFENSIVE</div>
-        {stats.slice(4, 18).map(([name, value, cls]) => <StatRow key={name} name={name} value={value} cls={cls} />)}
-        <div className="stat-group-label">RECOVERY</div>
-        {stats.slice(18).map(([name, value, cls]) => <StatRow key={name} name={name} value={value} cls={cls} />)}
+        {stats.length ? groups.map((group) => {
+          const rows = stats.filter((stat) => stat.group === group.key);
+          if (!rows.length) return null;
+          return (
+            <div className="stat-group" key={group.key}>
+              <div className="stat-group-label">{group.label}</div>
+              {rows.map((stat) => (
+                <StatRow key={stat.key} name={stat.label} value={stat.value} />
+              ))}
+            </div>
+          );
+        }) : (
+          <div className="stats-empty">No character stats received from poe.ninja.</div>
+        )}
       </div>
       <div className="main-skills-block">
         <div className="stat-group-label">MAIN SKILLS</div>
         {mainSkills.map((skill) => (
           <div className="main-skill" key={skill.name}>
-            <div className={`skill-icon ${skill.tone}`}>{skill.name.slice(0, 1)}</div>
+            <SkillIcon skill={skill} />
             <div>
               <strong>{skill.name}</strong>
               <span>{skill.support}</span>

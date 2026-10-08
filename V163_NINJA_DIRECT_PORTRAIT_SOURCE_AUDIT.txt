@@ -1,0 +1,14 @@
+V163 NINJA DIRECT PORTRAIT SOURCE
+
+- Removed all hard-coded ascendancy portrait mappings and external poe2db/GGG portrait fallbacks.
+- Character portrait is now resolved only from the user-supplied poe.ninja character page HTML.
+- Resolution order:
+  1) exact img alt/title/aria-label match to final ascendancy name
+  2) nearest img element to the exact ascendancy text in poe.ninja page source
+  3) Next.js serialized image props / src / srcset near the exact ascendancy label
+- Next.js /_next/image URLs are unwrapped to the original image URL.
+- Final ascendancy is still taken from the actual character JSON first, then the same poe.ninja page is re-scanned.
+- Existing V159 simulation split, equipment, dynamic stats, jewels, flasks/charms, skills/DPS and weapon-set behavior are retained.
+
+Validation note:
+- TypeScript parser reached the project successfully, but full compile cannot be completed in this environment because node_modules are not installed. No syntax-specific error from the modified route was reported before missing dependency errors.

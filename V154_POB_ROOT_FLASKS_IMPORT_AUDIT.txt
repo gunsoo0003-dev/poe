@@ -1,0 +1,12 @@
+V154 POE2 POB root.flasks import fix
+
+- Confirmed poe.ninja character payload stores life flask, mana flask, and charms in root.flasks[].
+- Added payload.flasks / character.flasks / build.flasks to equipment collection.
+- Existing inventoryId=Flask + x mapping retained:
+  x=0 LifeFlask
+  x=1 ManaFlask
+  x=2 Charm1
+  x=3 Charm2
+  x=4 Charm3
+- Removed RAW INVENTORY DEBUG UI and debug response generation.
+- Equipment images and hover tooltip behavior remain unchanged.

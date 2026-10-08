@@ -1,0 +1,7 @@
+V167 GA4 POE STREAM AUDIT
+
+- Base: V166_NINJA_ASCENDANCY_PORTRAIT_URL
+- Added GA4 measurement ID: G-SSC964HMHS
+- Scope: root layout only
+- Method: next/script, afterInteractive
+- No filter/PoB/item/sound/export logic changed

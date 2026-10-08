@@ -1,0 +1,9 @@
+V165 CHARACTER PORTRAIT VISIBLE HEADING ANCHOR
+
+- Removed broad character-name occurrence matching for portrait extraction.
+- Portrait extraction now anchors only to a visible h1-h6 element containing the exact character name.
+- Only images immediately before that heading within a tight 1800-character HTML window are candidates.
+- Known logo/favicon/site-brand images remain rejected.
+- Square/profile-sized images receive priority; images after the heading are rejected.
+- Removed serialized/Next.js broad image fallback for portrait selection.
+- If no safe header portrait is found, portraitUrl remains empty instead of displaying an unrelated image.

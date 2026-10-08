@@ -1,0 +1,9 @@
+V166 NINJA ASCENDANCY PORTRAIT URL
+- Removed runtime dependence on HTML/DOM portrait extraction for the displayed character portrait.
+- Character JSON final ascendancy is normalized to a slug.
+- Portrait URL is derived directly from poe.ninja assets:
+  https://assets.poe.ninja/poe2/classes/{ascendancy-slug}.webp
+- Example verified by user:
+  Gemling Legionnaire -> gemling-legionnaire ->
+  https://assets.poe.ninja/poe2/classes/gemling-legionnaire.webp
+- Existing equipment, stats, skills, simulation UI remain unchanged.

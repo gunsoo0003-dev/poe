@@ -1,0 +1,10 @@
+V153 - poe.ninja RAW INVENTORY DEBUG
+
+Purpose:
+- Diagnose missing POE2 flasks/charms without further guessing.
+- Dev-only imported character payload now includes compact raw inventory candidates.
+- UI shows path / inventoryId / x / slot / name / baseType.
+- Flask/charm-like rows are highlighted.
+- Also shows Path of Building export string length.
+
+Temporary diagnostic UI; remove after slot source is confirmed.

@@ -1,0 +1,36 @@
+V159 · CURRENT / SIMULATION SPLIT + TRADE SLOT UI
+
+1. Character screen split into two clearly separated build states.
+   - CURRENT CHARACTER: original poe.ninja import, read-only.
+   - SIMULATION / CHANGED BUILD: starts as an identical copy.
+
+2. Strong simulation boundary added between the two halves.
+   - Dedicated label, accent border and different background tone.
+
+3. Lower Equipment slots are interactive.
+   - Click a slot to open a slot-specific Path of Exile trade-link editor.
+   - Valid HTTPS pathofexile.com links can be stored per slot.
+   - Linked slots hide the original item image and show TRADE ITEM LINKED.
+   - Each linked slot has an individual reset control.
+   - Multiple slots can hold links simultaneously.
+
+4. Lower Stats / Main Skills / All Skills currently mirror the original ninja state.
+   - Trade item parsing and recalculation are intentionally NOT faked in V159.
+   - Next step: resolve each stored trade link into actual item data, replace only that simulation slot,
+     then feed the simulated item set into Stats / DPS calculation.
+
+5. Character portrait import added.
+   - Searches common portrait/avatar/class-image fields in poe.ninja character JSON.
+   - Falls back to the existing FIX placeholder if no portrait URL is exposed.
+
+6. Existing features retained.
+   - Dynamic ninja Stats
+   - Actual skills + ninja DPS
+   - Equipment images / hover details
+   - Dynamic jewels
+   - Flask / charm slots
+   - Weapon set I / II
+
+Validation:
+- TS/TSX syntax transpile check: PASS for page.tsx, import-ninja route, ninjaImport.ts.
+- Full Next build not run because dependency installation in the work container timed out/incomplete.

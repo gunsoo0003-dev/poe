@@ -1,0 +1,18 @@
+V151 POE2 ninja flask/charm slot mapping fix
+
+Confirmed mapping from Path of Building PoE2 import logic:
+- inventoryId = Flask, x = 0 -> Life Flask
+- inventoryId = Flask, x = 1 -> Mana Flask
+- inventoryId = Flask, x = 2 -> Charm 1
+- inventoryId = Flask, x = 3 -> Charm 2
+- inventoryId = Flask, x = 4 -> Charm 3
+
+Cause in V150:
+- parser kept inventoryId/slot but discarded x position,
+  so all five belt-row items collapsed to the same generic Flask slot.
+
+Fix:
+- read outer/inner x (and slotX fallback)
+- normalize Flask inventory to synthetic slots LifeFlask, ManaFlask, Charm1..3
+- existing UI slot matcher now maps those synthetic slots to the five existing equipment positions
+- no changes to normal equipment, item images, hover cards, or dynamic jewels

@@ -1,0 +1,17 @@
+V150 POE2 PoB UI UPDATE
+
+Scope implemented:
+1) Equipment slots now render actual poe.ninja item icon URLs when available.
+2) PC mouse hover shows a fixed-position item detail card with name/base/rarity/item level/quality/slot/mods.
+3) Removed the ACTUAL ITEMS RECEIVED debug list from the visible PoB UI.
+4) BASE JEWELS no longer uses a fixed dummy list.
+5) Jewel data is normalized dynamically from poe.ninja character JSON by scanning jewel-labelled arrays and jewel-like items.
+6) BASE JEWELS renders only the actual received jewel count and wraps naturally by count.
+7) Jewel icons also use received icon URLs and share the same hover detail card.
+8) Existing comparison/DPS placeholder sections were intentionally left unchanged in this pass.
+
+Validation:
+- TypeScript syntax transpile check passed for page.tsx, ninjaImport.ts, and import-ninja route.
+- Full dependency build could not be completed in the artifact environment because installed node_modules payload is incomplete; user local npm install/npm run dev remains the final runtime check.
+
+Project root remains: fix-pob/

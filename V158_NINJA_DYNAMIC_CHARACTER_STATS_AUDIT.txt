@@ -1,0 +1,11 @@
+V158 - poe.ninja dynamic character stats
+
+- Removed hard-coded current Stats values from /pob UI.
+- Added ImportedCharacterStat model to ninja import payload.
+- Character import now extracts poe.ninja character-state values dynamically.
+- Supported dynamic groups: CHARACTER / DEFENSIVE / SURVIVAL / RECOVERY.
+- Only stats actually found in the character payload are rendered.
+- Display labels intentionally remain English (poe.ninja-source-first policy).
+- Existing item / jewel / flask / charm / skill / DPS imports remain unchanged.
+- Removed the fake hard-coded "변화 후 STATS" panel until candidate-item calculation is implemented.
+- Candidate comparison area remains, but no fabricated post-change stat values are shown.
