@@ -24,7 +24,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="min-h-full flex flex-col">
         {children}
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-SSC964HMHS"
+          src="https://www.googletagmanager.com/gtag/js?id=G-DJM843F5EW"
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -32,7 +32,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-SSC964HMHS');
+            gtag('config', 'G-DJM843F5EW');
           `}
         </Script>
       </body>
