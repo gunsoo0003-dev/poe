@@ -768,10 +768,9 @@ export async function POST(request: NextRequest) {
       detailMessage = "공개 페이지 연결은 실패했지만 링크 정보로 계속 시도합니다.";
     }
 
-    // EXPERIMENTAL / LOCAL VALIDATION ONLY:
-    // poe.ninja documents builds/character endpoints as internal and unsupported for third-party apps.
-    // Keep this adapter disabled in production until a supported production ingestion path is chosen.
-    if (process.env.NODE_ENV !== "production") {
+    // poe.ninja builds/character 상세 경로를 로컬/운영 모두에서 사용합니다.
+    // 비공식 내부 API이므로 향후 poe.ninja 변경 시 실패할 수 있으며, 실패 시 공개 페이지 정보로 폴백합니다.
+    {
       try {
         const indexState = await fetchJson("https://poe.ninja/poe2/api/data/index-state", ref.originalUrl);
         const snapshot = findSnapshot(indexState, ref.leagueSlug);
@@ -820,13 +819,11 @@ export async function POST(request: NextRequest) {
         mainSkill = textValue(payload.mainSkill, asObject(payload.character)?.mainSkill) ?? mainSkill;
 
         detailSource = "poe-ninja-character-json";
-        detailMessage = `로컬 실험 경로로 상세 데이터 수신: 장비 ${items.length}개 · 주얼 ${jewels.length}개 · 스킬 ${skills.length}개 · 스탯 ${stats.length}개${pathOfBuildingExport ? " · PoB export 있음" : ""}`;
+        detailMessage = `상세 데이터 수신: 장비 ${items.length}개 · 주얼 ${jewels.length}개 · 스킬 ${skills.length}개 · 스탯 ${stats.length}개${pathOfBuildingExport ? " · PoB export 있음" : ""}`;
       } catch (error) {
         const reason = error instanceof Error ? error.message : "상세 데이터 요청 실패";
-        detailMessage = `${detailMessage} 상세 데이터 실험 요청은 실패했습니다: ${reason}`;
+        detailMessage = `${detailMessage} 상세 데이터 요청은 실패했습니다: ${reason}`;
       }
-    } else {
-      detailMessage = `${detailMessage} 운영 배포에서는 poe.ninja 비공개 builds API 실험 호출을 사용하지 않습니다.`;
     }
 
     const result: ImportedCharacter = {

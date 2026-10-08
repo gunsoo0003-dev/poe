@@ -1,0 +1,8 @@
+V171 START GUIDE / EXTENSION UI
+- Based on uploaded V170_ENABLE_NINJA_PRODUCTION.
+- Removed the placeholder Basic DPS / Practical DPS / Max Condition cards from the pre-import START panel.
+- Added two START actions in the same lower area:
+  1) GUIDE / 사용 가이드 -> anchors to the existing guide panel.
+  2) TRADE EXTENSION / 거래소 확장프로그램 설치 -> UI reserved for the upcoming FIXLGS trade exporter.
+- Extension download is intentionally disabled and labelled "설치 준비 중" until the extension package exists; no fake download link is exposed.
+- Existing ninja import, game screen, equipment, stats, skills, and simulation code are otherwise untouched.

@@ -337,7 +337,7 @@ export default function Home() {
       <section className="hero-stage">
         <div className="tree-column">
           <div className="tree-art" aria-hidden="true" />
-          <nav className="guide-panel" aria-label="가이드">
+          <nav className="guide-panel" id="pob-guide" aria-label="가이드">
             <div className="guide-heading">
               <span>GUIDE</span>
               <strong>필요할 때만 보는 간단 가이드</strong>
@@ -380,10 +380,20 @@ export default function Home() {
               {importError && <p className="ninja-import-error" role="alert">{importError}</p>}
             </form>
 
-            <div className="result-preview" aria-hidden="true">
-              <div><span>기본 DPS</span><b>420K</b></div>
-              <div className="featured"><span>실전 DPS</span><b>1.28M</b></div>
-              <div><span>최대 조건</span><b>2.04M</b></div>
+            <div className="start-tools" aria-label="시작 도구">
+              <a className="start-tool-card" href="#pob-guide">
+                <span className="start-tool-kicker">GUIDE</span>
+                <strong>사용 가이드</strong>
+                <small>캐릭터 불러오기부터 거래소 아이템 비교까지 사용 순서를 확인합니다.</small>
+                <b>가이드 보기 →</b>
+              </a>
+
+              <div className="start-tool-card extension-card">
+                <span className="start-tool-kicker">TRADE EXTENSION</span>
+                <strong>거래소 확장프로그램 설치</strong>
+                <small>거래소의 원하는 매물을 Export해 Simulation 장비로 가져옵니다.</small>
+                <button type="button" disabled title="확장프로그램 제작 후 다운로드를 연결합니다.">설치 준비 중</button>
+              </div>
             </div>
           </section>
 

@@ -1,0 +1,13 @@
+V170 ENABLE NINJA DETAIL IN PRODUCTION
+
+Base: V169_GA4_TAG_RESTORE
+
+Changes:
+- Removed NODE_ENV production guard around poe.ninja /poe2/api/builds/{snapshot}/character detail request.
+- The same detail fetch now runs in local development and Vercel production.
+- Kept existing try/catch fallback behavior.
+- No UI/filter/GA4/sound/export logic changed.
+
+Expected production result:
+- equipment / jewels / skills / character stats / PoB export can populate when poe.ninja internal endpoint responds.
+- if the internal endpoint fails or changes, the route continues with public-page fallback and a failure message.

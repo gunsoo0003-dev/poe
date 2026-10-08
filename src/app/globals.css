@@ -10736,3 +10736,85 @@ footer strong { color: #a99ab8; }
 }
 .equipment-slot-wrap.flask-a .equipment-slot-inner { background: linear-gradient(#681e1c,#c63832); }
 .equipment-slot-wrap.flask-b .equipment-slot-inner { background: linear-gradient(#193565,#326db1); }
+
+/* ===== FIX PoB · V171 · START guide / trade extension actions ===== */
+.start-tools {
+  grid-area: preview;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  border-top: 1px solid rgba(255,255,255,.07);
+  padding-top: 16px;
+}
+.start-tool-card {
+  min-width: 0;
+  min-height: 104px;
+  padding: 15px 17px;
+  border: 1px solid rgba(216,197,255,.14);
+  background: rgba(255,255,255,.024);
+  color: inherit;
+  text-decoration: none;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "kicker action"
+    "title action"
+    "copy action";
+  column-gap: 20px;
+  align-items: center;
+  transition: border-color .18s ease, background .18s ease, transform .18s ease;
+}
+.start-tool-card:hover {
+  border-color: rgba(185,154,255,.34);
+  background: rgba(113,73,193,.08);
+  transform: translateY(-1px);
+}
+.start-tool-kicker {
+  grid-area: kicker;
+  color: #9f7bea;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .13em;
+}
+.start-tool-card strong {
+  grid-area: title;
+  margin-top: 3px;
+  color: #f2eef7;
+  font-size: 16px;
+}
+.start-tool-card small {
+  grid-area: copy;
+  margin-top: 5px;
+  color: #958d9f;
+  font-size: 11px;
+  line-height: 1.55;
+}
+.start-tool-card > b {
+  grid-area: action;
+  align-self: center;
+  color: #d8c7ff;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.start-tool-card > button {
+  grid-area: action;
+  min-width: 126px;
+  padding: 11px 14px;
+  border: 1px solid rgba(216,197,255,.22);
+  border-radius: 4px;
+  color: #8e8697;
+  font-size: 12px;
+  font-weight: 800;
+  background: rgba(255,255,255,.035);
+  cursor: not-allowed;
+}
+.extension-card:hover {
+  transform: none;
+}
+
+@media (max-width: 760px) {
+  .start-tools { grid-template-columns: 1fr; }
+  .start-tool-card { grid-template-columns: 1fr; grid-template-areas: "kicker" "title" "copy" "action"; row-gap: 2px; }
+  .start-tool-card > b,
+  .start-tool-card > button { margin-top: 10px; justify-self: start; }
+}
