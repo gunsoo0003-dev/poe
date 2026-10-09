@@ -55,7 +55,7 @@ import {
 } from "./filterExport";
 
 type SectionId = "exceptional" | "rare" | "magic" | "normal" | "waystones" | "unique-armour" | "unique" | "other-unique" | "tablets" | "jewels" | "flasks" | "charms" | "currency" | "essence" | "delirium" | "breach" | "abyss" | "atziri" | "fragments" | "runes" | "ritual" | "soulcores" | "idols" | "uncutgems" | "expedition" | "gems" | "misc";
-type ItemState = { enabled: boolean; importance: string };
+type ItemState = { enabled: boolean; importance: string; visibilityExplicit?: boolean };
 type TierState = { enabled: boolean; importance: string };
 type NormalLevelState = { enabled: boolean; importance: string };
 type GearPreviewState = { kind: "tier" | "normal" | "normal-level"; rarity: "Rare" | "Magic" | "Normal"; id: string; label: string; note: string; enabled: boolean; importance: string };
@@ -108,6 +108,7 @@ type LocalPresetPayload = {
   skillGems: Record<string, boolean>;
   spiritGems: Record<string, boolean>;
   normalGear: Record<string, boolean>;
+  normalGearExplicit?: Record<string, boolean>;
   magicGear: Record<string, boolean>;
   rareGear: Record<string, boolean>;
   normalGearImportance: Record<string, string>;
@@ -121,6 +122,8 @@ type LocalPresetMeta = Pick<LocalPresetPayload, "neverSinkVersion" | "savedAt">;
 type EditSource = "original" | "preset";
 
 const presetStorageKey = (strictness: NeverSinkStrictnessId) => `fixlgs-poe2-preset:${strictness}`;
+
+type InstallGuideMode = "install" | "change";
 
 type InstallDirectoryHandle = {
   name: string;
@@ -344,6 +347,16 @@ function ItemToggle({
             {BASELINE_LABELS[baseline.status]}
           </small>
         ) : null}
+        {baseline?.status === "conditional" && state.visibilityExplicit ? (
+          <small className="filter-v2-ns-baseline" title="이 항목에 대한 사용자 표시 설정이 NeverSink 조건보다 우선합니다.">
+            {state.enabled ? "FIX 표시" : "FIX 숨김"}
+          </small>
+        ) : null}
+        {baseline?.status === "conditional" && !state.visibilityExplicit && !state.enabled ? (
+          <button type="button" className="filter-v2-force-hide" onClick={(event) => { event.stopPropagation(); onToggle(false); }} title="NeverSink 조건과 상관없이 해당 아이템을 숨깁니다.">
+            완전히 숨김
+          </button>
+        ) : null}
         {item.uniqueNamesKo?.length ? <small className="filter-v2-unique-names">관련 고유: {item.uniqueNamesKo.join(" / ")}</small> : null}
       </div>
 
@@ -448,6 +461,7 @@ export default function FilterCustomizer() {
   const [skillGems, setSkillGems] = useState<Record<string, boolean>>(() => makeInitialGemState("skill"));
   const [spiritGems, setSpiritGems] = useState<Record<string, boolean>>(() => makeInitialGemState("spirit"));
   const [normalGear, setNormalGear] = useState<Record<string, boolean>>({});
+  const [normalGearExplicit, setNormalGearExplicit] = useState<Record<string, boolean>>({});
   const [magicGear, setMagicGear] = useState<Record<string, boolean>>(() => makeInitialGearState("magic"));
   const [rareGear, setRareGear] = useState<Record<string, boolean>>(() => makeInitialGearState("rare"));
   const [normalGearImportance, setNormalGearImportance] = useState<Record<string, string>>(makeInitialNormalImportance);
@@ -472,6 +486,7 @@ export default function FilterCustomizer() {
   const [exportBusy, setExportBusy] = useState(false);
   const [exportMessage, setExportMessage] = useState("");
   const [installFolderName, setInstallFolderName] = useState("");
+  const [installGuideMode, setInstallGuideMode] = useState<InstallGuideMode | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -573,6 +588,7 @@ export default function FilterCustomizer() {
             setSkillGems(payload.skillGems ?? makeInitialGemState("skill"));
             setSpiritGems(payload.spiritGems ?? makeInitialGemState("spirit"));
             setNormalGear(presetNormalOverrides);
+            setNormalGearExplicit(payload.normalGearExplicit ?? {});
             setMagicGear(payload.magicGear ?? makeInitialGearState("magic"));
             setRareGear(payload.rareGear ?? makeInitialGearState("rare"));
             setNormalGearImportance(baselineNormalImportance);
@@ -762,9 +778,71 @@ export default function FilterCustomizer() {
     );
   };
 
-  const applySoundChoice = (choice: SoundChoice) => {
+  const applySoundChoice = async (choice: SoundChoice) => {
     if (!selectedItem) return;
     const linked = linkedTabletUniqueItems(selectedItem);
+    // A sound by itself cannot play for an item that NeverSink has no Show
+    // rule for. Never turn a Hide into Show implicitly: ask once at selection
+    // time rather than allowing an unexplained download failure afterwards.
+    if (choice !== "default") {
+      if (!neverSinkBaseline) {
+        setSoundMessage("NeverSink 원본 상태를 불러온 뒤 사운드를 적용해 주세요.");
+        return;
+      }
+      try {
+        const base = await loadNeverSinkBase(selectedStrictness);
+        const descriptors = buildSoundDescriptorMap();
+        const needsVisibility = linked.filter((item) => {
+          try {
+            const preview = buildCustomizedFilter({
+              base,
+              items: [item],
+              itemState: itemState[item.id] ? { [item.id]: itemState[item.id] } : {},
+              baselineEnabled: (id) => baselineEnabled(neverSinkBaseline.items[id]),
+              baselineStatus: (id) => neverSinkBaseline.items[id]?.status ?? "missing",
+              soundState: { [item.id]: choice },
+              soundDescriptors: descriptors,
+              rareTiers: {}, magicTiers: {}, rareGear: {}, magicGear: {},
+              normalItems: [], normalGear: {},
+              normalBaselineEnabled: () => false,
+              normalBaselineStatus: () => "missing",
+              normalBaselineImportance: () => "default",
+              normalImportance: {}, normalLevelRules: {},
+            });
+            // A rule can be generated yet be a Hide without an audible sound.
+            // Check that the chosen file is really referenced in the output.
+            return !preview.text.includes(descriptors[choice]?.filterPath ?? "__MISSING_SOUND_PATH__");
+          } catch (error) {
+            if (error instanceof Error && error.message.includes("필터 적용 불일치")) return true;
+            throw error;
+          }
+        });
+        if (needsVisibility.length) {
+          const names = needsVisibility.map((item) => item.labelKo ?? item.label).slice(0, 3).join(", ");
+          if (!window.confirm(
+            `${names}의 현재 NeverSink 단계에는 사운드만 적용할 수 있는 표시 규칙이 없습니다.\n\n` +
+            "이 아이템을 항상 표시하도록 바꾸고 사운드를 지정할까요?\n" +
+            "[확인] 표시 ON + 사운드 적용 / [취소] 변경하지 않음",
+          )) {
+            setSoundMessage("사운드 변경을 취소했습니다. NS 표시 조건은 유지됩니다.");
+            return;
+          }
+          setItemState((current) => {
+            const next = { ...current };
+            needsVisibility.forEach((item) => {
+              next[item.id] = { ...current[item.id], importance: current[item.id]?.importance ?? "default", enabled: true, visibilityExplicit: true };
+            });
+            return next;
+          });
+          setSoundMessage(`${needsVisibility.length}개 항목 표시 ON + 사운드 적용`);
+        } else {
+          setSoundMessage("사운드 적용 완료 · 원본 표시 조건 유지");
+        }
+      } catch (error) {
+        setSoundMessage(error instanceof Error ? error.message : "사운드 설정을 검증하지 못했습니다.");
+        return;
+      }
+    }
     setSoundState((current) => {
       const next = { ...current };
       linked.forEach((item) => { next[item.id] = choice; });
@@ -812,6 +890,7 @@ export default function FilterCustomizer() {
     } else {
       const enabled = baselineEnabled(neverSinkBaseline?.normal[gearPreview.id]);
       setNormalGear((current) => ({ ...current, [gearPreview.id]: enabled }));
+      setNormalGearExplicit((current) => { const next = { ...current }; delete next[gearPreview.id]; return next; });
       setNormalGearImportance((current) => ({ ...current, [gearPreview.id]: "default" }));
       setGearPreview({ ...gearPreview, enabled, importance: "default" });
     }
@@ -845,6 +924,7 @@ export default function FilterCustomizer() {
 
   const resetAllNormal = () => {
     if (!window.confirm("일반 장비의 변경사항을 현재 NeverSink 기준으로 되돌리고, FIXLGS 가상 레벨 규칙은 비활성화할까요?")) return;
+    setNormalGearExplicit({});
     setNormalGear(Object.fromEntries(
       NORMAL_GEAR_GROUPS.flatMap((group) => group.items.map((item) => [item.id, baselineEnabled(neverSinkBaseline?.normal[item.id])])),
     ));
@@ -1332,7 +1412,7 @@ export default function FilterCustomizer() {
     return assets;
   };
 
-  const buildLocalPresetPayload = (): LocalPresetPayload => {
+  const buildLocalPresetPayload = (effectiveItemState: Record<string, ItemState> = itemState): LocalPresetPayload => {
     const serializableSoundState = Object.fromEntries(
       Object.entries(soundState).map(([key, choice]) => [key, choice.startsWith("user:") ? "default" : choice]),
     ) as Record<string, SoundChoice>;
@@ -1341,10 +1421,11 @@ export default function FilterCustomizer() {
       strictness: selectedStrictness,
       neverSinkVersion: NEVER_SINK.version,
       savedAt: new Date().toISOString(),
-      itemState: { ...itemState },
+      itemState: { ...effectiveItemState },
       skillGems: { ...skillGems },
       spiritGems: { ...spiritGems },
       normalGear: { ...normalGear },
+      normalGearExplicit: { ...normalGearExplicit },
       magicGear: { ...magicGear },
       rareGear: { ...rareGear },
       normalGearImportance: { ...normalGearImportance },
@@ -1355,8 +1436,8 @@ export default function FilterCustomizer() {
     };
   };
 
-  const persistCurrentPreset = (message = true) => {
-    const payload = buildLocalPresetPayload();
+  const persistCurrentPreset = (message = true, effectiveItemState: Record<string, ItemState> = itemState) => {
+    const payload = buildLocalPresetPayload(effectiveItemState);
     window.localStorage.setItem(presetStorageKey(selectedStrictness), JSON.stringify(payload));
     window.localStorage.setItem(LAST_PRESET_TARGET_KEY, selectedStrictness);
     const meta = { neverSinkVersion: payload.neverSinkVersion, savedAt: payload.savedAt };
@@ -1402,6 +1483,7 @@ export default function FilterCustomizer() {
       setSkillGems(payload.skillGems ?? makeInitialGemState("skill"));
       setSpiritGems(payload.spiritGems ?? makeInitialGemState("spirit"));
       setNormalGear(presetNormalOverrides);
+      setNormalGearExplicit(payload.normalGearExplicit ?? {});
       setMagicGear(payload.magicGear ?? makeInitialGearState("magic"));
       setRareGear(payload.rareGear ?? makeInitialGearState("rare"));
       setNormalGearImportance(baselineNormalImportance);
@@ -1453,10 +1535,10 @@ export default function FilterCustomizer() {
     const exportMagicGear = magicGearRef.current;
     const exportSoundState = soundStateRef.current;
 
-    const result = buildCustomizedFilter({
+    const buildOutput = (nextItemState: Record<string, ItemState>) => buildCustomizedFilter({
       base,
       items: ALL_ITEMS,
-      itemState,
+      itemState: nextItemState,
       baselineEnabled: (id) => baselineEnabled(neverSinkBaseline?.items[id]),
       baselineStatus: (id) => neverSinkBaseline?.items[id]?.status ?? "missing",
       soundState: exportSoundState,
@@ -1465,14 +1547,64 @@ export default function FilterCustomizer() {
       magicTiers: exportMagicTiers,
       rareGear: exportRareGear,
       magicGear: exportMagicGear,
-      normalItems: NORMAL_GEAR_GROUPS.flatMap((group) => group.items),
+      normalItems: NORMAL_GEAR_GROUPS.flatMap((group) => group.items.map((item) => ({ ...item, classNames: group.classes }))),
       normalGear,
+      normalGearExplicit,
       normalBaselineEnabled: (id) => baselineEnabled(neverSinkBaseline?.normal[id]),
       normalBaselineStatus: (id) => neverSinkBaseline?.normal[id]?.status ?? "missing",
       normalBaselineImportance: (id) => neverSinkBaseline?.normal[id]?.importance ?? "default",
       normalImportance: normalGearImportance,
       normalLevelRules,
     });
+    let result: ReturnType<typeof buildCustomizedFilter>;
+    let recoveredItemState: Record<string, ItemState> | undefined;
+    try {
+      result = buildOutput(itemState);
+    } catch (error) {
+      // Previous local presets may have been saved before V215's sound
+      // selection preflight. Give those users the same explicit choice on
+      // export instead of trapping them in an unrecoverable download error.
+      if (!(error instanceof Error) || !error.message.includes("필터 적용 불일치")) throw error;
+      const unsafeItems: FilterItem[] = [];
+      for (const [id, choice] of Object.entries(exportSoundState)) {
+        if (choice === "default" || !soundDescriptors[choice]) continue;
+        const item = ALL_ITEMS.find((candidate) => candidate.id === id);
+        if (!item) continue;
+        try {
+          const probe = buildCustomizedFilter({
+            base, items: [item],
+            itemState: itemState[id] ? { [id]: itemState[id] } : {},
+            baselineEnabled: (name) => baselineEnabled(neverSinkBaseline?.items[name]),
+            baselineStatus: (name) => neverSinkBaseline?.items[name]?.status ?? "missing",
+            soundState: { [id]: choice }, soundDescriptors,
+            rareTiers: {}, magicTiers: {}, rareGear: {}, magicGear: {},
+            normalItems: [], normalGear: {},
+            normalBaselineEnabled: () => false,
+            normalBaselineStatus: () => "missing",
+            normalBaselineImportance: () => "default",
+            normalImportance: {}, normalLevelRules: {},
+          });
+          if (!probe.text.includes(soundDescriptors[choice].filterPath)) unsafeItems.push(item);
+        } catch (probeError) {
+          if (probeError instanceof Error && probeError.message.includes("필터 적용 불일치")) unsafeItems.push(item);
+          else throw probeError;
+        }
+      }
+      if (!unsafeItems.length) throw error;
+      const list = unsafeItems.slice(0, 3).map((item) => item.labelKo ?? item.label).join(", ");
+      if (!window.confirm(
+        `저장본의 ${unsafeItems.length}개 항목(${list})은 현재 원본에서 숨김 처리되어 사운드가 나지 않습니다.\n\n` +
+        "표시 ON으로 바꾸고 사운드를 적용해 설치할까요?\n[취소]를 누르면 아무것도 변경하지 않습니다.",
+      )) throw new Error("사운드 설정 변경을 취소했습니다. 기존 NeverSink 조건은 유지됩니다.");
+      const recovered: Record<string, ItemState> = { ...itemState };
+      unsafeItems.forEach((item) => {
+        recovered[item.id] = { ...recovered[item.id], enabled: true, visibilityExplicit: true, importance: recovered[item.id]?.importance ?? "default" };
+      });
+      result = buildOutput(recovered); // A second failure is surfaced, never silently ignored.
+      recoveredItemState = recovered;
+      setItemState(recovered);
+    }
+
 
     const assertGearModeExport = (rarity: "rare" | "magic", tiers: Record<string, TierState>) => {
       const enabled = Object.entries(tiers).filter(([, state]) => state?.enabled);
@@ -1500,7 +1632,7 @@ export default function FilterCustomizer() {
     const safeBaseName = sanitizeExportBaseName(exportBaseName, fallback);
     setExportBaseName(safeBaseName);
     const soundAssets = await collectSoundAssets(result.usedSoundChoices);
-    return { result, safeBaseName, soundAssets };
+    return { result, safeBaseName, soundAssets, recoveredItemState };
   };
 
   const handleCustomizedExport = async () => {
@@ -1526,13 +1658,20 @@ export default function FilterCustomizer() {
   };
 
   const getDirectoryPicker = () => (window as Window & {
-    showDirectoryPicker?: (options?: { mode?: "read" | "readwrite" }) => Promise<InstallDirectoryHandle>;
+    showDirectoryPicker?: (options?: {
+      mode?: "read" | "readwrite";
+      startIn?: "desktop" | "documents" | "downloads" | "music" | "pictures" | "videos";
+      id?: string;
+    }) => Promise<InstallDirectoryHandle>;
   }).showDirectoryPicker;
 
   const chooseInstallDirectory = async () => {
     const picker = getDirectoryPicker();
     if (!picker) throw new Error("게임 폴더 직접 설치는 Chrome/Edge의 폴더 접근 기능이 필요합니다.");
-    const directory = await picker({ mode: "readwrite" });
+    const directory = await picker({ mode: "readwrite", startIn: "documents", id: "fixlgs-poe2-filter-install" });
+    if (directory.name !== "Path of Exile 2" && !window.confirm(`선택한 폴더는 '${directory.name}'입니다.\n보통 문서 → My Games → Path of Exile 2를 선택해야 합니다.\n이 폴더가 실제 필터 폴더가 맞다면 확인을 눌러주세요.`)) {
+      throw new DOMException("폴더를 다시 선택해야 합니다.", "AbortError");
+    }
     if (!(await requestInstallPermission(directory))) throw new Error("선택한 폴더의 쓰기 권한이 필요합니다.");
     return directory;
   };
@@ -1560,29 +1699,42 @@ export default function FilterCustomizer() {
     return { result, safeBaseName, soundAssets };
   };
 
-  const handleChangeInstallFolder = async () => {
+  const installToChosenDirectory = async (mode: InstallGuideMode) => {
     if (exportBusy) return;
+    setInstallGuideMode(null);
     setExportBusy(true);
     setExportMessage("");
     try {
-      // Folder picker must happen directly from the user's click. After choosing a
-      // new folder, install the current filter immediately so "change folder" never
-      // leaves the user with a remembered path but no file written there.
+      // Keep the directory picker as the very first privileged action from the
+      // modal confirmation click so Chrome/Edge retain the user gesture.
       const directory = await chooseInstallDirectory();
       const payload = await prepareExportPayload();
       const { result, safeBaseName, soundAssets } = await writeInstallPayload(directory, payload);
       await saveInstallDirectory(directory);
       setInstallFolderName(directory.name);
-      persistCurrentPreset(false);
-      setExportMessage(`설치 폴더 변경 + 저장 완료 · ${directory.name}\\${safeBaseName}.filter${soundAssets.length ? " + FIXLGS_SOUNDS" : ""}`);
+      persistCurrentPreset(false, payload.recoveredItemState ?? itemState);
+      setExportMessage(
+        mode === "change"
+          ? `설치 폴더 변경 + 저장 완료 · ${directory.name}\\${safeBaseName}.filter${soundAssets.length ? " + FIXLGS_SOUNDS" : ""}`
+          : `설치 + 설정 저장 완료 · ${directory.name}\\${safeBaseName}.filter${soundAssets.length ? " + FIXLGS_SOUNDS" : ""}`,
+      );
       if (result.notes.length) setExportMessage((current) => `${current} · 검토 ${result.notes.length}건`);
     } catch (error) {
       const name = error instanceof DOMException ? error.name : "";
       if (name === "AbortError") setExportMessage("게임 폴더 선택을 취소했습니다.");
-      else setExportMessage(error instanceof Error ? error.message : "설치 폴더 변경 중 오류가 발생했습니다.");
+      else setExportMessage(error instanceof Error ? error.message : "게임 폴더 설치 중 오류가 발생했습니다.");
     } finally {
       setExportBusy(false);
     }
+  };
+
+  const handleChangeInstallFolder = () => {
+    if (exportBusy) return;
+    if (!getDirectoryPicker()) {
+      setExportMessage("게임 폴더 직접 설치는 Chrome/Edge의 폴더 접근 기능이 필요합니다. 지원되지 않는 브라우저에서는 ZIP/필터 다운로드를 사용해주세요.");
+      return;
+    }
+    setInstallGuideMode("change");
   };
 
   const handleInstallToGameFolder = async () => {
@@ -1595,26 +1747,28 @@ export default function FilterCustomizer() {
     setExportBusy(true);
     setExportMessage("");
     try {
-      // Resolve permission/folder first while the click still counts as a user
-      // gesture. Only then build the filter and overwrite the remembered folder.
-      let directory = await loadInstallDirectory();
-      let directoryWasNew = false;
-      if (!directory || !(await requestInstallPermission(directory))) {
-        directory = await chooseInstallDirectory();
-        directoryWasNew = true;
+      const directory = await loadInstallDirectory();
+      if (!directory) {
+        setInstallGuideMode("install");
+        return;
       }
+
+      const permission = directory.queryPermission
+        ? await directory.queryPermission({ mode: "readwrite" })
+        : "granted";
+      if (permission !== "granted") {
+        setInstallGuideMode("install");
+        return;
+      }
+
       const payload = await prepareExportPayload();
       const { result, safeBaseName, soundAssets } = await writeInstallPayload(directory, payload);
-      if (directoryWasNew) await saveInstallDirectory(directory);
       setInstallFolderName(directory.name);
-      persistCurrentPreset(false);
-
+      persistCurrentPreset(false, payload.recoveredItemState ?? itemState);
       setExportMessage(`설치 + 설정 저장 완료 · ${directory.name}\\${safeBaseName}.filter${soundAssets.length ? " + FIXLGS_SOUNDS" : ""}`);
       if (result.notes.length) setExportMessage((current) => `${current} · 검토 ${result.notes.length}건`);
     } catch (error) {
-      const name = error instanceof DOMException ? error.name : "";
-      if (name === "AbortError") setExportMessage("게임 폴더 선택을 취소했습니다.");
-      else setExportMessage(error instanceof Error ? error.message : "게임 폴더 설치 중 오류가 발생했습니다.");
+      setExportMessage(error instanceof Error ? error.message : "게임 폴더 설치 중 오류가 발생했습니다.");
     } finally {
       setExportBusy(false);
     }
@@ -1624,14 +1778,14 @@ export default function FilterCustomizer() {
     const itemChanges = ALL_ITEMS.filter((item) => {
       const state = itemState[item.id];
       if (!state) return false;
-      return state.enabled !== baselineEnabled(neverSinkBaseline?.items[item.id]) || state.importance !== "default";
+      return state.enabled !== baselineEnabled(neverSinkBaseline?.items[item.id]) || state.importance !== "default" || state.visibilityExplicit === true;
     }).length;
     const soundChanges = Object.values(soundState).filter((sound) => sound !== "default").length;
     const gemChanges =
       Object.values(skillGems).filter((enabled) => !enabled).length +
       Object.values(spiritGems).filter((enabled) => !enabled).length;
     const normalVisibilityChanges = NORMAL_GEAR_GROUPS.flatMap((group) => group.items).filter(
-      (item) => (normalGear[item.id] ?? baselineEnabled(neverSinkBaseline?.normal[item.id])) !== baselineEnabled(neverSinkBaseline?.normal[item.id]),
+      (item) => normalGearExplicit[item.id] === true || (normalGear[item.id] ?? baselineEnabled(neverSinkBaseline?.normal[item.id])) !== baselineEnabled(neverSinkBaseline?.normal[item.id]),
     ).length;
     const rareTierSelections = Object.values(rareTiers).filter((state) => state.enabled).length;
     const magicTierSelections = Object.values(magicTiers).filter((state) => state.enabled).length;
@@ -1652,7 +1806,7 @@ export default function FilterCustomizer() {
       ? Object.values(magicTiers).filter((state) => state.enabled || state.importance !== "default").length
       : 0;
     return itemChanges + soundChanges + gemChanges + gearChanges + rareChanges + magicChanges;
-  }, [itemState, soundState, skillGems, spiritGems, normalGear, magicGear, rareGear, normalGearImportance, normalLevelRules, rareTiers, magicTiers, neverSinkBaseline]);
+  }, [itemState, soundState, skillGems, spiritGems, normalGear, normalGearExplicit, magicGear, rareGear, normalGearImportance, normalLevelRules, rareTiers, magicTiers, neverSinkBaseline]);
 
   const editTargetValue = `${editSource}:${selectedStrictness}`;
   const currentEditLabel = editSource === "preset"
@@ -1670,6 +1824,7 @@ export default function FilterCustomizer() {
     setSkillGems(makeInitialGemState("skill"));
     setSpiritGems(makeInitialGemState("spirit"));
     setNormalGear({});
+    setNormalGearExplicit({});
     setMagicGear(makeInitialGearState("magic"));
     setRareGear(makeInitialGearState("rare"));
     setNormalGearImportance(makeInitialNormalImportance());
@@ -1709,6 +1864,7 @@ export default function FilterCustomizer() {
     setSkillGems(makeInitialGemState("skill"));
     setSpiritGems(makeInitialGemState("spirit"));
     setNormalGear({});
+    setNormalGearExplicit({});
     setMagicGear(makeInitialGearState("magic"));
     setRareGear(makeInitialGearState("rare"));
     setNormalGearImportance(makeInitialNormalImportance());
@@ -1731,8 +1887,8 @@ export default function FilterCustomizer() {
       const next = { ...current };
       (linked.length ? linked : target ? [target] : []).forEach((item) => {
         const baselineState: ItemState = { enabled: baselineEnabled(neverSinkBaseline?.items[item.id]), importance: "default" };
-        const resolved = { ...(current[item.id] ?? baselineState), ...patch };
-        if (resolved.enabled === baselineState.enabled && resolved.importance === "default") delete next[item.id];
+        const resolved = { ...(current[item.id] ?? baselineState), ...patch, ...("enabled" in patch ? { visibilityExplicit: true } : {}) };
+        if (resolved.enabled === baselineState.enabled && resolved.importance === "default" && !resolved.visibilityExplicit) delete next[item.id];
         else next[item.id] = resolved;
       });
       return next;
@@ -1972,6 +2128,7 @@ export default function FilterCustomizer() {
   const setNormalGearGroup = (groupId: string, enabled: boolean) => {
     const group = NORMAL_GEAR_GROUPS.find((entry) => entry.id === groupId);
     if (!group) return;
+    setNormalGearExplicit((current) => ({ ...current, ...Object.fromEntries(group.items.map((item) => [item.id, true])) }));
     setNormalGear((current) => {
       const next = { ...current };
       group.items.forEach((item) => { next[item.id] = enabled; });
@@ -2034,6 +2191,7 @@ export default function FilterCustomizer() {
                         onChange={(event) => {
                           const nextEnabled = event.target.checked;
                           setNormalGear((current) => ({ ...current, [item.id]: nextEnabled }));
+                          setNormalGearExplicit((current) => ({ ...current, [item.id]: true }));
                           setGearPreview({ kind: "normal", rarity: "Normal", id: item.id, label: item.labelKo, note: `${group.labelKo} · 드롭 BaseType`, enabled: nextEnabled, importance: shownImportance });
                         }}
                       />
@@ -3102,6 +3260,40 @@ export default function FilterCustomizer() {
         </div>
 
       </aside>
+      {installGuideMode ? (
+        <div
+          className="filter-v2-install-guide-backdrop"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget && !exportBusy) setInstallGuideMode(null);
+          }}
+        >
+          <div className="filter-v2-install-guide-dialog" role="dialog" aria-modal="true" aria-labelledby="filter-install-guide-title">
+            <div className="filter-v2-install-guide-kicker">POE2 FILTER FOLDER</div>
+            <h2 id="filter-install-guide-title">POE2 필터 폴더를 선택해주세요</h2>
+            <p className="filter-v2-install-guide-lead">아래 버튼을 누르면 <strong>문서 폴더</strong>에서 시작합니다.</p>
+
+            <div className="filter-v2-install-guide-path" aria-label="필터 폴더 경로">
+              <span>문서</span><b>›</b><span>My Games</span><b>›</b><strong>Path of Exile 2</strong>
+            </div>
+
+            <ol className="filter-v2-install-guide-steps">
+              <li><span>1</span><div><strong>My Games</strong><small>폴더를 더블클릭</small></div></li>
+              <li><span>2</span><div><strong>Path of Exile 2</strong><small>폴더로 들어가기</small></div></li>
+              <li><span>3</span><div><strong>폴더 선택</strong><small>현재 폴더를 선택하면 완료</small></div></li>
+            </ol>
+
+            <p className="filter-v2-install-guide-note">게임이 D: / E: 드라이브에 설치되어 있어도 필터는 게임 설치 폴더가 아니라 <strong>문서 쪽 Path of Exile 2 폴더</strong>를 선택하면 됩니다.</p>
+
+            <div className="filter-v2-install-guide-actions">
+              <button type="button" className="is-cancel" disabled={exportBusy} onClick={() => setInstallGuideMode(null)}>취소</button>
+              <button type="button" className="is-primary" disabled={exportBusy} onClick={() => installToChosenDirectory(installGuideMode)}>
+                {exportBusy ? "처리 중..." : "문서에서 폴더 선택"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

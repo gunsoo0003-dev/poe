@@ -6,7 +6,7 @@ import {
 } from "./filterData";
 import type { NeverSinkBasePayload } from "./neversinkBase";
 
-export type ExportItemState = { enabled: boolean; importance: string };
+export type ExportItemState = { enabled: boolean; importance: string; visibilityExplicit?: boolean };
 export type ExportTierState = { enabled: boolean; importance: string };
 export type ExportNormalLevelState = { enabled: boolean; importance: string };
 export type ExportSoundChoice = "default" | "masitda" | "oishie" | "divine-power" | "risenne-geoje-yaho" | "risenne-gripgam" | "risenne-neo-do-na-do" | "risenne-sori-jilleo" | "risenne-drama" | "risenne-an-ttaeryeosseo" | "risenne-niga-mwonde" | "risenne-onaka-ippai-zenbu-tabeta" | `user:${string}`;
@@ -30,8 +30,9 @@ export type FilterExportInput = {
   magicTiers: Record<string, ExportTierState>;
   rareGear: Record<string, boolean>;
   magicGear: Record<string, boolean>;
-  normalItems: Array<{ id: string; baseType: string }>;
+  normalItems: Array<{ id: string; baseType: string; classNames?: string[] }>;
   normalGear: Record<string, boolean>;
+  normalGearExplicit?: Record<string, boolean>;
   normalBaselineEnabled: (itemId: string) => boolean;
   normalBaselineStatus: (itemId: string) => NeverSinkRuleStatus;
   normalBaselineImportance: (itemId: string) => string;
@@ -99,6 +100,12 @@ function quotedValues(line: string) {
 
 function sourceSections(item: FilterItem) {
   return [...String(item.sourceSection ?? "").matchAll(/\b(\d{4})\b/g)].map((match) => match[1]);
+}
+
+
+function matchesSourceSection(section: string, requested: string[]) {
+  if (!requested.length) return true;
+  return requested.some((value) => section === value || (value.endsWith("00") && section.slice(0, 2) === value.slice(0, 2)));
 }
 
 function rarityMatches(block: RuleBlock, rarity?: FilterItem["rarity"]) {
@@ -302,10 +309,11 @@ function replaceSound(lines: string[], descriptor?: ExportSoundDescriptor) {
 
 function numericConditionMatches(line: string, field: string, value: number) {
   const clean = stripComment(line);
-  const match = clean.match(new RegExp(`^${field}\\s*(>=|<=|==|=|>|<)\\s*(-?\\d+)`, "i"));
-  if (!match) return true;
+  // NeverSink accepts `GemLevel 19` as equality, without an explicit operator.
+  const match = clean.match(new RegExp(`^${field}\\s*(>=|<=|==|=|>|<)?\\s*(-?\\d+)\\s*$`, "i"));
+  if (!match) return false; // Never assume that an unknown condition matches everything.
   const n = Number(match[2]);
-  switch (match[1]) {
+  switch (match[1] ?? "==") {
     case ">=": return value >= n;
     case "<=": return value <= n;
     case ">": return value > n;
@@ -370,7 +378,7 @@ function originalPresentationLines(baseText: string, item: FilterItem) {
   const parsed = parseBlocks(baseText);
   const sections = sourceSections(item);
   const candidates = parsed.blocks.filter((block) => {
-    if (sections.length && !sections.includes(block.section)) return false;
+    if (!matchesSourceSection(block.section, sections)) return false;
     if (!blockContainsBaseType(block, item.baseType!)) return false;
     if (!blockMatchesItemRarityScope(block, item)) return false;
     return true;
@@ -459,14 +467,42 @@ function mutateExceptional(baseText: string, item: FilterItem, enabled: boolean)
   return { text: lines.join("\n"), changed };
 }
 
+function enableCommentedExceptionalUnique(baseText: string, item: FilterItem, state: ExportItemState, descriptor?: ExportSoundDescriptor) {
+  if (item.rarity !== "Unique" || !item.exceptionalRule) return { text: baseText, changed: 0 };
+  const lines = baseText.replace(/\r/g, "").split("\n");
+  const sectionStart = lines.findLastIndex((line) => /^#\s*\[2903\]/.test(line));
+  const sectionEnd = lines.findIndex((line, index) => index > sectionStart && /^#\s*\[2904\]/.test(line));
+  if (sectionStart < 0) return { text: baseText, changed: 0 };
+  const marker = item.exceptionalRule === "overquality" ? /\$tier->overqualityuniques\b/ : /\$tier->oversocketuniques[12]\b/;
+  const matches: Array<{ start: number; end: number; block: string[] }> = [];
+  for (let i = sectionStart; i < (sectionEnd < 0 ? lines.length : sectionEnd); i++) {
+    if (!/^#Show\b/.test(lines[i]) || !marker.test(lines[i])) continue;
+    let end = i + 1;
+    while (end < lines.length && /^#\s+\S/.test(lines[end]) && !/^#Show\b/.test(lines[end])) end++;
+    const block = lines.slice(i, end).map((line) => line.slice(1));
+    matches.push({ start: i, end, block });
+    i = end - 1;
+  }
+  for (const match of matches.reverse()) {
+    let block = match.block;
+    if (state.importance !== "default" && state.importance !== "dynamic")
+      block = replaceVisualStyle(block, findStyleBlock(baseText, state.importance, item.family));
+    block = replaceSound(block, descriptor);
+    block[0] += ` # FIXLGS enabled exceptional override · ${item.id}`;
+    lines.splice(match.start, match.end - match.start, ...block);
+  }
+  return { text: lines.join("\n"), changed: matches.length };
+}
+
 function transformExceptionalCustomization(
   baseText: string,
   item: FilterItem,
   state: ExportItemState,
   descriptor?: ExportSoundDescriptor,
+  forceEnable = false,
 ) {
   if (item.family !== "exceptional" || !item.rarity || !item.exceptionalRule) return { text: baseText, changed: 0 };
-  if (!state.enabled || (state.importance === "default" && (!descriptor || descriptor.choice === "default"))) {
+  if (!state.enabled || (!forceEnable && state.importance === "default" && (!descriptor || descriptor.choice === "default"))) {
     return { text: baseText, changed: 0 };
   }
   const parsed = parseBlocks(baseText);
@@ -483,7 +519,7 @@ function transformExceptionalCustomization(
     if (item.exceptionalRule === "overquality") return block.lines.some((line) => /^\s*Quality\b/i.test(stripComment(line)));
     return block.lines.some((line) => /^\s*Sockets\b/i.test(stripComment(line)));
   });
-  if (!targets.length) return { text: baseText, changed: 0 };
+  if (!targets.length) return enableCommentedExceptionalUnique(baseText, item, state, descriptor);
 
   const lines = parsed.lines;
   let changed = 0;
@@ -523,12 +559,13 @@ function transformExceptionalCustomization(
 function transformBaseTypeItem(baseText: string, item: FilterItem, state: ExportItemState, baseline: boolean, descriptor?: ExportSoundDescriptor, gearRarity?: "Rare" | "Magic" | "Normal") {
   if (!item.baseType || item.gemLevel != null) return { text: baseText, changed: 0, handled: false };
   const hasOverride = state.enabled !== baseline || state.importance !== "default" || (descriptor && descriptor.choice !== "default");
+  const soundOnly = !!descriptor && descriptor.choice !== "default" && state.enabled === baseline && state.importance === "default";
   if (!hasOverride) return { text: baseText, changed: 0, handled: true };
 
   const parsed = parseBlocks(baseText);
   const sections = sourceSections(item);
   const candidates = parsed.blocks.filter((block) => {
-    if (sections.length && !sections.includes(block.section)) return false;
+    if (!matchesSourceSection(block.section, sections)) return false;
     if (!blockContainsBaseType(block, item.baseType!)) return false;
     if (!blockMatchesItemRarityScope(block, item)) return false;
     return true;
@@ -538,6 +575,9 @@ function transformBaseTypeItem(baseText: string, item: FilterItem, state: Export
   const lines = parsed.lines;
   let changed = 0;
   for (const block of [...candidates].sort((a, b) => b.start - a.start)) {
+    // A sound command appended to Hide never plays. Keep the original Hide
+    // untouched and look for the applicable Show / safe fallback instead.
+    if (soundOnly && !/^Show\b/i.test(block.lines[0].trim())) continue;
     const removed = removeBaseType(block.lines, item.baseType);
     if (state.enabled === false && baseline !== false) {
       if (removed.empty) lines.splice(block.start, block.end - block.start, `# FIXLGS disabled mapped rule · ${item.id}`);
@@ -559,11 +599,11 @@ function transformBaseTypeItem(baseText: string, item: FilterItem, state: Export
     else lines.splice(block.start, block.end - block.start, ...clone, "", ...removed.lines);
     changed += 1;
   }
-  return { text: lines.join("\n"), changed, handled: true };
+  return { text: lines.join("\n"), changed, handled: !soundOnly || changed > 0 };
 }
 
 function numericOverrideBlocks(baseText: string, item: FilterItem, state: ExportItemState, baseline: boolean, descriptor?: ExportSoundDescriptor) {
-  const visibilityChanged = state.enabled !== baseline;
+  const visibilityChanged = state.enabled !== baseline || state.visibilityExplicit === true;
   const custom = visibilityChanged || state.importance !== "default" || (descriptor && descriptor.choice !== "default");
   if (!custom || (item.gemLevel == null && item.waystoneTier == null)) return [] as string[];
 
@@ -579,7 +619,7 @@ function numericOverrideBlocks(baseText: string, item: FilterItem, state: Export
   const parsed = parseBlocks(baseText);
   const sections = sourceSections(item);
   const candidates = parsed.blocks.filter((block) => {
-    if (sections.length && !sections.includes(block.section)) return false;
+    if (!matchesSourceSection(block.section, sections)) return false;
     if (item.baseType && !blockContainsBaseType(block, item.baseType)) return false;
     if (!blockMatchesItemRarityScope(block, item)) return false;
     if (item.gemLevel != null) {
@@ -594,6 +634,170 @@ function numericOverrideBlocks(baseText: string, item: FilterItem, state: Export
   });
   if (!candidates.length) return buildShowRule(item, item.labelKo ?? item.label, state.importance, descriptor, baseText);
   return candidates.flatMap((block) => [...cloneNumericRule(block, item, state.importance, descriptor, baseText), ""]);
+}
+
+function transformNumericSoundInPlace(baseText: string, item: FilterItem, descriptor: ExportSoundDescriptor) {
+  const parsed = parseBlocks(baseText);
+  const sections = sourceSections(item);
+  const matches = parsed.blocks.filter((block) => {
+    if (!matchesSourceSection(block.section, sections)) return false;
+    if (item.baseType && !blockContainsBaseType(block, item.baseType)) return false;
+    if (!blockMatchesItemRarityScope(block, item)) return false;
+    const field = item.gemLevel != null ? "GemLevel" : "WaystoneTier";
+    const level = item.gemLevel ?? item.waystoneTier;
+    if (level == null) return false;
+    const numericLines = block.lines.filter((line) => new RegExp(`^\\s*${field}\\b`, "i").test(stripComment(line)));
+    return numericLines.every((line) => numericConditionMatches(line, field, level));
+  });
+  const lines = parsed.lines;
+  let changed = 0;
+  for (const block of [...matches].sort((a, b) => b.start - a.start)) {
+    // Original Hide must remain Hide: adding a sound cannot turn a hidden item visible.
+    // For broad range rules retain the untouched original after the narrowed clone.
+    if (!/^Show\b/i.test(block.lines[0].trim())) continue;
+    let clone = [...block.lines];
+    if (item.baseType) clone = replaceBaseTypeWithOnly(clone, item.baseType);
+    if (item.gemLevel != null) {
+      clone = clone.filter((line) => !/^\s*GemLevel\b/i.test(stripComment(line)));
+      clone.splice(1, 0, `\tGemLevel == ${item.gemLevel}`);
+    }
+    if (item.waystoneTier != null) {
+      clone = clone.filter((line) => !/^\s*WaystoneTier\b/i.test(stripComment(line)));
+      clone.splice(1, 0, `\tWaystoneTier == ${item.waystoneTier}`);
+    }
+    clone = replaceSound(clone, descriptor);
+    clone[0] += ` # FIXLGS sound override · ${item.id}`;
+    lines.splice(block.start, 0, ...clone, "");
+    changed++;
+  }
+  return { text: lines.join("\n"), changed };
+}
+
+// Match only a NeverSink Show block which already covers the BaseType.
+// NeverSink uses both exact selectors (`BaseType == "A"`) and substring
+// selectors (`BaseType "Lesser"`) in its leveling flask rules.
+// Inserting a narrowed clone immediately before that block preserves the
+// original AreaLevel / Quality / other gates. It NEVER turns a Hide into Show.
+function transformReferencedSoundFallback(baseText: string, item: FilterItem, descriptor: ExportSoundDescriptor) {
+  if (!item.baseType) return { text: baseText, changed: 0 };
+  const parsed = parseBlocks(baseText);
+  const normalizedClass = item.family === "flask"
+    ? item.baseType.endsWith("Life Flask") ? "Life Flasks" : item.baseType.endsWith("Mana Flask") ? "Mana Flasks" : ""
+    : item.family === "charm" ? "Charms" : "";
+  const candidates = parsed.blocks.filter((block) => {
+    if (!/^Show\b/i.test(block.lines[0].trim())) return false;
+    if (block.lines.some((line) => /^\s*Continue\b/i.test(stripComment(line)))) return false;
+    const selector = block.lines.find((line) => /^\s*BaseType\b/i.test(stripComment(line)));
+    if (!selector) return false;
+    const clean = stripComment(selector);
+    const operator = clean.match(/^BaseType\s*(==|!=|=)?/i)?.[1] ?? "";
+    if (operator === "!=") return false;
+    const values = quotedValues(clean);
+    const matches = operator === "==" || operator === "="
+      ? values.includes(item.baseType!)
+      : values.some((value) => item.baseType!.includes(value));
+    if (!matches) return false;
+    const classLine = block.lines.find((line) => /^\s*Class\b/i.test(stripComment(line)));
+    // A partial BaseType such as "Lesser" without an independently verified
+    // Class would be too broad; never guess its match scope.
+    if (operator !== "==" && operator !== "=" && !normalizedClass) return false;
+    if (classLine && normalizedClass && !quotedValues(classLine).includes(normalizedClass)) return false;
+    if (item.family === "unique") {
+      const rarityLine = block.lines.find((line) => /^\s*Rarity\b/i.test(stripComment(line)));
+      if (rarityLine && !rarityMatches(block, "Unique")) return false;
+    }
+    return blockMatchesItemRarityScope(block, item);
+  });
+  const lines = parsed.lines;
+  let changed = 0;
+  for (const block of [...candidates].sort((a, b) => b.start - a.start)) {
+    let clone = block.lines.map((line) => /^\s*BaseType\b/i.test(stripComment(line))
+      ? `\tBaseType == "${item.baseType!.replaceAll('"', '')}"` : line);
+    clone = replaceSound(clone, descriptor);
+    clone[0] += ` # FIXLGS scoped sound · ${item.id}`;
+    lines.splice(block.start, 0, ...clone, "");
+    changed += 1;
+  }
+  return { text: lines.join("\n"), changed };
+}
+
+// Second, conservative sound-only fallback: some items have no individual
+// BaseType line in NeverSink and are handled by a Class catcher. Narrow a
+// copy of *that actual Show rule* with BaseType == X; retain every original
+// region/item-level and other gate. Never invent a new unconditional Show.
+function transformClassSoundFallback(baseText: string, item: FilterItem, descriptor: ExportSoundDescriptor) {
+  if (!item.baseType) return { text: baseText, changed: 0 };
+  const a = item.id;
+  const expectedClass = item.family === "charm" ? "Charms"
+    : item.family === "flask" && item.baseType.endsWith("Life Flask") ? "Life Flasks"
+    : item.family === "flask" && item.baseType.endsWith("Mana Flask") ? "Mana Flasks"
+    : a === "abyss-preserved-vertebrae" ? "Stackable Currency"
+    : a.startsWith("frag-") && a.includes("reliquary-key") ? "Pinnacle Keys"
+    : a.startsWith("frag-") ? "Map Fragments"
+    : a === "exp-expedition-logbook" ? "Expedition Logbook" : null;
+  const parsed = parseBlocks(baseText);
+  const blocks = parsed.blocks.filter((block) => {
+    if (!/^Show\b/i.test(block.lines[0].trim())) return false;
+    if (block.lines.some((line) => /^\s*Continue\b/i.test(stripComment(line)))) return false;
+    if (block.lines.some((line) => /^\s*BaseType\b/i.test(stripComment(line)))) return false;
+    if (!blockMatchesItemRarityScope(block, item)) return false;
+    if (item.family === "unique") {
+      // Catch unlisted unique bases in NeverSink's genuine Unique fallback,
+      // including special variants (corruption/quality) that also apply.
+      if (!block.section.startsWith("29")) return false;
+      const rarityLine = block.lines.find((line) => /^\s*Rarity\b/i.test(stripComment(line)));
+      return !!rarityLine && /^Rarity\s+(?:==\s*)?Unique\s*$/i.test(stripComment(rarityLine));
+    }
+    if (!expectedClass) return false;
+    const cls = block.lines.find((line) => /^\s*Class\b/i.test(stripComment(line)));
+    return !!cls && !/^Class\s*(!=|!)/i.test(stripComment(cls)) && quotedValues(cls).includes(expectedClass);
+  });
+  const lines = parsed.lines;
+  let changed = 0;
+  for (const block of [...blocks].sort((a, b) => b.start - a.start)) {
+    let clone = [...block.lines];
+    clone.splice(1, 0, `\tBaseType == "${item.baseType.replaceAll('"', '')}"`);
+    clone = replaceSound(clone, descriptor);
+    clone[0] += ` # FIXLGS class sound · ${item.id}`;
+    lines.splice(block.start, 0, ...clone, "");
+    changed++;
+  }
+  return { text: lines.join("\n"), changed };
+}
+
+function transformNormalSoundFallback(baseText: string, item: FilterItem, classNames: string[], descriptor: ExportSoundDescriptor) {
+  if (!classNames.length || !item.baseType) return { text: baseText, changed: 0 };
+  const parsed = parseBlocks(baseText);
+  const blocks = parsed.blocks.filter((block) => {
+    if (!/^Show\b/i.test(block.lines[0].trim())) return false;
+    if (block.lines.some((line) => /^\s*Continue\b/i.test(stripComment(line)))) return false;
+    const base = block.lines.find((line) => /^\s*BaseType\b/i.test(stripComment(line)));
+    if (base) return false; // An exact BaseType block is handled separately.
+    if (!rarityMatches(block, "Normal")) return false;
+    const rarity = block.lines.find((line) => /^\s*Rarity\b/i.test(stripComment(line)));
+    if (rarity && /^Rarity\s+(?:==\s*)?(Rare|Magic|Unique)\s*$/i.test(stripComment(rarity))) return false;
+    const classLine = block.lines.find((line) => /^\s*Class\b/i.test(stripComment(line)));
+    if (!classLine) return !!rarity && /^Rarity\s+(?:==\s*)?Normal\s*$/i.test(stripComment(rarity));
+    const clean = stripComment(classLine);
+    if (/^Class\s*(!=|<|>)/i.test(clean)) return false;
+    return classNames.some((name) => quotedValues(clean).includes(name));
+  });
+  const lines = parsed.lines;
+  let changed = 0;
+  for (const block of [...blocks].sort((a, b) => b.start - a.start)) {
+    let clone = [...block.lines];
+    // Narrow copied Class-level rules without duplicate Rarity conditions.
+    const rarityIndex = clone.findIndex((line) => /^\s*Rarity\b/i.test(stripComment(line)));
+    if (rarityIndex >= 0) clone[rarityIndex] = "\tRarity Normal";
+    else clone.splice(1, 0, "\tRarity Normal");
+    clone.splice(1, 0, `\tBaseType == "${item.baseType.replaceAll('"', '')}"`);
+    // Retain original regional/level/quality gates and the unchanged original rule.
+    clone = replaceSound(clone, descriptor);
+    clone[0] += ` # FIXLGS normal sound override · ${item.id}`;
+    lines.splice(block.start, 0, ...clone, "");
+    changed++;
+  }
+  return { text: lines.join("\n"), changed };
 }
 
 function selectedGearClasses(state: Record<string, boolean>, rarity: "rare" | "magic") {
@@ -663,7 +867,7 @@ function buildGearMode(baseText: string, rarity: "rare" | "magic", tiers: Record
   out.push(
     `Hide # FIXLGS ${rarityName} mode fallback`,
     `\tRarity ${rarityName}`,
-    `\tClass == ${classes.map((value) => `"${value}"`).join(" ")}`,
+    `\tClass == ${allClasses.map((value) => `"${value}"`).join(" ")}`,
     "",
   );
   return out;
@@ -724,6 +928,12 @@ export function buildCustomizedFilter(input: FilterExportInput): FilterExportRes
   const notes: string[] = [];
   const usedSoundChoices = new Set<ExportSoundChoice>();
 
+  for (const [target, choice] of Object.entries(input.soundState)) {
+    if (choice !== "default" && !input.soundDescriptors[choice]) {
+      throw new Error(`사운드 '${target}'의 MP3 연결 정보를 찾을 수 없습니다. 사운드를 다시 선택해주세요.`);
+    }
+  }
+
   const descriptorFor = (choice?: ExportSoundChoice) => {
     if (!choice || choice === "default") return undefined;
     const descriptor = input.soundDescriptors[choice];
@@ -747,8 +957,9 @@ export function buildCustomizedFilter(input: FilterExportInput): FilterExportRes
       changedRules += result.changed;
       continue;
     }
-    if (state.enabled && (state.importance !== "default" || choice !== "default")) {
-      const result = transformExceptionalCustomization(text, item, state, descriptor);
+    if (state.enabled && (state.enabled !== baseline || state.visibilityExplicit || state.importance !== "default" || choice !== "default")) {
+      const result = transformExceptionalCustomization(text, item, state, descriptor, state.enabled !== baseline || state.visibilityExplicit === true);
+      if (!result.changed && (state.enabled !== baseline || state.importance !== "default" || choice !== "default")) notes.push(`${item.labelKo ?? item.label}: 특출난 원본 규칙을 찾지 못했습니다.`);
       text = result.text;
       changedRules += result.changed;
     }
@@ -769,7 +980,7 @@ export function buildCustomizedFilter(input: FilterExportInput): FilterExportRes
 
     // NS/default keeps NeverSink's original conditional rule.
     // Choosing a custom importance means the user's override wins, so do not keep the NS conditional gate.
-    if (state.enabled && state.importance !== "default" && baselineStatus === "conditional") {
+    if (state.enabled && !state.visibilityExplicit && state.importance !== "default" && baselineStatus === "conditional") {
       const rule = buildShowRule(item, item.labelKo ?? item.label, state.importance, descriptor, input.base.text);
       if (rule.length) {
         topOverrides.push(...rule);
@@ -781,7 +992,7 @@ export function buildCustomizedFilter(input: FilterExportInput): FilterExportRes
     if (item.baseType && item.gemLevel == null) {
       // Checkbox is a hard user visibility override. NeverSink's original Show/Hide status is
       // only the starting state; once the user flips the switch, the generated rule must win.
-      if (state.enabled !== baseline) {
+      if (state.enabled !== baseline || state.visibilityExplicit === true) {
         const rule = buildVisibilityOverrideRule(item, state.enabled, state.importance, descriptor, input.base.text);
         if (rule.length) {
           topOverrides.push(...rule);
@@ -793,9 +1004,33 @@ export function buildCustomizedFilter(input: FilterExportInput): FilterExportRes
       text = result.text;
       changedRules += result.changed;
       if (result.handled) continue;
+      // Some newer item bases are tiered by NeverSink's earlier global
+      // sections (e.g. New League Unknown Items) rather than the category
+      // sourceSection carried by the UI. Only sound-only needs this fallback.
+      if (descriptor && state.enabled === baseline && !state.visibilityExplicit && state.importance === "default") {
+        const scoped = transformReferencedSoundFallback(text, item, descriptor);
+        if (scoped.changed) {
+          text = scoped.text;
+          changedRules += scoped.changed;
+          continue;
+        }
+        const classScoped = transformClassSoundFallback(text, item, descriptor);
+        if (classScoped.changed) {
+          text = classScoped.text;
+          changedRules += classScoped.changed;
+          continue;
+        }
+      }
     }
 
     if (item.gemLevel != null || item.waystoneTier != null) {
+      if (descriptor && state.importance === "default" && state.enabled === baseline && !state.visibilityExplicit) {
+        const soundResult = transformNumericSoundInPlace(text, item, descriptor);
+        text = soundResult.text;
+        changedRules += soundResult.changed;
+        if (!soundResult.changed) notes.push(`${item.labelKo ?? item.label}: 원본 표시 규칙에서 사운드를 지정할 위치를 찾지 못했습니다.`);
+        continue;
+      }
       const rules = numericOverrideBlocks(input.base.text, item, state, baseline, descriptor);
       if (rules.length) {
         topOverrides.push(...rules);
@@ -804,8 +1039,12 @@ export function buildCustomizedFilter(input: FilterExportInput): FilterExportRes
       continue;
     }
 
-    const changed = state.enabled !== baseline || state.importance !== "default" || choice !== "default";
+    const changed = state.enabled !== baseline || state.visibilityExplicit === true || state.importance !== "default" || choice !== "default";
     if (!changed) continue;
+    if (state.enabled === baseline && !state.visibilityExplicit && state.importance === "default" && choice !== "default") {
+      notes.push(`${item.labelKo ?? item.label}: 원본 표시 조건을 유지하면서 사운드를 지정할 규칙을 찾지 못했습니다.`);
+      continue;
+    }
     const rule = state.enabled
       ? buildShowRule(item, item.labelKo ?? item.label, state.importance, descriptor, input.base.text)
       : buildHideRule(item, item.labelKo ?? item.label);
@@ -830,7 +1069,7 @@ export function buildCustomizedFilter(input: FilterExportInput): FilterExportRes
     // Normal BaseType checkboxes are hard visibility overrides, exactly like the main item lists.
     // Many Normal bases are controlled by Class-level NeverSink rules rather than an exact BaseType
     // block, so split-in-place alone cannot guarantee the user's checkbox choice.
-    if (enabled !== baseline) {
+    if (enabled !== baseline || input.normalGearExplicit?.[item.id] === true) {
       if (!enabled) {
         const rule = buildHideRule(pseudo, `Normal visibility override · ${item.baseType}`);
         if (rule.length) {
@@ -862,6 +1101,12 @@ export function buildCustomizedFilter(input: FilterExportInput): FilterExportRes
     const result = transformBaseTypeItem(text, pseudo, { enabled, importance }, baseline, descriptor, "Normal");
     text = result.text;
     changedRules += result.changed;
+    if (!result.changed && descriptor && enabled === baseline && importance === "default") {
+      const fallback = transformNormalSoundFallback(text, pseudo, item.classNames ?? [], descriptor);
+      text = fallback.text;
+      changedRules += fallback.changed;
+      if (!fallback.changed) notes.push(`${item.baseType}: NeverSink 표시 조건을 보존한 사운드 적용 지점을 찾지 못했습니다.`);
+    }
   }
 
   const gearOverrides = [
@@ -870,16 +1115,22 @@ export function buildCustomizedFilter(input: FilterExportInput): FilterExportRes
     ...buildGearMode(input.base.text, "magic", input.magicTiers, input.magicGear, input.soundState, input.soundDescriptors),
   ];
 
-  // Register every assigned non-default sound so the ZIP collector cannot omit an
-  // MP3 that the user selected. Item sounds are normally registered by descriptorFor(),
-  // while gear builders emit paths directly; this final pass safely covers both paths.
-  for (const choice of Object.values(input.soundState)) {
-    if (choice === "default") continue;
-    if (input.soundDescriptors[choice]) usedSoundChoices.add(choice);
-  }
+  // Never package an MP3 for a setting whose rule could not be materialized.
+  // Stop instead of reporting a successful download that ignores user selections.
+  if (notes.length) throw new Error(`필터 적용 불일치 ${notes.length}건: ${notes.slice(0, 3).join(" / ")} 다운로드를 중단했습니다.`);
+
   text = insertAfterExceptional(text, gearOverrides);
   text = insertTop(text, topOverrides);
   if (gearOverrides.length) changedRules += 1;
+  // Only package MP3 assets referenced by the fully assembled filter.
+  for (const choice of Object.values(input.soundState)) {
+    const sound = input.soundDescriptors[choice];
+    if (choice !== "default" && sound && text.includes(sound.filterPath)) usedSoundChoices.add(choice);
+  }
+  for (const choice of [...usedSoundChoices]) {
+    const sound = input.soundDescriptors[choice];
+    if (!sound || !text.includes(sound.filterPath)) usedSoundChoices.delete(choice);
+  }
 
   const banner = `# FIXLGS EXPORT\n# BASE: NeverSink ${input.base.id}\n# VERSION: ${input.base.version}\n# CUSTOMIZED: YES\n`;
   if (changedRules > 0 && !text.startsWith("# FIXLGS EXPORT")) text = `${banner}${text}`;

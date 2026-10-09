@@ -1,0 +1,53 @@
+FIXLGS POE2 V215 - FILTER SOUND FIX / VERIFICATION REPORT
+기준 프로젝트: V213 PoB 최종본 + V214 필터 안전 패치
+기준 필터: NeverSink 0.10.4 / 0-SOFT ~ 6-UBER-PLUS-STRICT
+상태: 검증용 후보본. Next.js 프로덕션 빌드/인게임 검증은 미완료.
+
+수정 1. 사운드 선택 시 실제 Show 규칙과의 연결 보완
+- NeverSink 원본의 sourceSection 메타데이터 밖에 있는 BaseType은 전역 규칙에서 확인
+- BaseType 부분 문자열(예: "Lesser")을 사용하는 플라스크는 Class/AreaLevel/Quality 조건을 유지한 복제로 처리
+- 원본에서 BaseType 개별 목록이 아닌 Class(호신부·맵조각·탐험일지 등)로 처리하는 경우에는 해당 Show 규칙을 좁혀 복제
+- 기존 Hide 규칙에는 사운드를 붙여도 재생되지 않으므로 사운드 단독 변경에서는 Hide 블록을 복제하지 않음
+- 원본 NS 조건부 가시성을 사운드 변경만으로 임의로 바꾸지 않음
+
+수정 2. 원본이 숨기는 아이템의 사용자 선택 처리
+- 특정 엄격도에서 사운드 단독 변경이 가능한 원본 Show 규칙이 없다면 사운드 선택 즉시 안내
+- '표시 ON + 사운드' 변경에 동의한 경우만 visibilityExplicit=true 적용
+- 거절 시 해당 변경은 수행하지 않음
+- 예전 저장본에 불가능한 조합이 남아 있으면 저장/다운로드 시점에도 동일한 복구 선택을 제공
+- 설치 중 복구한 명시적 표시 상태는 저장 슬롯에도 함께 보존
+
+테스트 (V215 필터 생성 함수 실제 실행)
+- 전체 1,128개 기본 항목 × 7단계 = 7,896개 사운드 단독 설정
+  · 원본 Show 및 조건을 유지한 적용: 7,664건
+  · NS 원본에 가능한 Show가 없어 확인 필요: 232건
+  · 사용자 명시적 표시 ON 동의 후 재생 가능 Show+사운드 생성: 232/232건
+- 무수정 7단계 파일 바이트 일치: 7/7
+- 미가공 젬 42종 × 7단계 × 표시/숨김: 588/588
+- 일반 장비 807종 × 7단계 사운드 생성: 5,649/5,649
+- 회귀 검사(filter-regression.cjs) 전체 통과
+- 대표 사례: 완벽한 룬, 하위 생명력 플라스크, 정화의 호신부, 고대 위기 조각, 고유 룬 쇠스랑, 탐험 일지, 미가공 스킬 젬 19레벨 검증
+- TypeScript 필터 엔진(filterExport/filterData/neversinkBase) strict 타입 검사 통과
+- FilterCustomizer TSX 및 filterExport TS 파싱 검사 통과
+- V213 PoB 핵심 파일 21개와 파일 내용 바이트 비교: 21/21 일치
+
+남은 검증
+- npm ci가 이 컨테이너에서 완료되지 않아 정식 Next.js 빌드 성공 여부는 확인 불가.
+  · npm --offline: 패키지 캐시 부족(ENOTCACHED)
+  · npm 온라인 시도: npm CLI 'Exit handler never called' 종료
+- 브라우저의 폴더 접근 권한, 실제 다운로드/ZIP, 저장본 복구 팝업의 조작 검증
+- PoE2 인게임 실제 필터 로드 및 모든 아이템의 첫 일치 규칙 확인
+- 클래스 기반 폴백은 NeverSink의 기존 Class 조건을 복제한 코드 검사 결과임. 실제 게임 아이템 분류가 다르면 기대한 사운드가 재생되지 않을 수 있으므로 인게임 대표 확인 필요.
+
+기존 기능 유지
+- NeverSink 원본 0~6단계 미수정 출력
+- V214의 미가공 젬/레어·매직/일반 장비 수정 유지
+- V177 필터 폴더 안내 팝업/문서 시작 기능 유지
+- V213 PoB 계산/UI/데이터 변경 없음
+- 사이트의 외부 API/유료 서버/상시 백엔드 추가 없음
+
+재현 명령 (npm ci 가능 환경에서)
+  node scripts/filter-regression.cjs
+  node scripts/filter-v215-safety.cjs
+  node scripts/filter-v215-normal-matrix.cjs
+  npm run build

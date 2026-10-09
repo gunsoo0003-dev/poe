@@ -1,0 +1,52 @@
+FIXLGS POE2 / V214 사전 오류 예방·수정 검증 기록
+기준: V213 PoB 최종본 (fix-pob_POE2_MAIN_V213_VERCEL_TS_BUILD_FIX(1).zip)
+2026-10-10 / 필터 원본 NeverSink 0.10.4, 0-SOFT ~ 6-UBER-PLUS-STRICT
+상태: 코드 검증용 후보본 (게임 적용 및 정식 Next.js 빌드 미확인)
+
+[수정 전 예방 점검 원칙]
+1. V213 PoB 소스, 데이터, 엔진 보존. 필터 관련 TSX/TS 및 팝업 CSS 외 수정 금지.
+2. 사용자 변경이 없으면 NeverSink 원본을 바이트 그대로 유지.
+3. 사용자가 조작한 항목만 정확히 override하고, 원본 조건부 표시를 사운드 변경만으로 강제 Show/Hide 하지 않음.
+4. 명시적 ON/OFF는 NS 조건부 기본 OFF/ON과 구별해 로컬 저장본에도 남김.
+5. 무효 사운드·기본 규칙 미매칭은 침묵하지 않고 생성 중지 및 대상 표시.
+6. 0~6단계와 필터 규칙 우선순위 충돌 사례를 구분해 검사하고, 게임에서 검증하지 못한 사항은 정상 판정 금지.
+
+[발견 및 수정한 위험]
+A. GemLevel 19 등 비교 연산자가 없는 NeverSink 숫자 문법을 등호로 해석. 알 수 없는 문법은 무조건 참으로 간주하지 않음.
+B. 미가공 젬의 조건부 체크값(false)과 명시적 Hide(false)를 구별하도록 visibilityExplicit 상태 추가. NS 상태는 그대로, 명시적인 Show/Hide는 BaseType+GemLevel로 우선 규칙 생성. 조건부 기본 OFF에는 '완전히 숨김' 단축 버튼 추가.
+C. 젬/경로석의 사운드만 변경한 경우 원본 Show의 GemLevel/WaystoneTier, AreaLevel 조건을 유지한 복제 규칙을 원본 규칙 바로 앞에 삽입. 원본 Hide는 그대로 Hide 유지.
+D. 일반 장비의 원본 개별 BaseType 규칙이 없는 경우, 해당 Class의 원본 Show 규칙을 필요한 BaseType과 Rarity Normal로 정확히 제한해 조건부 복제. 원본 레벨/지역 조건 유지.
+E. 일반 장비의 명시적 OFF와 원본 조건부 OFF를 구분하도록 normalGearExplicit 추가. 기존 저장본은 해당 필드가 없으면 원본 동작 그대로.
+F. 레어/매직 선택 단계 모드의 fallback Hide 적용 범위를 선택한 Class만이 아니라 관리대상 전체 장비 Class로 확장. 선택한 단계×선택한 Class만 Show.
+G. 최고 엄격도 6단계에서 #Show로 주석 처리된 고유 특출난 과퀄리티/과소켓 원본을 사용자 커스텀에 한해 활성화. 체크 해제의 원본 복귀 정책 유지.
+H. NeverSink 상위 섹션(2900 등)과 하위 섹션(2901~ 등) 매칭을 정상 처리.
+I. 연결 안 된 개인 MP3 등은 오류를 띄우고 필터 다운로드 중단. 최종 필터에서 참조하는 소리 파일만 ZIP에 포함.
+J. 폴더 직접 설치: 클릭 → 경로 안내 → 문서 시작. 선택 폴더 이름이 Path of Exile 2가 아니면 경고 후 사용자가 확인해야 저장.
+
+[수정 후 자동 검사]
+- 원본 무수정 7단계: 7/7 파일 내용 원본과 일치.
+- 미가공 젬 42종 × NeverSink 7단계: Show 294/294, 명시적 Hide 294/294 규칙 생성 검사 통과.
+- 미가공 젬 사운드 단독 294건: 261건 원본 조건 유지 사운드 규칙 생성, 33건은 원본에서 적합한 Show 조건을 확보하지 못해 생성 차단 (강제 Show 없음).
+- 일반 장비 807 베이스 × 0-SOFT 사운드 단독: 807/807 해당 사운드 명령 생성, 누락 0.
+- 일반 장비 표본 144건 (0/3/6단계): 사운드 명령 생성 144건, 추가 누락 0.
+- 일반 분류 표본 sound-only 166건: 154건 변경, 12건 안전 미확인으로 생성 차단. 조용한 잘못된 Show/Hide 생성 대신 오류 표시.
+- 회귀 테스트: 원본보존, Gem 10 S, Gem Hide, Gem 19 sound-only, Wooden Club sound-only, 6단계 고유 특출난, 레어 fallback, normal explicit OFF, 레어 단계 ZIP 사운드, 누락 MP3 오류 등 모두 통과.
+- TypeScript TS/TSX 파싱 오류: 0건.
+- 압축본에서 PoB 최종본 파일은 V213 원본과 동일한 바이트 사용.
+
+[아직 검증되지 않은 항목]
+- 브라우저에서 실제 폴더선택/쓰기 권한/OneDrive 경로의 사용성 테스트.
+- 실제 게임에서 필터 로딩 오류 및 모든 젬/장비 드롭에 대한 첫 번째 일치 규칙 테스트.
+- Next.js npm install/npm run build: 실행 환경의 npm 패키지 다운로드가 완료되지 않아 정식 빌드 성공을 확인할 수 없음. 배포 전 반드시 검증해야 함.
+- 0~6단계 전체 1,128개 아이템의 모든 가능한 복합 규칙 조합 전수 검증(모든 조합은 무한에 가깝고 완전 판정 불가).
+- 조건부/원본 Hide 항목에서 sound-only 적용이 허용되지 않는 33개 젬 사례와 표본 12개 일반 아이템에 대한 정책/UI 개선.
+
+[다운로드 전 최종 권고]
+이 압축본은 V213을 보존하고 필터 쪽을 통합 수정한 검증용 후보본이다.
+실서비스 배포용 확정본으로 사용하기 전에 npm ci, npm run build, 브라우저 실사용, POE2 인게임 대표 드롭 테스트를 수행할 것.
+
+[재현 명령어: 프로젝트 폴더에서 npm ci 선행]
+node scripts/filter-regression.cjs
+node scripts/filter-matrix.cjs
+node scripts/filter-normal-audit.cjs
+npm run build
