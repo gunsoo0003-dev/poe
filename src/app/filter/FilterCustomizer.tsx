@@ -836,7 +836,7 @@ export default function FilterCustomizer() {
           });
           setSoundMessage(`${needsVisibility.length}개 항목 표시 ON + 사운드 적용`);
         } else {
-          setSoundMessage(selectedItem.gemLevel != null && choice !== "default"
+          setSoundMessage(selectedItem.gemLevel != null
             ? `사운드 적용 완료 · 미가공 젬 ${selectedItem.gemLevel}레벨은 지역과 관계없이 표시됩니다.`
             : "사운드 적용 완료 · 원본 표시 조건 유지");
         }
