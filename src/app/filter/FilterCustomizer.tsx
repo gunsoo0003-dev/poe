@@ -260,6 +260,35 @@ const SECTION_META: Array<{
   { id: "misc", label: "MISC", ko: "기타", description: "장비 아이템을 제외하고 마지막으로 직접 커스텀할 가치가 있는 골드와 키류를 모았습니다. 목록 밖 특수 드랍은 NeverSink 0-SOFT 원본 규칙을 그대로 유지합니다." },
 ];
 
+// 상단 안내는 선택한 NeverSink 원본에서 '완전히 숨김' 기능이 필요한 분류에만 표시합니다.
+// 특정 분류를 하드코딩하지 않아 0~6단계의 조건부 항목 변경도 그대로 반영됩니다.
+const SECTION_ITEM_GROUPS: Partial<Record<SectionId, ItemGroup[]>> = {
+  exceptional: EXCEPTIONAL_GROUPS,
+  waystones: WAYSTONE_GROUPS,
+  "unique-armour": UNIQUE_ARMOUR_GROUPS,
+  unique: UNIQUE_GROUPS,
+  "other-unique": OTHER_UNIQUE_GROUPS,
+  tablets: TABLET_GROUPS,
+  jewels: JEWEL_GROUPS,
+  flasks: FLASK_GROUPS,
+  charms: CHARM_GROUPS,
+  currency: CURRENCY_GROUPS,
+  essence: ESSENCE_GROUPS,
+  delirium: DELIRIUM_GROUPS,
+  breach: BREACH_GROUPS,
+  abyss: ABYSS_GROUPS,
+  atziri: ATZIRI_GROUPS,
+  fragments: FRAGMENT_GROUPS,
+  runes: RUNE_GROUPS,
+  ritual: RITUAL_GROUPS,
+  soulcores: SOUL_CORE_GROUPS,
+  idols: IDOL_GROUPS,
+  uncutgems: UNCUT_GEM_GROUPS,
+  expedition: EXPEDITION_GROUPS,
+  gems: LINEAGE_GEM_GROUPS,
+  misc: MISC_GROUPS,
+};
+
 const ALL_ITEMS = [...EXCEPTIONAL_GROUPS, ...WAYSTONE_GROUPS, ...UNIQUE_ARMOUR_GROUPS, ...UNIQUE_GROUPS, ...OTHER_UNIQUE_GROUPS, ...TABLET_GROUPS, ...JEWEL_GROUPS, ...FLASK_GROUPS, ...CHARM_GROUPS, ...CURRENCY_GROUPS, ...ESSENCE_GROUPS, ...DELIRIUM_GROUPS, ...BREACH_GROUPS, ...ABYSS_GROUPS, ...ATZIRI_GROUPS, ...FRAGMENT_GROUPS, ...RUNE_GROUPS, ...RITUAL_GROUPS, ...SOUL_CORE_GROUPS, ...IDOL_GROUPS, ...UNCUT_GEM_GROUPS, ...EXPEDITION_GROUPS, ...LINEAGE_GEM_GROUPS, ...MISC_GROUPS].flatMap((group) => group.items);
 
 function makeInitialItemState(): Record<string, ItemState> {
@@ -617,6 +646,12 @@ export default function FilterCustomizer() {
   }, [selectedStrictness]);
 
   const section = SECTION_META.find((entry) => entry.id === activeSection) ?? SECTION_META[0];
+  const showConditionalHideGuide = (SECTION_ITEM_GROUPS[activeSection] ?? []).some((group) =>
+    group.items.some((item) => {
+      const baseline = neverSinkBaseline?.items[item.id];
+      return baseline?.status === "conditional" && !baselineEnabled(baseline);
+    }),
+  );
   const selectedBase = NEVER_SINK_STRICTNESSES.find((entry) => entry.id === selectedStrictness) ?? NEVER_SINK_STRICTNESSES[0];
   const selectedItem = ALL_ITEMS.find((item) => item.id === selectedId);
   // Fast Refresh can preserve itemState from the previous build when a new category is added.
@@ -2376,6 +2411,11 @@ export default function FilterCustomizer() {
             <span>FIX POE2 · NEVER SINK CUSTOMIZER</span>
             <h1>{section.label}</h1>
             <p>{section.description.replaceAll("0-SOFT", selectedStrictness)}</p>
+            {showConditionalHideGuide && (
+              <p className="filter-v2-conditional-guide">
+                <strong>NS 조건부</strong>는 NeverSink가 젬 레벨·지역 등 조건에 따라 표시 여부를 결정한다는 뜻입니다. 체크가 꺼져 있어도 조건에 따라 보일 수 있습니다. <strong>완전히 숨김</strong>을 누르면 해당 항목을 조건과 관계없이 항상 숨기며 <strong>FIX 숨김</strong>으로 표시됩니다. 개별 초기화하면 NS 원본으로 돌아갑니다.
+              </p>
+            )}
           </div>
 
           <div className="filter-v2-head-actions">

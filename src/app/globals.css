@@ -8232,6 +8232,17 @@ footer strong { color: #a99ab8; }
   line-height: 1.7;
 }
 
+
+/* V218: NS 조건부 / 완전히 숨김 상단 설명 */
+.filter-v2-editor-head .filter-v2-conditional-guide {
+  margin-top: 8px;
+  color: rgba(255,255,255,.58);
+}
+.filter-v2-editor-head .filter-v2-conditional-guide strong {
+  color: #eac39b;
+  font-weight: 700;
+}
+
 .filter-v2-head-actions {
   width: 210px;
   display: flex;
