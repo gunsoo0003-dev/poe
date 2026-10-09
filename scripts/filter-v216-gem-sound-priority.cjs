@@ -20,7 +20,7 @@ for (const stage of stages){
   const fallback=top.split('\n').findIndex(line=>line.startsWith(`Show # FIXLGS guaranteed gem sound · ${gem.id}`));
   assert(fallback>=0,`missing top-level fallback ${stage} ${gem.id}`);
   const segment=top.split('\n').slice(fallback, fallback+14).join('\n');
-  assert(segment.includes(expected)&&segment.includes(`BaseType == "${gem.baseType}"`)&&segment.includes(sound),`incorrect fallback ${stage} ${gem.id}`);
+  assert(segment.includes(expected)&&segment.includes(`BaseType "${gem.baseType}"`)&&segment.includes(sound),`incorrect fallback ${stage} ${gem.id}`);
   assert(generated.usedSoundChoices.includes('masitda'),`sound packaging missing ${stage} ${gem.id}`);
   assert(!segment.includes('AreaLevel'),`unexpected AreaLevel fallback ${stage} ${gem.id}`);
   for(const area of [1,60,64,65,70,78,79,80,90]){
@@ -30,7 +30,7 @@ for (const stage of stages){
     let found=false;
     for(const block of blocks){
       const lines=block.split('\n').map(x=>x.trim());
-      if(!lines.includes(expected)||!lines.includes(`BaseType == "${gem.baseType}"`)) continue;
+      if(!lines.includes(expected)||!lines.includes(`BaseType "${gem.baseType}"`)) continue;
       const lower=lines.find(x=>/^AreaLevel\s*<=/.test(x));
       const upper=lines.find(x=>/^AreaLevel\s*>=/.test(x));
       if(lower&&area>Number(lower.match(/\d+/)[0]))continue;

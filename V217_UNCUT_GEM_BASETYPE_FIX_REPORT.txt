@@ -1,0 +1,41 @@
+FIXLGS POE2 V217 - UNCUT GEM BASETYPE RUNTIME MATCH FIX
+날짜: 2026-10-10
+기준: V216_TS_BUILD_FIX
+NeverSink: 0.10.4 0-SOFT ~ 6-UBER-PLUS-STRICT
+
+원인
+- V216 커스텀 규칙은 Uncut Skill/Spirit/Support Gem에 'BaseType == "Uncut ... Gem"'을 생성함.
+- 게임 아이템의 BaseType에 '(Level 10)' 등의 레벨 접미사가 포함되는 사례에서 == 매칭이 실패함.
+- NeverSink 원본은 'BaseType "Uncut ... Gem"' 부분 일치 규칙을 사용함.
+- 지역 레벨 우선순위만 검사하던 과거 자동 테스트는 레벨 접미사 이름으로 실제 선택자를 평가하지 않아서 오류를 놓침.
+
+수정
+- 미가공 젬(gemLevel 필드가 있는 아이템)에 한해 BaseType 선택자를 NeverSink와 동일한 부분 일치 문법으로 변경.
+- GemLevel == N을 유지하여 지정한 젬 레벨에만 적용.
+- 음성만 변경, 중요도 변경, 표시/숨김 변경, 스타일+음성 동시 변경 모두 동일 식별 적용.
+- NS 무수정 시 NeverSink 원본 그대로 출력.
+- 다른 아이템에는 기존 BaseType == 문법 유지.
+- PoB 소스/UI 변경 없음.
+
+검증
+- 42개 젬 항목 × 7 NeverSink 단계 × 9 지역 레벨 = 사운드 우선 매칭 2,646건 통과.
+- 42개 젬 항목 × 7 단계 × 3 설정 × 2 지역 레벨 = 표시/숨김/중요도 1,764건 통과.
+- 42개 젬 항목 × 7 단계 = 스타일+사운드 복합 설정 검증 통과.
+- 실제 이름 예시: Uncut Skill Gem (Level 10), Uncut Spirit Gem (Level 10), Uncut Support Gem (Level 3).
+- 인접 레벨과 다른 젬 종류에 잘못 적용되는 현상 없음(가상 규칙 평가).
+- NS 미수정 7단계 출력 바이트 일치.
+- filter-regression.cjs, filter-v215-safety.cjs, filter-v215-normal-matrix.cjs, filter-v216-gem-sound-priority.cjs 모두 통과.
+- 다른 분류 대표 11그룹 x 7단계 x 3설정 = 231건 출력이 V216과 정확히 일치.
+- filterExport.ts TypeScript strict/typecheck 통과 (ES2023 라이브러리).
+
+미검증
+- 완전한 Next.js/Vercel 빌드 (작업 환경 내 npm 패키지 미설치).
+- 실제 게임의 필터 파서 및 드롭 사운드 확인.
+- 사용자 로컬에 이미 저장된 구버전 .filter 및 MP3가 바뀌었는지 브라우저 확인.
+
+사용자 검증 안내
+1. GitHub 배포 후 Vercel READY 확인.
+2. 필터 사이트에서 미가공 젬에 지정했던 커스텀 사운드를 확인하고 필터를 다시 설치.
+3. 게임 필터 목록에서 설치한 FIXLGS 필터를 다시 선택/갱신.
+4. 새로 드롭된 같은 종류/레벨 젬에서 사운드 확인.
+5. 문제 발생 시 실제 저장된 .filter 파일과 젬 종류/레벨을 전달하면 첫 일치 규칙까지 추적 가능.

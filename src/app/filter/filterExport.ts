@@ -145,13 +145,15 @@ function blockContainsBaseType(block: RuleBlock, baseType: string) {
   return block.lines.some((line) => /^\s*BaseType\b/i.test(stripComment(line)) && quotedValues(line).includes(baseType));
 }
 
-function replaceBaseTypeWithOnly(lines: string[], baseType: string) {
+function replaceBaseTypeWithOnly(lines: string[], baseType: string, partialMatch = false) {
   return lines.map((line) => {
     if (!/^\s*BaseType\b/i.test(stripComment(line)) || !quotedValues(line).includes(baseType)) return line;
     const clean = stripComment(line);
-    const operator = clean.match(/^BaseType\s*(!=|==|=)?/i)?.[1] ?? "==";
+    // Uncut Gem base names can contain a level suffix in-game. Follow the
+    // original NeverSink substring selector for gems, not exact BaseType ==.
+    const operator = partialMatch ? "" : (clean.match(/^BaseType\s*(!=|==|=)?/i)?.[1] ?? "==");
     const indent = line.match(/^\s*/)?.[0] ?? "\t";
-    return `${indent}BaseType ${operator} "${baseType.replaceAll('"', "")}"`;
+    return `${indent}BaseType${operator ? ` ${operator}` : ""} "${baseType.replaceAll('"', "")}"`;
   });
 }
 
@@ -324,7 +326,7 @@ function numericConditionMatches(line: string, field: string, value: number) {
 
 function cloneNumericRule(block: RuleBlock, item: FilterItem, importance: string, descriptor: ExportSoundDescriptor | undefined, baseText: string) {
   let lines = [...block.lines];
-  if (item.baseType) lines = replaceBaseTypeWithOnly(lines, item.baseType);
+  if (item.baseType) lines = replaceBaseTypeWithOnly(lines, item.baseType, item.gemLevel != null);
   if (item.gemLevel != null) {
     lines = lines.filter((line) => !/^\s*GemLevel\b/i.test(stripComment(line)));
     const actionIndex = 0;
@@ -344,7 +346,7 @@ function cloneNumericRule(block: RuleBlock, item: FilterItem, importance: string
 
 function simpleSelector(item: FilterItem) {
   const lines: string[] = [];
-  if (item.baseType) lines.push(`\tBaseType == "${item.baseType.replaceAll('"', "")}"`);
+  if (item.baseType) lines.push(`\tBaseType${item.gemLevel != null ? "" : " =="} "${item.baseType.replaceAll('"', "")}"`);
   if (item.classNames?.length) lines.push(`\tClass == ${item.classNames.map((value) => `"${value.replaceAll('"', "")}"`).join(" ")}`);
   const rarityCondition = inferredRarityCondition(item);
   if (rarityCondition) lines.push(`\t${rarityCondition}`);
@@ -656,7 +658,7 @@ function transformNumericSoundInPlace(baseText: string, item: FilterItem, descri
     // For broad range rules retain the untouched original after the narrowed clone.
     if (!/^Show\b/i.test(block.lines[0].trim())) continue;
     let clone = [...block.lines];
-    if (item.baseType) clone = replaceBaseTypeWithOnly(clone, item.baseType);
+    if (item.baseType) clone = replaceBaseTypeWithOnly(clone, item.baseType, item.gemLevel != null);
     if (item.gemLevel != null) {
       clone = clone.filter((line) => !/^\s*GemLevel\b/i.test(stripComment(line)));
       clone.splice(1, 0, `\tGemLevel == ${item.gemLevel}`);
