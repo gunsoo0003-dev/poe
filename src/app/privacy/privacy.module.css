@@ -1,0 +1,15 @@
+
+.page { min-height:100vh; background:radial-gradient(ellipse at 18% 0%,#1b1830 0%,#0a0a12 48%,#07080d 100%); color:#eae8ef; font-family:Arial,"Noto Sans KR",sans-serif; }
+.shell { max-width:990px; margin:0 auto; padding:0 22px; }
+.topbar {display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:76px;border-bottom:1px solid #393343;}
+.brand {font-size:17px;font-weight:800;letter-spacing:.08em;color:#f0eef4;text-decoration:none;}.brand span{color:#c6a6f0;}
+.nav {display:flex;align-items:center;gap:20px;}.nav a {color:#bdb6c9;font-size:13px;text-decoration:none;}.nav a:hover,.footer a:hover{color:white;}
+.article {padding:45px 0 60px;}.kicker{color:#b99add;font-size:11px;font-weight:800;letter-spacing:.17em;}
+.article h1{font-size:clamp(29px,4vw,42px);font-weight:800;letter-spacing:-.04em;margin:12px 0 4px;line-height:1.25;}
+.lead{font-size:15px;color:#e5d3f1;margin:0 0 7px;}.date{font-size:12px;color:#b0aab6;margin:0;}
+.summary {margin:27px 0 28px;background:#201b2b;border-left:3px solid #b48ce2;padding:18px 20px;}.summary strong{font-size:14px;color:#ead1ff;}.summary p{font-size:13px;line-height:1.8;color:#ded7e7;margin:6px 0 0;}
+.section {border-top:1px solid #302b37;padding:22px 0 18px;}.section h2,.english h2 {font-size:17px;line-height:1.5;letter-spacing:-.02em;margin:0 0 12px;font-weight:700;color:#f2edf7;}.section p,.english p{font-size:13px;line-height:1.9;color:#c8c2d0;margin:8px 0;word-break:keep-all;overflow-wrap:anywhere;}
+.section a,.english a {color:#d1abfa;text-decoration:underline;text-underline-offset:2px;}.section code,.english code{font-family:Consolas,monospace;color:#dfc0fc;font-size:12px;}.section strong,.english strong{color:#e8d7f4;font-weight:700;}
+.english {border-top:1px solid #504063;margin-top:27px;padding-top:28px;}.english h2{margin:8px 0 10px;}.english p{word-break:normal;}
+.footer{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:18px 0 32px;border-top:1px solid #302b37;font-size:12px;color:#9b95a7;}.footer a{color:#d0b1eb;text-decoration:none;}
+@media (max-width:560px){.shell{padding:0 17px;}.topbar{min-height:66px;}.nav{gap:13px;}.nav a{font-size:12px;}.article{padding-top:30px;}.section{padding:20px 0 15px;}.summary{padding:16px 17px;}}

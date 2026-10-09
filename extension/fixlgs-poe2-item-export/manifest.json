@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "FIXLGS POE2 Item Export",
+  "version": "0.4.0",
+  "description": "Export POE2 trade listings as English PoB-compatible items via the official English trade endpoint.",
+  "permissions": [
+    "clipboardWrite"
+  ],
+  "host_permissions": [
+    "https://www.pathofexile.com/*",
+    "https://pathofexile.com/*",
+    "https://poe.kakaogames.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.pathofexile.com/trade2/*",
+        "https://pathofexile.com/trade2/*",
+        "https://poe.kakaogames.com/trade2/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "page-hook.js"
+      ],
+      "matches": [
+        "https://www.pathofexile.com/*",
+        "https://pathofexile.com/*",
+        "https://poe.kakaogames.com/*"
+      ]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}

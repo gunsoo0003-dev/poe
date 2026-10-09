@@ -1,0 +1,20 @@
+{
+  "description": "Executed in Node with the vendored Lua WASM, imported ResurrectForbidden PoB Export, and FIXLGS-EN-V004 Grand Spear adapter output. Not a claim of all-mod compatibility.",
+  "character": "ResurrectForbidden",
+  "skillGroups": {"twister": 14, "whirlingSlash": 12},
+  "weaponSetOne": {
+    "twisterDpsBefore": 87406.648538876,
+    "twisterDpsAfter": 220056.93165147,
+    "equippedSlot": "Weapon 1",
+    "equippedItemId": 20,
+    "calculatedItemMatches": true,
+    "parsedModCount": 7
+  },
+  "weaponSetTwo": {
+    "twisterDpsOriginal": 306057.75878128,
+    "whirlingSlashDpsBefore": 10450.176121947,
+    "whirlingSlashDpsAfter": 10450.176121947
+  },
+  "checks": ["original PoB export loads", "selected skill groups calculate and restore main group", "weapon set switches change PoB output", "custom Grand Spear parsed and equipped", "MAIN calculated item identity agrees", "baseline and after Twister DPS differ", "secondary group DPS restored in original weapon set"],
+  "limits": ["Next.js production build not verified in runner", "all explicit and rune modifiers not independently validated", "other characters not tested"]
+}

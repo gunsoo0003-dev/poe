@@ -1,0 +1,36 @@
+V175 - PoB2 Headless Engine Phase 0
+
+Goal
+- Reuse the official PathOfBuilding-PoE2 calculation engine instead of reimplementing formulas in TypeScript.
+- Establish a repeatable local headless-engine boot/calculation smoke test before wiring character/import/item replacement.
+
+Added
+1) scripts/setup-pob2-engine.ps1
+   - Clones/updates official PathOfBuildingCommunity/PathOfBuilding-PoE2 dev branch into .pob2-engine
+   - Copies FIXLGS smoke bridge
+   - Detects standalone LuaJIT and runs smoke test when available
+2) scripts/test-pob2-engine.ps1
+   - Configures LUA_PATH / LUA_CPATH for PoB2 runtime
+   - Runs FIXLGS_Smoke.lua through LuaJIT
+3) engine/pob2/FIXLGS_Smoke.lua
+   - Loads official HeadlessWrapper.lua
+   - Creates a build and executes PoB2 BuildOutput
+   - Emits FIXLGS_POB2_READY plus baseline Life/Mana/ES/DPS fields
+4) src/lib/pob2-engine/headless.ts
+   - Node-side adapter for engine detection and smoke execution
+5) src/app/api/pob/engine-status/route.ts
+   - GET: engine readiness
+   - POST: execute smoke test
+6) .pob2-engine ignored from Git
+   - Keeps the large upstream PoB2 checkout out of the FIXLGS repository/deployment source.
+
+Important
+- This phase deliberately does NOT copy hundreds of MB of PoB2 into the project ZIP.
+- Production/Vercel execution architecture is not finalized in this phase.
+- The purpose is to prove the official PoB2 calculation engine can boot and calculate through a stable bridge on the development machine first.
+
+Next Phase after successful smoke
+- Build JSON/stdio bridge around the same headless process.
+- Load the current character/build.
+- Return selected mainOutput fields.
+- Paste/equip one exported trade item and calculate before/after delta.

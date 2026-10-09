@@ -1,0 +1,1 @@
+V180: Official PoB2 runtime executable is named Path{space}of{space}Building-PoE2.exe. Search both this literal filename and the spaced variant. Added 60s smoke-test timeout. Windows smoke test requires user machine; not validated here.

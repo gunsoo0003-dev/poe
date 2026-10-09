@@ -22,3 +22,11 @@ http://localhost:3000
 
 
 V040 notes: split the video section background from the lower hero artwork so the embed sits on its own backdrop while the guide/knight section starts below it.
+
+
+## PoB2 engine runtime
+FIXLGS uses the official `runtime/Path of Building-PoE2.exe` included in the cloned PoB2 repository for local engine smoke tests. No Scoop, winget, or standalone LuaJIT install is required.
+
+
+## PoB2 runtime setup note
+`npm run pob2:setup` now expands the official `runtime-win32.zip` automatically and locates the SimpleGraphic executable without assuming a fixed archive layout.

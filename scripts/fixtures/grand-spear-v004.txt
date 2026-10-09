@@ -1,0 +1,19 @@
+FIXLGS-EN-V004
+Rarity: RARE
+Spirit Edge
+Grand Spear
+Quality: 25
+Item Level: 82
+Implicits: 1
+25% increased [Melee] [Strike] Range with this weapon
++1 Suffix Modifier allowed (rune)
+Can roll Destruction modifiers (rune)
+[ShamanOnlyMods|Bonded]: +5% to all [ElementalDamage|Elemental] [Resistances] (rune)
++4.94% to [Critical|Critical Hit] Chance
+20% increased Explicit Fire Modifier magnitudes
+71% increased [Physical] Damage
+Adds 27 to 63 [Physical|Physical] Damage
++173 to [Accuracy|Accuracy] Rating
+Gain 56 Life per enemy killed
+[ManaLeech|Leeches] 6.15% of [Physical|Physical] Damage as Mana
+Adds 66 to 110 [Fire|Fire] Damage

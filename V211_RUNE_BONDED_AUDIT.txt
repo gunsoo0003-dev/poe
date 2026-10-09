@@ -1,0 +1,40 @@
+FIXLGS POE2 / V211 — PoB native rune + Bonded bridge
+
+Changed files:
+- src/app/pob/tradeToPob.ts
+- src/app/pob/pobCompare.ts
+- src/app/pob/web-engine/calc-worker.ts
+- src/app/pob/web-engine/calc-client.ts
+- scripts/test-v210-contract.cjs (updated expectation)
+- scripts/test-v211-rune-contract.cjs (new)
+
+Root cause:
+V210 deleted the official export's trailing '(rune)' marker before sending the item to PoB,
+thereby causing PoB to treat those lines as ordinary non-rune modifiers.
+It also treated 'Socketed item effects require PoB verification' as an unconditional warning.
+
+V211:
+- Preserve source rune/enchant modifiers as native {rune} and {enchant} lines.
+- Regroup into the native PoB Implicits section with a corrected count.
+- Preserve Bonded: condition prefix; PoB itself governs CanUseBondedModifiers.
+- Pass socket counts and unambiguous augment identities (exclude granted skills).
+- Audit the actual Lua Item.runeModLines after equip, including count and values.
+- Warn only for mismatches, unparsed rune lines, unknown Rune identities or an unsupported Bonded effect when active.
+- Do not warn merely because sockets are present.
+- Do not change PoB's Lua calculation algorithms.
+
+Verification:
+- V211 contract 14 checks: PASS
+- V210 existing contract regression: PASS
+- V209 skill audit regression: PASS
+- Targeted TypeScript check: PASS
+- Native Item.lua parsing: Grim Edge 2 rune lines; Honour Edge 3 rune lines: PASS
+- ResurrectForbidden + Honour Edge weapon set I native WASM calculation: PASS
+  Twister Set I 659677.5611 DPS; other set 306057.7588 DPS unchanged.
+- Complete Next.js bundle / user Chrome test: NOT verified here.
+
+Limitations:
+- Not all game mods have PoB implementations. If a condition-eligible Bonded line is
+  unparsed or a PoB rune reconstruction differs from export, show a warning.
+- Ambiguous augment slot identities are not fabricated; native parsing of tagged
+  exported rune lines is preserved instead.

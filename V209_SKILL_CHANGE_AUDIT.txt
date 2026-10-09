@@ -1,0 +1,12 @@
+V209 — Short item-granted skill changes (FIXLGS UI only)
+
+- PoB2 engine and all calculation logic are unchanged.
+- Before/after PoB socket group inventories are compared by slot + sorted active skill names, accounting for duplicate groups without depending on shifting group indexes.
+- Only single-skill groups appearing/disappearing in a replaced equipment slot can produce confirmed notices: "Spear Throw 제거" or "Skill Name 추가".
+- Same content in a different group order/index: no notice. No changes: no notice.
+- Multiple or unnamed active skills, non-replaced slots, or inconsistent two-set snapshots: "스킬 변경 확인 필요"; do not invent a reason.
+- The group API does not expose reliable support-gem identity, so V209 does not claim support-gem changes.
+- The PoB skill change comparison is performed only once for the character (not repeated in both weapon sets).
+- Existing warnings for unsupported modifiers or failed independent skills are retained.
+
+Validation: isolated TypeScript typecheck and 6 pure comparison scenarios pass. Previously successful V208 WASM group diagnostic established that the specific Spear Throw group is removed (21→20) when replacing the granting weapon. Full end-to-end V209 WASM attempt did not finish before timeout; no browser build has been verified.

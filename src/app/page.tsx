@@ -117,6 +117,7 @@ export default async function PoeHome() {
           <nav aria-label="푸터 메뉴">
             <Link href="/pob">POB</Link>
             <Link href="/filter">FILTER</Link>
+            <Link href="/privacy">개인정보처리방침</Link>
             <a href="#official-video">YOUTUBE</a>
           </nav>
           <p>Unofficial fan-made tools. Not affiliated with or endorsed by Grinding Gear Games.</p>

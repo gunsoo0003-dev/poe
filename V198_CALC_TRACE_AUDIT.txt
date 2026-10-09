@@ -1,0 +1,1 @@
+V198 calculation trace patch (not an end-to-end pass): equipItem now checks OnFrame failure, buildFlag, output revision increment and fresh mainOutput; engine-lab shows internal diagnostic. A successful delta and real ninja export import remain unverified.

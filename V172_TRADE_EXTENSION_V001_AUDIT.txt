@@ -1,0 +1,13 @@
+V172 / FIXLGS POE2 Item Export V001
+
+- Added extension/fixlgs-poe2-item-export
+- Manifest V3, supports pathofexile.com trade2 and poe.kakaogames.com trade2
+- Injects a page-world hook at document_start and observes fetch/XHR JSON responses
+- Detects item entries containing item data and stores them in page order / by id when available
+- Adds FIXLGS EXPORT buttons to likely trade result rows
+- Copies selected item as PoB-style text to clipboard
+- Adds bottom-right diagnostic status with captured item count and TEST #1 fallback
+- Added downloadable ZIP to public/downloads/FIXLGS_POE2_ITEM_EXPORT_V001.zip
+- START extension card now links to the downloadable prototype
+
+Important: V001 is a real-browser verification prototype. Exact Kakao DOM result-row mapping may need one selector adjustment after the first live test.

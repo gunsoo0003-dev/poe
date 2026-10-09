@@ -1,6 +1,11 @@
 "use client";
 
-import { FormEvent, MouseEvent, ReactNode, useMemo, useState } from "react";
+import { FormEvent, MouseEvent, ReactNode, useMemo, useState, useEffect } from "react";
+import { parseTradeItem, type TradeItem } from "./tradeItem";
+import { calculateGearDelta } from "./gearDelta";
+import { calculateComparison, getMeasuredSkill, type ComparisonResult, type SetSnapshots, type SetCalculation, type WeaponSet } from "./pobCompare";
+import { CalcClient } from "./web-engine/calc-client";
+import type { SkillsData } from "./web-engine/calc-api";
 import type { ImportedCharacter, ImportedCharacterStat, ImportedItem, ImportedSkill } from "./ninjaImport";
 
 const guideLinks = [
@@ -80,27 +85,93 @@ function weaponSlotMatches(cls: "weapon" | "offhand", set: 1 | 2, slot?: string)
   if (cls === "weapon") {
     return set === 1
       ? ["weapon", "weapon1", "mainhand", "mainhand1", "mainweapon"].includes(key)
-      : ["weapon2", "mainhand2", "mainweapon2"].includes(key);
+      : ["weapon2", "weapon1swap", "weaponswap", "mainhand2", "mainweapon2"].includes(key);
   }
   return set === 1
     ? ["offhand", "offhand1", "shield", "shield1"].includes(key)
-    : ["offhand2", "shield2"].includes(key);
+    : ["offhand2", "weapon2swap", "shield2"].includes(key);
 }
 
+// Persist weapon overrides by physical weapon set, not by the currently visible tab.
+const physicalSlotKey = (slot: string, set: 1 | 2) =>
+  slot === "weapon" || slot === "offhand" ? `${slot}-set-${set}` : slot;
 export default function Home() {
   const [screen, setScreen] = useState<"landing" | "game">("landing");
   const [ninjaUrl, setNinjaUrl] = useState("");
   const [importedCharacter, setImportedCharacter] = useState<ImportedCharacter | null>(null);
   const [importError, setImportError] = useState("");
   const [importing, setImporting] = useState(false);
+  const [exportCheck, setExportCheck] = useState<{ stage: string; message: string } | null>(null);
   const [hoveredItem, setHoveredItem] = useState<ImportedItem | null>(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 24, y: 24 });
   const [weaponSet, setWeaponSet] = useState<1 | 2>(1);
   const [simulationWeaponSet, setSimulationWeaponSet] = useState<1 | 2>(1);
-  const [simulationLinks, setSimulationLinks] = useState<Record<string, string>>({});
+  const [simulationItems, setSimulationItems] = useState<Record<string, TradeItem>>({});
   const [simulationSlot, setSimulationSlot] = useState<string | null>(null);
+  const [editingWeaponSet, setEditingWeaponSet] = useState<1 | 2>(1);
   const [simulationDraft, setSimulationDraft] = useState("");
   const [simulationError, setSimulationError] = useState("");
+  const [pobState, setPobState] = useState<ComparisonResult | null>(null);
+  const [pobStatus, setPobStatus] = useState("PoB2 엔진 대기 중");
+  useEffect(() => {
+    if (!importedCharacter?.pathOfBuildingExport) {
+      setPobState(null); setPobStatus("PoB Export가 없어 계산할 수 없습니다."); return;
+    }
+    let cancelled = false;
+    let engine: CalcClient | null = null;
+    const run = async () => {
+      setPobState(null); setPobStatus("PoB2 원본 Set I·II 계산 준비 중...");
+      try {
+        const response = await fetch("/api/pob/prepare-export", {
+          method: "POST", headers: { "content-type": "application/json" },
+          body: JSON.stringify({ exportCode: importedCharacter.pathOfBuildingExport }),
+        });
+        const payload = await response.json();
+        if (!response.ok || !payload.ok || typeof payload.xml !== "string")
+          throw new Error(payload.error || "캐릭터 XML 변환 실패");
+        if (cancelled) return;
+        engine = new CalcClient();
+        if (!await engine.init()) throw new Error("PoB2 WASM 엔진 초기화 실패");
+        const result = await calculateComparison(engine, importedCharacter, payload.xml, simulationItems);
+        if (!cancelled) { setPobState(result); setPobStatus(result.status); }
+      } catch (error) {
+        if (!cancelled) { setPobState(null); setPobStatus(`계산 실패: ${error instanceof Error ? error.message : String(error)}`); }
+      } finally { engine?.terminate(); }
+    };
+    void run();
+    return () => { cancelled = true; engine?.terminate(); };
+  }, [importedCharacter, simulationItems]);
+  // The UI tabs choose only which already-computed immutable snapshot to show.
+  // They never call setWeaponSet or alter PoB's working state.
+  const beforeSnapshot = pobState?.original[weaponSet];
+  const compareBeforeSnapshot = pobState?.original[simulationWeaponSet];
+  const afterSnapshot = pobState?.simulation[simulationWeaponSet];
+  const statsFor = (stats?: Record<string, number>): ImportedCharacterStat[] =>
+    stats ? Object.entries(stats).filter(([key, value]) => !key.startsWith("_") && Number.isFinite(value))
+      .map(([key, value]) => ({ key, label: key, value: value.toLocaleString("en-US", { maximumFractionDigits: 2 }), group: "overview" })) : [];
+  const engineStatsBefore = statsFor(beforeSnapshot?.stats);
+  const engineStatsAfter = statsFor(afterSnapshot?.stats);
+  const pobStats = useMemo(() => {
+    if (!compareBeforeSnapshot || !afterSnapshot) return [];
+    const labels: Record<string, string> = { TotalDPS: "Main Skill DPS", CombinedDPS: "Combined DPS", Life: "Life", EnergyShield: "Energy Shield", Mana: "Mana", Armour: "Armour", Evasion: "Evasion", FireResist: "Fire Resistance", ColdResist: "Cold Resistance", LightningResist: "Lightning Resistance", ChaosResist: "Chaos Resistance" };
+    return Object.entries(compareBeforeSnapshot.stats)
+      .filter(([key, value]) => !key.startsWith("_") && Number.isFinite(value) && Number.isFinite(afterSnapshot.stats[key]))
+      .map(([key, before]) => ({ key, label: labels[key] || key, before, after: afterSnapshot.stats[key], delta: afterSnapshot.stats[key] - before }));
+  }, [compareBeforeSnapshot, afterSnapshot]);
+  const skillDeltas = useMemo(() => {
+    if (!compareBeforeSnapshot || !afterSnapshot) return [];
+    return [...(importedCharacter?.skills || [])].filter(skill => Number.isFinite(skill.dpsValue))
+      .sort((a, b) => (b.dpsValue || 0) - (a.dpsValue || 0)).slice(0, 2)
+      .flatMap(skill => {
+        const before = getMeasuredSkill(compareBeforeSnapshot, skill.name);
+        const after = getMeasuredSkill(afterSnapshot, skill.name);
+        // The same PoB group MUST have been calculated in the same physical set.
+        if (!before || !after || before.weaponSet !== after.weaponSet || before.groupIndex !== after.groupIndex || before.slot !== after.slot)
+          return [];
+        return [{ name: skill.name, before: before.dps, after: after.dps, weaponSet: after.weaponSet, groupIndex: after.groupIndex }];
+      });
+  }, [compareBeforeSnapshot, afterSnapshot, importedCharacter]);
+  const gearComparison = useMemo(() => calculateGearDelta(importedCharacter, simulationItems, simulationWeaponSet), [importedCharacter, simulationItems, simulationWeaponSet]);
   const actualSkills = useMemo(() => importedCharacter?.skills ?? [], [importedCharacter]);
   const actualStats = useMemo(() => importedCharacter?.stats ?? [], [importedCharacter]);
   const mainSkills = useMemo(() => {
@@ -111,6 +182,18 @@ export default function Home() {
     const source = ranked.length ? ranked : actualSkills;
     return source.slice(0, 2).map(toUiSkill);
   }, [actualSkills]);
+
+  // The visual skill names/supports come from ninja; DPS comes only from PoB2.
+  // Do not substitute ninja DPS when PoB has not computed a matching skill.
+  const engineMainSkills = (snapshot?: SetCalculation): UiSkill[] => {
+    if (!snapshot) return [];
+    return mainSkills.flatMap(skill => {
+      const result = getMeasuredSkill(snapshot, skill.name);
+      if (!result) return []; // Not measured in this set: don't reuse another set's DPS.
+      return [{ ...skill, name: `${skill.name} · Set ${result.weaponSet === 1 ? "I" : "II"}`,
+        dps: result.dps.toLocaleString("en-US", { maximumFractionDigits: 2 }) }];
+    });
+  };
 
   function moveItemTooltip(event: MouseEvent<HTMLElement>, item: ImportedItem) {
     const tooltipWidth = 360;
@@ -126,6 +209,7 @@ export default function Home() {
     event.preventDefault();
     setImportError("");
     setImporting(true);
+    setExportCheck(null);
 
     try {
       const response = await fetch("/api/pob/import-ninja", {
@@ -137,10 +221,24 @@ export default function Home() {
       if (!response.ok || !payload?.ok) {
         throw new Error(payload?.error || "캐릭터 링크를 불러오지 못했습니다.");
       }
-      setImportedCharacter(payload.character as ImportedCharacter);
+      const character = payload.character as ImportedCharacter;
+      setImportedCharacter(character);
+      if (character.pathOfBuildingExport) {
+        setExportCheck({ stage: "CHECKING", message: "PoB 캐릭터 데이터를 웹에서 확인 중..." });
+        void fetch("/api/pob/prepare-export", {
+          method: "POST", headers: { "content-type": "application/json" },
+          body: JSON.stringify({ exportCode: character.pathOfBuildingExport }),
+        }).then(async (result) => {
+          const data = await result.json();
+          if (!result.ok || !data.ok) throw new Error(data.error || "Export 검사 실패");
+          setExportCheck({ stage: "VALIDATED", message: `PoB Export 확인 완료 · 장비 ${data.metadata.itemCount}개 · 스킬 ${data.metadata.skillCount}개 · 계산 연결 전` });
+        }).catch((error) => setExportCheck({ stage: "ERROR", message: error instanceof Error ? error.message : "Export 검사 실패" }));
+      } else {
+        setExportCheck({ stage: "MISSING", message: "poe.ninja에서 PoB Export가 제공되지 않았습니다. 현재 정보만 표시합니다." });
+      }
       setWeaponSet(1);
       setSimulationWeaponSet(1);
-      setSimulationLinks({});
+      setSimulationItems({});
       setSimulationSlot(null);
       setSimulationDraft("");
       setScreen("game");
@@ -153,32 +251,29 @@ export default function Home() {
 
   function openSimulationSlot(slot: string) {
     setSimulationSlot(slot);
-    setSimulationDraft(simulationLinks[slot] ?? "");
+    setEditingWeaponSet(simulationWeaponSet);
+    setSimulationDraft(simulationItems[physicalSlotKey(slot, simulationWeaponSet)]?.raw ?? "");
     setSimulationError("");
   }
 
-  function saveSimulationLink(event: FormEvent<HTMLFormElement>) {
+  function saveSimulationItem(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!simulationSlot) return;
     try {
-      const parsed = new URL(simulationDraft.trim());
-      const host = parsed.hostname.toLowerCase();
-      if (parsed.protocol !== "https:" || !(host === "pathofexile.com" || host.endsWith(".pathofexile.com"))) {
-        throw new Error("Path of Exile HTTPS trade link only.");
-      }
-      setSimulationLinks((current) => ({ ...current, [simulationSlot]: parsed.toString() }));
+      const item = parseTradeItem(simulationDraft);
+      setSimulationItems((current) => ({ ...current, [physicalSlotKey(simulationSlot, editingWeaponSet)]: item }));
       setSimulationSlot(null);
       setSimulationDraft("");
       setSimulationError("");
     } catch (error) {
-      setSimulationError(error instanceof Error ? error.message : "Invalid trade link.");
+      setSimulationError(error instanceof Error ? error.message : "아이템 정보를 읽을 수 없습니다.");
     }
   }
 
   function clearSimulationLink(slot: string) {
-    setSimulationLinks((current) => {
+    setSimulationItems((current) => {
       const next = { ...current };
-      delete next[slot];
+      delete next[physicalSlotKey(slot, simulationWeaponSet)];
       return next;
     });
     if (simulationSlot === slot) {
@@ -189,7 +284,7 @@ export default function Home() {
   }
 
   if (screen === "game") {
-    const changedCount = Object.keys(simulationLinks).length;
+    const changedCount = Object.keys(simulationItems).length;
     return (
       <main className="game-shell">
         <div className="game-frame">
@@ -227,20 +322,34 @@ export default function Home() {
               </div>
             )}
 
+            {exportCheck && <div className={`import-source-note ${exportCheck.stage === "VALIDATED" ? "ok" : "warn"}`} role="status">
+              <b>PoB 웹 데이터 검사 · {exportCheck.stage}</b><span>{exportCheck.message}</span>
+            </div>}
+            <div className="import-source-note" role="note">
+              <b>PoB2 WEB ENGINE · V210</b>
+              <span>PoB2 브라우저 계산엔진을 사용합니다. 실계산 결과는 아래 비교표에서 확인할 수 있으며, 지원하지 않는 옵션은 경고로 표시합니다.</span>
+              <button className="head-button" type="button" onClick={() => {
+                try {
+                  if (importedCharacter?.pathOfBuildingExport) sessionStorage.setItem("fixlgs.pob2.engineLabExport", importedCharacter.pathOfBuildingExport);
+                  else sessionStorage.removeItem("fixlgs.pob2.engineLabExport");
+                } catch { /* optional temporary diagnostics */ }
+                window.location.assign("/pob/engine-lab");
+              }}>웹 계산엔진 진단 열기</button>
+            </div>
             <section className="build-half current-build">
               <div className="build-half-label">
                 <div><small>ORIGINAL BUILD</small><strong>CURRENT CHARACTER</strong></div>
                 <span>poe.ninja imported state · read only</span>
               </div>
+              <WeaponSetSummary data={pobState?.original} chosen={weaponSet} onChoose={setWeaponSet} title="CURRENT · 원본 두 무기 세트" character={importedCharacter} />
               <div className="character-grid">
                 <EquipmentPanel
                   character={importedCharacter}
                   weaponSet={weaponSet}
-                  setWeaponSet={setWeaponSet}
                   onHover={moveItemTooltip}
                   onLeave={() => setHoveredItem(null)}
                 />
-                <StatsCard title="Stats" stats={actualStats} mainSkills={mainSkills} />
+                <StatsCard title={`Stats · CURRENT (PoB2 · Set ${weaponSet === 1 ? "I" : "II"})`} stats={engineStatsBefore} mainSkills={engineMainSkills(beforeSnapshot)} />
               </div>
               <SkillsPanel character={importedCharacter} />
             </section>
@@ -250,7 +359,7 @@ export default function Home() {
               <div className="simulation-divider-copy">
                 <small>VIRTUAL EQUIPMENT TEST</small>
                 <strong>SIMULATION / CHANGED BUILD</strong>
-                <span>아래 장비 슬롯을 클릭해 거래소 링크를 넣으면 이 영역만 변경됩니다.</span>
+                <span>아래 장비 슬롯을 클릭해 FIXLGS EXPORT 텍스트를 붙여넣으면 이 영역만 변경됩니다.</span>
               </div>
               <div className="simulation-divider-line" />
             </div>
@@ -258,48 +367,70 @@ export default function Home() {
             <section className="build-half simulation-build">
               <div className="build-half-label simulation-label">
                 <div><small>AFTER CHANGE</small><strong>SIMULATION</strong></div>
-                <span>{changedCount ? `${changedCount} SLOT${changedCount > 1 ? "S" : ""} LINKED` : "No equipment changed yet"}</span>
+                <span>{changedCount ? `${changedCount} SLOT${changedCount > 1 ? "S" : ""} IMPORTED` : "No equipment changed yet"}</span>
               </div>
+              <WeaponSetSummary data={pobState?.simulation} chosen={simulationWeaponSet}
+                onChoose={(set) => { setSimulationWeaponSet(set); setSimulationSlot(null); setSimulationError(""); }} title="SIMULATION · 변경 후 두 무기 세트" character={importedCharacter} overrides={simulationItems} />
               <div className="character-grid">
                 <EquipmentPanel
                   character={importedCharacter}
                   weaponSet={simulationWeaponSet}
-                  setWeaponSet={setSimulationWeaponSet}
                   onHover={moveItemTooltip}
                   onLeave={() => setHoveredItem(null)}
                   simulation
-                  linkedSlots={simulationLinks}
+                  linkedSlots={simulationItems}
                   activeSlot={simulationSlot}
                   onSlotClick={openSimulationSlot}
                   onClearSlot={clearSimulationLink}
                 >
                   {simulationSlot && (
-                    <form className="simulation-link-editor" onSubmit={saveSimulationLink}>
+                    <form className="simulation-link-editor" onSubmit={saveSimulationItem}>
                       <div className="simulation-link-head">
-                        <div><small>TRADE ITEM</small><strong>{simulationSlot.toUpperCase()}</strong></div>
+                        <div><small>FIXLGS EXPORT · 붙여넣기</small><strong>{simulationSlot.toUpperCase()}</strong></div>
                         <button type="button" onClick={() => setSimulationSlot(null)}>×</button>
                       </div>
-                      <input
+                      <textarea
                         autoFocus
-                        type="url"
-                        inputMode="url"
-                        placeholder="https://www.pathofexile.com/trade2/..."
+                        rows={9}
+                        placeholder={"Rarity: Rare\n아이템 이름\n베이스 타입\n--------\n..."}
                         value={simulationDraft}
                         onChange={(event) => setSimulationDraft(event.target.value)}
                       />
+                      {/^(?:FIXLGS-EN-V004\s+)?Rarity:/i.test(simulationDraft.trim()) && (
+                        <p className="trade-preview">{(() => { try { const x = parseTradeItem(simulationDraft); return `${x.rarity} · ${x.name} · ${x.baseType} · 옵션 ${x.modifiers.length}줄`; } catch { return "텍스트를 모두 붙여넣어 주세요."; } })()}</p>
+                      )}
                       <div className="simulation-link-actions">
-                        <span>{simulationError || "Paste the trade item link for this slot."}</span>
-                        <button type="submit">APPLY LINK</button>
+                        <span>{simulationError || "거래소에서 FIXLGS EXPORT를 누르고 여기에 Ctrl+V 하세요."}</span>
+                        <button type="submit">아이템 적용</button>
                       </div>
                     </form>
                   )}
                 </EquipmentPanel>
-                <StatsCard title="Stats · After Change" stats={actualStats} mainSkills={mainSkills} />
+                <StatsCard title={`Stats · After Change (PoB2 · Set ${simulationWeaponSet === 1 ? "I" : "II"})`} stats={engineStatsAfter} mainSkills={engineMainSkills(afterSnapshot)} />
               </div>
-              <SkillsPanel character={importedCharacter} simulation />
+              <section className="gear-delta-panel" aria-live="polite">
+                <strong>PoB2 WASM · 엔진 계산 비교 (검증용)</strong>
+                <p>{pobStatus}</p><p>증감량은 SIMULATION에서 선택한 동일 무기 세트의 원본과 변경 후를 비교합니다. CURRENT는 별도로 보존됩니다.</p>
+                {changedCount > 0 && pobStats.length > 0 && <div className="gear-delta-grid">{pobStats.map(row => <div className="gear-delta-row" key={row.key}><span>{row.label}</span><b>{row.after.toLocaleString("en-US", {maximumFractionDigits:2})} ({row.delta >= 0 ? "+" : ""}{row.delta.toLocaleString("en-US", {maximumFractionDigits:2})})</b><small>기존 {row.before.toLocaleString("en-US", {maximumFractionDigits:2})} → 변경 {row.after.toLocaleString("en-US", {maximumFractionDigits:2})}</small></div>)}</div>}
+                {changedCount > 0 && skillDeltas.length > 0 && <div className="gear-delta-grid">{skillDeltas.map((skill, i) => <div className="gear-delta-row" key={`${skill.name}-${i}`}><span>{skill.name} DPS</span><b>{skill.after.toLocaleString("en-US", {maximumFractionDigits: 2})}</b><small>{skill.before === undefined ? "이전 스킬 식별자 없음" : `${skill.before.toLocaleString("en-US")} → ${skill.after.toLocaleString("en-US")} (${skill.after - skill.before >= 0 ? "+" : ""}${(skill.after - skill.before).toLocaleString("en-US")})`}</small></div>)}</div>}
+                {changedCount > 0 && !!pobState?.skillChanges?.length && <div className="gear-delta-grid" aria-label="스킬 변경">
+                  {pobState.skillChanges.map((change, i) => <p key={`${change.kind}-${change.slot}-${change.name}-${i}`}>
+                    {change.name} {change.kind === "added" ? "추가" : "제거"}
+                  </p>)}
+                </div>}
+                {(pobState?.warnings || []).map((warning, i) => <p key={i} style={{color: "#f3b870"}}>부분 계산 주의: {warning}</p>)}
+                {changedCount > 0 && pobState?.equipmentTrace && <details style={{marginTop: 12}}><summary>PoB2 실제 장착·재계산 확인 기록</summary><pre style={{whiteSpace: "pre-wrap", fontSize: 12}}>{pobState.equipmentTrace.join("\n")}</pre></details>}
+              </section>
+              {changedCount > 0 && <section className="gear-delta-panel" aria-live="polite">
+                <strong>장비 옵션 차이 · 웹 계산</strong>
+                <p>교체한 슬롯의 기존/신규 장비에서 직접 확인 가능한 고정 옵션만 비교해. 캐릭터 최종 Stats나 DPS 계산값은 아니야.</p>
+                {gearComparison.rows.length ? <div className="gear-delta-grid">{gearComparison.rows.map(row => <div className="gear-delta-row" key={row.key}><span>{row.label}</span><b>{row.delta > 0 ? "+" : ""}{row.delta}</b><small>기존 {row.before} → 변경 {row.after}</small></div>)}</div> : <p>현재 지원하는 고정 옵션에서 확인 가능한 변화가 없어. 무기 피해·공격 속도·스킬 DPS 등은 PoB2 웹 엔진 연결 후 계산해야 해.</p>}
+                {gearComparison.warnings.map(w => <p key={w}>{w}</p>)}
+              </section>}
+              <SkillsPanel character={importedCharacter} simulation engineSkills={afterSnapshot?.skills} />
               <div className="simulation-stage-note">
-                <b>UI STEP COMPLETE</b>
-                <span>현재는 아래 슬롯별 거래소 링크 입력/보존까지 연결되어 있습니다. 거래소 아이템 파싱과 Stats/DPS 재계산은 다음 단계에서 연결합니다.</span>
+                <b>PoB2 ENGINE TEST</b>
+                <span>CURRENT와 SIMULATION Stats는 PoB2 엔진 계산값을 사용합니다. 미인식 옵션 및 빌드 누락이 있으면 완전한 계산으로 간주하지 마세요.</span>
               </div>
             </section>
 
@@ -391,8 +522,8 @@ export default function Home() {
               <div className="start-tool-card extension-card">
                 <span className="start-tool-kicker">TRADE EXTENSION</span>
                 <strong>거래소 확장프로그램 설치</strong>
-                <small>거래소의 원하는 매물을 Export해 Simulation 장비로 가져옵니다.</small>
-                <button type="button" disabled title="확장프로그램 제작 후 다운로드를 연결합니다.">설치 준비 중</button>
+                <small>Google Chrome에서 거래소를 열고 원하는 매물을 Export해 Simulation 장비로 가져옵니다.</small>
+                <a className="extension-download" href="/downloads/FIXLGS_POE2_ITEM_EXPORT_V004.zip" download>설치파일 ↓</a>
               </div>
             </div>
           </section>
@@ -427,10 +558,36 @@ export default function Home() {
 }
 
 
+function WeaponSetSummary({ data, chosen, onChoose, title, character, overrides }: {
+  data?: SetSnapshots;
+  character: ImportedCharacter | null;
+  overrides?: Record<string, TradeItem>;
+  chosen: WeaponSet;
+  onChoose: (set: WeaponSet) => void;
+  title: string;
+}) {
+  return <div className="set-overview" aria-label={title}>
+    <div className="set-overview-label">{title}</div>
+    <div className="set-overview-grid">{([1, 2] as const).map(set => {
+      const result = data?.[set];
+      const dps = result?.stats.CombinedDPS;
+      const originalWeapon = character?.items.find(item => weaponSlotMatches("weapon", set, item.slot));
+      const override = overrides?.[physicalSlotKey("weapon", set)];
+      const weaponName = override?.name || originalWeapon?.name || originalWeapon?.baseType || "No main-hand weapon";
+      return <button type="button" key={set} className={`set-overview-option ${chosen === set ? "selected" : ""}`}
+        onClick={() => onChoose(set)} aria-pressed={chosen === set}>
+        <b>WEAPON SET {set === 1 ? "I" : "II"}</b>
+        <small className="set-weapon-label">{weaponName}{override ? " · TRADE REPLACEMENT" : ""}</small>
+        <span>{Number.isFinite(dps) ? dps!.toLocaleString("en-US", { maximumFractionDigits: 2 }) + " DPS" : "계산 대기 / 실패"}</span>
+        <small>{chosen === set ? "선택된 상세 STATS" : "선택해 상세 STATS 보기"}</small>
+      </button>;
+    })}</div>
+  </div>;
+}
+
 function EquipmentPanel({
   character,
   weaponSet,
-  setWeaponSet,
   onHover,
   onLeave,
   simulation = false,
@@ -442,11 +599,10 @@ function EquipmentPanel({
 }: {
   character: ImportedCharacter | null;
   weaponSet: 1 | 2;
-  setWeaponSet: (set: 1 | 2) => void;
   onHover: (event: MouseEvent<HTMLElement>, item: ImportedItem) => void;
   onLeave: () => void;
   simulation?: boolean;
-  linkedSlots?: Record<string, string>;
+  linkedSlots?: Record<string, TradeItem>;
   activeSlot?: string | null;
   onSlotClick?: (slot: string) => void;
   onClearSlot?: (slot: string) => void;
@@ -456,14 +612,6 @@ function EquipmentPanel({
     <section className={`equipment-card panel-card ${simulation ? "simulation-equipment" : ""}`}>
       <div className="panel-title">{simulation ? "Equipment · Simulation" : "Equipment"}</div>
       <div className="equipment-stage">
-        <div className="weapon-set-toggle weapon-set-toggle-left" aria-label="왼쪽 무기 세트 선택">
-          <button type="button" className={weaponSet === 1 ? "active" : ""} onClick={() => setWeaponSet(1)}>I</button>
-          <button type="button" className={weaponSet === 2 ? "active" : ""} onClick={() => setWeaponSet(2)}>II</button>
-        </div>
-        <div className="weapon-set-toggle weapon-set-toggle-right" aria-label="오른쪽 무기 세트 선택">
-          <button type="button" className={weaponSet === 1 ? "active" : ""} onClick={() => setWeaponSet(1)}>I</button>
-          <button type="button" className={weaponSet === 2 ? "active" : ""} onClick={() => setWeaponSet(2)}>II</button>
-        </div>
         {equipment.map((item) => {
           const importedItem = character?.items?.find((candidate) =>
             item.cls === "weapon" || item.cls === "offhand"
@@ -471,13 +619,14 @@ function EquipmentPanel({
               : slotMatches(item.cls, candidate.slot)
           );
           const displayName = importedItem?.name || importedItem?.baseType;
-          const linked = Boolean(linkedSlots[item.cls]);
+          const tradeItem = linkedSlots[physicalSlotKey(item.cls, weaponSet)];
+          const linked = Boolean(tradeItem);
           return (
             <div className={`equipment-slot-wrap ${item.cls}`} key={item.cls}>
               <button
                 type="button"
                 className={`equipment-slot-inner ${importedItem ? "loaded" : ""} ${linked ? "trade-linked" : ""} ${activeSlot === item.cls ? "editing" : ""}`}
-                aria-label={simulation ? `${item.label} 거래소 링크 입력` : `${displayName ?? item.label} 상세 보기`}
+                aria-label={simulation ? `${item.label} FIXLGS EXPORT 텍스트 붙여넣기` : `${displayName ?? item.label} 상세 보기`}
                 onClick={() => simulation && onSlotClick?.(item.cls)}
                 onMouseEnter={(event) => !linked && importedItem && onHover(event, importedItem)}
                 onMouseMove={(event) => !linked && importedItem && onHover(event, importedItem)}
@@ -486,8 +635,8 @@ function EquipmentPanel({
                 {linked ? (
                   <div className="trade-slot-copy">
                     <small>TRADE ITEM</small>
-                    <strong>LINKED</strong>
-                    <span>{item.label}{item.sub ? ` ${item.sub}` : ""}</span>
+                    <strong>{tradeItem?.name ?? "IMPORTED"}</strong>
+                    <span>{tradeItem?.baseType ?? item.label}</span>
                   </div>
                 ) : importedItem?.icon ? (
                   <img className="equipment-image" src={importedItem.icon} alt="" draggable={false} />
@@ -540,11 +689,18 @@ function EquipmentPanel({
   );
 }
 
-function SkillsPanel({ character, simulation = false }: { character: ImportedCharacter | null; simulation?: boolean }) {
-  const uiSkills = character?.skills?.length ? character.skills.map(toUiSkill) : skills;
+function SkillsPanel({ character, simulation = false, engineSkills }: { character: ImportedCharacter | null; simulation?: boolean; engineSkills?: SkillsData }) {
+  // Display the original skill gems in both panes. PoB2's SkillDPS is a
+  // computed subset, not the inventory of socket groups; an empty SkillDPS
+  // response must not erase the character's actual gem list.
+  const originalSkills = character?.skills?.length ? character.skills.map(toUiSkill) : skills;
+  const uiSkills = simulation ? originalSkills.map(skill => {
+    const matching = engineSkills?.skills.find(s => s.name.toLowerCase() === skill.name.toLowerCase());
+    return { ...skill, dps: matching ? matching.dps.toLocaleString("en-US", { maximumFractionDigits: 2 }) : "—" };
+  }) : originalSkills;
   return (
     <section className={`all-skills panel-card build-skill-panel ${simulation ? "simulation-skills" : ""}`}>
-      <div className="panel-title">{simulation ? "All Skills · After Change" : "All Skills"}</div>
+      <div className="panel-title">{simulation ? "All Skills · After Change (PoB2 일부 결과)" : "All Skills · poe.ninja 참고값"}</div>
       {character?.skills && character.skills.length > 0 && (
         <div className="actual-skill-note">{character.skills.length} SKILL SETS</div>
       )}
@@ -640,7 +796,8 @@ function StatsCard({
         )}
       </div>
       <div className="main-skills-block">
-        <div className="stat-group-label">MAIN SKILLS</div>
+        <div className="stat-group-label">MAIN SKILLS · 현재 선택한 세트의 PoB2 실계산</div>
+        {!mainSkills.length && <div className="stats-empty">이 세트에서 검증된 메인 스킬 DPS가 없습니다.</div>}
         {mainSkills.map((skill) => (
           <div className="main-skill" key={skill.name}>
             <SkillIcon skill={skill} />

@@ -1,0 +1,50 @@
+.fixlgs-export-button {
+  appearance: none !important;
+  border: 1px solid rgba(167, 126, 255, .75) !important;
+  background: #17121f !important;
+  color: #dac8ff !important;
+  border-radius: 4px !important;
+  padding: 6px 9px !important;
+  font: 700 11px/1.2 Arial, sans-serif !important;
+  letter-spacing: .04em !important;
+  cursor: pointer !important;
+  margin: 4px 4px 4px 0 !important;
+  z-index: 2147483646 !important;
+}
+.fixlgs-export-button:hover {
+  background: #261c36 !important;
+  border-color: #c7a9ff !important;
+}
+.fixlgs-export-button[data-state="ok"] {
+  border-color: #7bdba1 !important;
+  color: #bff3d2 !important;
+}
+.fixlgs-export-button[data-state="error"] {
+  border-color: #ff8c8c !important;
+  color: #ffc3c3 !important;
+}
+#fixlgs-export-status {
+  position: fixed !important;
+  right: 14px !important;
+  bottom: 14px !important;
+  z-index: 2147483647 !important;
+  display: flex !important;
+  gap: 8px !important;
+  align-items: center !important;
+  padding: 8px 10px !important;
+  border: 1px solid rgba(167, 126, 255, .5) !important;
+  background: rgba(16, 12, 22, .95) !important;
+  color: #d7c7ef !important;
+  border-radius: 6px !important;
+  font: 700 11px/1.2 Arial, sans-serif !important;
+  box-shadow: 0 6px 24px rgba(0,0,0,.35) !important;
+}
+#fixlgs-export-status button {
+  appearance: none !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: #a988ef !important;
+  font: inherit !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+}

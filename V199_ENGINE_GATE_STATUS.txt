@@ -1,0 +1,17 @@
+V199 — engine-gate candidate (not verified final release)
+
+Changes:
+- Stop treating a failed PoB load OnFrame or a missing baseline mainOutput as a successful import.
+- Expose calculatedSlotPresent and calculatedItemId from the PoB calculation environment.
+- Reject swaps whose calculated item slot is missing or identified as a different item.
+- Enforce baseline skill-group presence and stable group-count / main-skill / weapon-set identity after a swap.
+- Avoid claiming unconditional calculation accuracy in status text.
+
+NOT VERIFIED:
+- ResurrectForbidden complete live PoB export was not available in the execution environment.
+- Actual WASM baseline + Grand Spear swap not run.
+- Full Next.js build unavailable because next binary is not installed in execution container.
+- PoB parser support for all current league modifiers is not established.
+- This is not yet the user acceptance test release.
+
+Deployment ZIP structure: fix-pob/ single root. Chrome extension unchanged.

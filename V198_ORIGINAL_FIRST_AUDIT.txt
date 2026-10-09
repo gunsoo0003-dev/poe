@@ -1,0 +1,7 @@
+V198 original-first structural checkpoint (NOT integrated/verified release)
+- Preserve PoB2's own selected skill and weapon set for initial snapshot.
+- /pob/engine-lab independently calls native PoB2 WASM: loadBuild, getSkills, getStats, addCustomItem, equipItem, getSlotItems.
+- Compares repeated identical baseline results; reports actual changed stat keys.
+- The FIXLGS comparison panel is hidden before any swap.
+- Simulation gem list retains imported skill list even if PoB2 computed SkillDPS subset is empty; unverified skill DPS shown as dash.
+NOT DONE: independent original PoB comparison, real ninja+trade item tests, full Next build (npm dependencies unavailable in container), verified item support, all-skill PoB DPS.

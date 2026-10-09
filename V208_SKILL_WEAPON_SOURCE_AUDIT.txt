@@ -1,0 +1,25 @@
+FIXLGS POE2 /pob — V208 skill-by-weapon-set source separation
+
+REASON
+In V207, calculateComparison.capture() calculated Whirling Slash once in the character's original weapon set II and copied its DPS into BOTH Set I and Set II snapshots. The page then assigned a displayed 'Set' label by inference from mainSocketGroup, NOT by source-of-calculation. Selecting Set I thus showed Twister (I) and Whirling Slash (II) in one pane.
+
+FIX
+- Every measured skill stores actual PoB group index, physical weapon set, group names, slot and engine DPS.
+- Only a measurement obtained in the selected physical set is stored in that set's snapshot.
+- Secondary skills are calculated in the original engine weapon set only (an unverified alternate set is not automatically brute-forced).
+- MAIN SKILLS filters measurements to those directly obtained for the selected set. Set label is taken from the actual measurement; no DPS copied across sets and no poe.ninja DPS fallback.
+- Skill deltas require the SAME measured group, weapon set, and slot in the before and after snapshots.
+- 'All Skills' raw poe.ninja figures are explicitly marked reference values; they are not PoB2 per-set calculations.
+- Original PoB2 item, modifier, DPS and weapon-set calculation code is unchanged.
+
+REPRO / EXPECTED on ResurrectForbidden (PoB Export + FIXLGS-EN-V004 Grand Spear):
+- Set I CURRENT: Twister ~87,406.65; Whirling Slash not displayed as a Set I engine DPS.
+- Set II CURRENT: Twister ~306,057.76; Whirling Slash ~10,450.18.
+- Set I replacement: Twister changes; Whirling Slash stays a Set II result, not a Set I result.
+- Set II replacement: Twister + Whirling Slash updated in Set II when calculation succeeds.
+
+VALIDATION
+- TypeScript source transpilation; isolated pobCompare typecheck; Node-hosted PoB2 WASM Swap I test PASSED (source tag and preservation checks).
+- Full Next.js production build and GUI browser acceptance test NOT executed (npm dependencies unavailable).
+- V208 regression Swap II run exceeded runtime limit; cannot claim execution pass on this patched version (V207 baseline previously passed).
+- New modifiers not understood by the PoB version remain an accuracy caveat.

@@ -7,7 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "dev:turbo": "next dev --turbopack"
+    "dev:turbo": "next dev --turbopack",
+    "pob2:setup": "powershell -ExecutionPolicy Bypass -File scripts/setup-pob2-engine.ps1",
+    "pob2:test": "powershell -ExecutionPolicy Bypass -File scripts/test-pob2-engine.ps1",
+    "pob2:character": "node scripts/prepare-pob2-character.cjs",
+    "pob:export-test": "node scripts/test-v210-contract.cjs",
+    "pob2:character-test": "powershell -ExecutionPolicy Bypass -File scripts/test-pob2-engine.ps1 -Character"
   },
   "dependencies": {
     "next": "16.3.5",

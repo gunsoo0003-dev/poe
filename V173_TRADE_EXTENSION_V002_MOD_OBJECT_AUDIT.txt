@@ -1,0 +1,9 @@
+V173 / TRADE EXTENSION V002
+
+- Extension version: 0.2.0
+- Fixed modifier export objects being rendered as [object Object].
+- Supports direct text fields, name/template + values placeholders, and nested wrapper fields.
+- Unknown modifier shapes are preserved as [FIXLGS RAW MOD] JSON during prototype testing instead of silently losing data.
+- Site download link updated to FIXLGS_POE2_ITEM_EXPORT_V002.zip.
+- Start-page extension guide now explicitly says to open the trade site in Google Chrome.
+- JavaScript syntax checked with node --check for content.js and page-hook.js.

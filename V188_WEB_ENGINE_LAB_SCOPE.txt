@@ -1,0 +1,1 @@
+V188 WEB ENGINE LAB: Browser WebAssembly smoke test + ninja PoB export API verification. NOT a PoB2 DPS calculation engine. No Lua runtime bundled; WASM test only verifies browser WebAssembly support.

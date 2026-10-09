@@ -1,0 +1,12 @@
+V174 / Extension V003 audit
+- Fixed rune socket display: type=rune => S instead of ?
+- Added grantedSkills export (e.g. Grants Skill / 스킬 부여)
+- Added additionalProperties export
+- Added socketed non-gem item names when supplied by trade JSON
+- Preserved semantic mod groups with labels: enchant/rune/implicit/fractured/crafted/utility/scourge/desecrated/corrupted
+- Added generic fallback for unknown *Mods arrays
+- Expanded item-state flags
+- Expanded frameType mapping and prefers API rarity/frameTypeId
+- Removed unsafe row-index-only matching fallback; now ID first, unique name/base match second
+- Site download link now points to V003
+- Chrome requirement retained in extension README/site guide

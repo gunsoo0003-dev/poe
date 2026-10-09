@@ -1,0 +1,1 @@
+V187: Browser-side limited, verified fixed-affix equipment delta. This is NOT PoB2 or full Stats/DPS recalculation. Existing ninja Stats/DPS intentionally unchanged.

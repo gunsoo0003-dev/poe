@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local Path of Building 2 headless engine (cloned by scripts/setup-pob2-engine.ps1)
+/.pob2-engine/
+
+# Local PoB2 runtime bootstrap cache
+/.pob2-runtime/

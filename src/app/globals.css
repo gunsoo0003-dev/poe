@@ -10796,7 +10796,8 @@ footer strong { color: #a99ab8; }
   font-size: 12px;
   white-space: nowrap;
 }
-.start-tool-card > button {
+.start-tool-card > button,
+.start-tool-card > .extension-download {
   grid-area: action;
   min-width: 126px;
   padding: 11px 14px;
@@ -10808,6 +10809,17 @@ footer strong { color: #a99ab8; }
   background: rgba(255,255,255,.035);
   cursor: not-allowed;
 }
+.start-tool-card > .extension-download {
+  cursor: pointer;
+  color: #d8c7ff;
+  text-decoration: none;
+  text-align: center;
+  background: rgba(113,73,193,.10);
+}
+.start-tool-card > .extension-download:hover {
+  border-color: rgba(216,197,255,.42);
+  background: rgba(113,73,193,.18);
+}
 .extension-card:hover {
   transform: none;
 }
@@ -10816,5 +10828,26 @@ footer strong { color: #a99ab8; }
   .start-tools { grid-template-columns: 1fr; }
   .start-tool-card { grid-template-columns: 1fr; grid-template-areas: "kicker" "title" "copy" "action"; row-gap: 2px; }
   .start-tool-card > b,
-  .start-tool-card > button { margin-top: 10px; justify-self: start; }
+  .start-tool-card > button,
+.start-tool-card > .extension-download { margin-top: 10px; justify-self: start; }
 }
+
+/* V183: FIXLGS EXPORT clipboard item editor */
+.simulation-link-editor textarea { width:100%; min-height:175px; resize:vertical; padding:12px; font:12px/1.55 Consolas,monospace; color:#e8f3ef; border:1px solid #365f51; background:#0a1713; outline:none; }
+.simulation-link-editor textarea:focus {border-color:#53c49d;}
+.simulation-link-editor .trade-preview {margin:8px 0 0; color:#8dd8be; font-size:11px; overflow-wrap:anywhere;}
+.trade-slot-copy strong { overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow-wrap:anywhere; }
+
+.gear-delta-panel{border:1px solid #35675b;background:#102621;padding:14px 18px;margin:12px 0;color:#d8eee5;font-size:12px}.gear-delta-panel>strong{color:#8ae5bb;font-size:13px}.gear-delta-panel p{margin:8px 0;color:#adccc0;line-height:1.6}.gear-delta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:8px}.gear-delta-row{background:#162f2a;border:1px solid #29594e;padding:9px;display:grid;grid-template-columns:1fr auto;gap:4px}.gear-delta-row b{color:#b9f9d0}.gear-delta-row small{grid-column:1/-1;color:#9bbbae}
+
+/* V207: expose both physical weapon sets without changing PoB calculation on tab click. */
+.set-overview { margin: 10px 0 14px; padding: 11px 14px; border: 1px solid #57426b; background: #1b1724; border-radius: 8px; }
+.set-overview-label { color: #d3b8eb; letter-spacing: .08em; font-size: 11px; font-weight: 700; margin-bottom: 9px; }
+.set-overview-grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 10px; }
+.set-overview-option { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; min-width: 0; padding: 10px 12px; border-radius: 7px; border: 1px solid #50405e; background: #131019; color: #ded2ed; cursor: pointer; text-align: left; }
+.set-overview-option.selected { border-color: #b695e9; background: #312643; box-shadow: inset 0 0 0 1px #9876c4; }
+.set-overview-option b { font-size: 12px; }
+.set-overview-option span { font-size: 15px; font-weight: 700; color: #f3dfb5; }
+.set-overview-option small { color: #ad9ebd; font-size: 10px; }
+.set-overview-option .set-weapon-label { display: block; font-size: 11px; color: #d7c7ed; overflow-wrap: anywhere; }
+@media (max-width: 600px) { .set-overview-grid { grid-template-columns: 1fr; } }

@@ -1,0 +1,32 @@
+FIXLGS POE2 V207 - independent weapon-set snapshots
+
+Root: /pob
+PoB original Lua calculation code: unchanged.
+
+Architecture
+- pobCompare.ts runs a fresh original PoB XML build for every comparison request.
+- Before equipping any simulated item, the engine calculates immutable Set I and Set II baseline snapshots.
+- After all replacements are equipped, PoB calculates a separate Set I and Set II simulated snapshot.
+- A CURRENT set selector only chooses an existing original snapshot; it cannot edit the engine.
+- A SIMULATION set selector chooses the corresponding simulated snapshot and pairs it with the SAME original set when showing deltas.
+- Both sets' weapon names and DPS are visible at once in each pane.
+- Weapon overrides have physical keys (weapon-set-1, weapon-set-2); a tab change cannot move an override.
+- The secondary skill uses the character's original weapon set, not a brute-force attempt on both sets.
+- No result falls back to ninja DPS when reporting PoB MAIN SKILLS.
+
+WASM regression using the provided ResurrectForbidden PoB Export + FIXLGS-EN-V004 Grand Spear:
+Unchanged:  Set I Twister 87406.648538876; Set II Twister 306057.75878128; Whirling Slash 10450.176121947.
+Replace I:  Set I Twister 220056.93165147; Set II Twister unchanged; Whirling Slash unchanged.
+Replace II: Set I Twister unchanged; Set II Twister 253877.50098149; Whirling Slash 7801.8718666551.
+All 4 runs succeeded: unchanged, replace I, replace II, and simultaneous I+II replacement.
+Both replaced together: Set I Twister 220056.93165147; Set II Twister 253877.50098149; Whirling Slash 7801.8718666551.
+Every replacement preserves both immutable original snapshots.
+This is a Node-hosted worker/WASM regression, not a full-browser integration test.
+
+Validation
+- TS syntax/transpilation: passed for modified files.
+- Standalone tsc typecheck: passed for pobCompare.ts and CalcClient dependency.
+- Full Next.js build: unavailable; npm dependency installation failed in this environment.
+- Actual desktop browser UI: not executed here; user validation needed.
+- Several PoB skill-group signatures differ after an equip; warnings retained (does not imply missing groups).
+- The PoB item parser may not support all new mods; do not treat reported DPS as universally accurate.

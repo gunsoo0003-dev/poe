@@ -1,0 +1,8 @@
+V197 — ENGINE INTEGRATION WORK-IN-PROGRESS (NOT VERIFIED AS COMPLETE)
+1. V196 worker code inspected: PoB Lua new('Item'), AddItem, IsItemValidForSlot, SetSelItemId already present.
+2. Fixed CalcClient to propagate PoB getStats/getSkills/add/equip/slot errors instead of returning empty success-looking data.
+3. Added post-equip slot database read-back, and baseline/after minimal stat-presence gates.
+4. Switched CURRENT Stats display to PoB engine when available, consistent with AFTER Stats. No PoB output is interpreted as verified ninja stats.
+5. Existing XML import still relies on poe.ninja providing a PoB export; build completeness, mod support and real-character DPS remain unverified.
+6. No actual PoB WASM end-to-end calculation could be run in this environment; npm install did not complete and full Next.js build unverified.
+DO NOT LABEL THIS BUILD CALCULATION-ACCURATE. Extension V004.2 unchanged.

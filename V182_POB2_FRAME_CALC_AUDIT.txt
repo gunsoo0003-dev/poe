@@ -1,0 +1,1 @@
+V182: deferred smoke to Launch.OnFrame after main.OnFrame, enters BUILD via SetMode then reads BuildOutput on next frame. Windows execution not yet verified. Source Lua restored in finally.

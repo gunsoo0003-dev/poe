@@ -1,0 +1,1 @@
+V184: ninja PoB export -> decode compressed Base64 -> verify PathOfBuilding XML -> save to .pob2-engine/FIXLGS_Character.xml. This is a preparation step, NOT a character-loaded PoB2 calculation. Actual BUILD LoadDB/Import integration is pending.

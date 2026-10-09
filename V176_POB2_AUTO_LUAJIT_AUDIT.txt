@@ -1,0 +1,19 @@
+V176 - PoB2 Headless automatic LuaJIT setup
+
+Changes from V175:
+- Removed Scoop dependency and all instructions requiring a non-admin PowerShell.
+- Added scripts/pob2-runtime.ps1 with shared LuaJIT detection/install logic.
+- `npm run pob2:setup` now:
+  1) clones/updates official PathOfBuilding-PoE2 dev,
+  2) installs FIXLGS_Smoke.lua,
+  3) detects existing LuaJIT,
+  4) if absent, automatically installs DEVCOM.LuaJIT using Windows Package Manager (winget),
+  5) resolves luajit.exe directly even when PATH has not refreshed,
+  6) runs the PoB2 headless smoke test.
+- Works from an Administrator PowerShell; Scoop is no longer used.
+- LUAJIT_PATH is still honored as the highest-priority override.
+
+Expected user command:
+  npm run pob2:setup
+
+If winget is missing, install Microsoft's App Installer and rerun the command.
