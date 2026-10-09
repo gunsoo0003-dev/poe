@@ -673,6 +673,46 @@ function transformNumericSoundInPlace(baseText: string, item: FilterItem, descri
   return { text: lines.join("\n"), changed };
 }
 
+// V216: A user-selected sound on an Uncut Gem is an explicit level-specific override.
+// V215 only inserted sound into area-scoped NeverSink Show blocks. Those files
+// contained the MP3 command yet did not guarantee an audible rule for every drop.
+// Build exact BaseType + GemLevel rules in precedence order, keeping NeverSink's
+// area-specific visual styling where possible. A final exact-level fallback
+// guarantees that the selected sound is not silently suppressed by an AreaLevel
+// gate. Unmodified gems still use the byte-identical NeverSink original.
+function buildGemSoundPriorityRules(baseText: string, item: FilterItem, descriptor: ExportSoundDescriptor) {
+  if (item.gemLevel == null || !item.baseType) return [] as string[];
+  const blocks = parseBlocks(baseText).blocks;
+  const sections = sourceSections(item);
+  const matchingShows = blocks.filter((block) => {
+    if (!/^Show\b/i.test(block.lines[0].trim())) return false;
+    if (!matchesSourceSection(block.section, sections)) return false;
+    if (!blockContainsBaseType(block, item.baseType!)) return false;
+    const gemConditions = block.lines.filter((line) => /^\s*GemLevel\b/i.test(stripComment(line)));
+    return gemConditions.every((line) => numericConditionMatches(line, "GemLevel", item.gemLevel!));
+  });
+  const rules = matchingShows.flatMap((block) => [
+    ...cloneNumericRule(block, item, "default", descriptor, baseText),
+    "",
+  ]);
+  // A generic unconditional final rule is needed if NeverSink has no Show in
+  // this area. Otherwise the sound entry exists but never fires in-game.
+  // Do not use originalPresentationLines() here: it may pick the unrelated
+  // level-20 S-style for a low-level gem. Prefer NeverSink's generic map gem
+  // style; if absent, use a genuine Show matching this BaseType.
+  const generic = matchingShows.find((block) => /\$tier->other(?:skill|spirit|support)eg\b/i.test(block.lines[0]))
+    ?? matchingShows.find((block) => !block.lines.some((line) => /^\s*GemLevel\b/i.test(stripComment(line))))
+    ?? matchingShows[0];
+  const fallback = [
+    `Show # FIXLGS guaranteed gem sound · ${item.id}`,
+    ...simpleSelector(item),
+    ...(generic ? visualLines(generic) : []),
+    `\tCustomAlertSoundOptional "${descriptor.filterPath.replaceAll('"', '')}" 300`,
+    "",
+  ];
+  return [...rules, ...fallback];
+}
+
 // Match only a NeverSink Show block which already covers the BaseType.
 // NeverSink uses both exact selectors (`BaseType == "A"`) and substring
 // selectors (`BaseType "Lesser"`) in its leveling flask rules.
@@ -1024,6 +1064,16 @@ export function buildCustomizedFilter(input: FilterExportInput): FilterExportRes
     }
 
     if (item.gemLevel != null || item.waystoneTier != null) {
+      // Unlike waystones, a directly customized Uncut Gem sound must take
+      // precedence over NeverSink's area progression and generic gem rules.
+      // This branch applies only to sound-only customization (not explicit
+      // Hide or a user-selected importance).
+      if (item.gemLevel != null && descriptor && state.importance === "default" && state.enabled === baseline && !state.visibilityExplicit) {
+        const gemRules = buildGemSoundPriorityRules(input.base.text, item, descriptor);
+        if (!gemRules.length) notes.push(`${item.labelKo ?? item.label}: 젬 사운드 최상위 규칙을 만들 수 없습니다.`);
+        else { topOverrides.push(...gemRules); changedRules += 1; }
+        continue;
+      }
       if (descriptor && state.importance === "default" && state.enabled === baseline && !state.visibilityExplicit) {
         const soundResult = transformNumericSoundInPlace(text, item, descriptor);
         text = soundResult.text;
