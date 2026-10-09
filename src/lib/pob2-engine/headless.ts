@@ -98,7 +98,7 @@ export async function runPob2Smoke(timeoutMs = DEFAULT_TIMEOUT_MS): Promise<Pob2
     let stderr = "";
     let settled = false;
 
-    const finish = (payload: Record<string, unknown>) => {
+    const finish = (payload: Pob2SmokeResult) => {
       if (settled) return;
       settled = true;
       clearTimeout(timer);

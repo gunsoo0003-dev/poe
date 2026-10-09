@@ -1,5 +1,5 @@
 /** Strict FIXLGS Export -> PoB2 item-text adapter. Never silently approximate unsupported mods. */
-import { parseTradeItem } from './tradeItem.ts';
+import { parseTradeItem } from './tradeItem';
 
 const knownBases: Record<string, string> = { '솟구치는 창': 'Soaring Spear' };
 

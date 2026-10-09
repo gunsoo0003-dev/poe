@@ -571,7 +571,7 @@ function WeaponSetSummary({ data, chosen, onChoose, title, character, overrides 
     <div className="set-overview-grid">{([1, 2] as const).map(set => {
       const result = data?.[set];
       const dps = result?.stats.CombinedDPS;
-      const originalWeapon = character?.items.find(item => weaponSlotMatches("weapon", set, item.slot));
+      const originalWeapon = character?.items?.find(item => weaponSlotMatches("weapon", set, item.slot));
       const override = overrides?.[physicalSlotKey("weapon", set)];
       const weaponName = override?.name || originalWeapon?.name || originalWeapon?.baseType || "No main-hand weapon";
       return <button type="button" key={set} className={`set-overview-option ${chosen === set ? "selected" : ""}`}
