@@ -1,0 +1,33 @@
+FIXLGS POE2 V226 - Ring slot identity fix
+
+Source baseline: V225 native PoB integrity release.
+
+Root cause:
+  UI ring-a matched `ring` using substring includes(), so it also matched
+  `ring2`. If ninja equipment array listed Ring 2 first, both UI ring slots
+  selected Ring 2, including its name, icon, mods and hover details.
+
+Correction:
+  - Exact-match Ring 1 / Ring 2 per item and per UI slot.
+  - Resolve generic ninja inventoryId `Ring` using x=0 (Ring 1), x=1 (Ring 2).
+  - Ambiguous ring inventory without x is not guessed.
+  - Regression tests include reversed item-array order and generic Ring+x.
+
+Source-of-truth verification:
+  VD_VD original PoB Export ItemSet distinguishes:
+  Ring 1 = Storm Nail, Mnemonic Ring
+  Ring 2 = Kalandra's Touch, Ring
+  This is an offline verification of the user's supplied data; no personal
+  character files are included in this ZIP.
+
+Validation:
+  - 29 ring slot tests pass.
+  - Changed TS/TSX files parse successfully.
+  - Original PoB calc worker and compare module unmodified.
+  - Full Next.js build not run (node_modules not available in current environment).
+
+Deployment smoke test:
+  - Reload VD_VD after deployment (new import request).
+  - Hover each ring and verify distinct name, icon and modifiers.
+  - Verify current DPS still matches pre-patch baseline.
+  - Test placing a candidate ring in Ring I and Ring II independently.

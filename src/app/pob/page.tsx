@@ -8,6 +8,7 @@ import { calculateComparison, getMeasuredSkill, type ComparisonResult, type SetS
 import { CalcClient } from "./web-engine/calc-client";
 import type { SkillsData } from "./web-engine/calc-api";
 import type { ImportedCharacter, ImportedCharacterStat, ImportedItem, ImportedSkill } from "./ninjaImport";
+import { matchesRingSlot } from "./ringSlots";
 
 const guideLinks = pobGuides.map(({label,slug}) => ({label,href:`/guides/pob/${slug}`}));
 
@@ -44,6 +45,8 @@ function normalizedSlotKey(value?: string) {
 }
 
 function slotMatches(cls: string, slot?: string) {
+  // Ring 1 must never match Ring 2 via a substring match.
+  if (cls === "ring-a" || cls === "ring-b") return matchesRingSlot(cls, slot);
   const key = normalizedSlotKey(slot);
   const rules: Record<string, string[]> = {
     weapon: ["weapon", "mainhand", "weapon1", "mainweapon"],
@@ -52,8 +55,6 @@ function slotMatches(cls: string, slot?: string) {
     body: ["bodyarmour", "bodyarmor", "chest"],
     gloves: ["gloves", "glove"],
     boots: ["boots", "boot"],
-    "ring-a": ["ring", "ring1", "leftring"],
-    "ring-b": ["ring2", "rightring"],
     amulet: ["amulet"],
     belt: ["belt"],
     "charm-a": ["charm1"],

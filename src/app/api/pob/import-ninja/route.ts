@@ -1,3 +1,4 @@
+import { canonicalRingSlot } from "@/app/pob/ringSlots";
 import { NextRequest, NextResponse } from "next/server";
 import {
   parseNinjaCharacterUrl,
@@ -310,6 +311,10 @@ function normalizeItemEntries(rawItems: unknown[], kind: ImportedItem["kind"] = 
       // Their x-position identifies the actual slot:
       //   x=0 life flask, x=1 mana flask, x=2/3/4 charm 1/2/3.
       // This matches Path of Building PoE2's character import logic.
+      if (normalizedRawSlot === "ring" || normalizedRawSlot === "ring1" || normalizedRawSlot === "ring2" ||
+          normalizedRawSlot === "leftring" || normalizedRawSlot === "rightring") {
+        resolvedSlot = canonicalRingSlot(rawSlot, slotX) ?? rawSlot;
+      }
       if (normalizedRawSlot === "flask" && slotX !== undefined) {
         if (slotX === 0) resolvedSlot = "LifeFlask";
         else if (slotX === 1) resolvedSlot = "ManaFlask";
