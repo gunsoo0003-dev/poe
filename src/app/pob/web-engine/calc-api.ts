@@ -42,6 +42,8 @@ export interface NativeModAudit {
   lines: Array<{ group: string; line: string; modifierCount: number; extra: string }>;
   unrecognized: Array<{ group: string; line: string; extra: string }>;
   emptyModifier: Array<{ group: string; line: string }>;
+  /** Intrinsic lines from upstream item.base.implicit, not FIXLGS rules. */
+  baseImplicitLines?: string[];
   total: number;
   nativeModifiers: number;
 }

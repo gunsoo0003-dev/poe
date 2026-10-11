@@ -18,6 +18,16 @@ const inputKind = (line: string) => {
 const structuralFlag = (line: string) =>
   /^(?:implicit modifiers cannot be changed|[+]\d+ (?:prefix|suffix) modifiers? allowed|only runes can be socketed in this item)$/i.test(normalize(line));
 
+// PoB's own Breach-family bases include a quality-ceiling implicit. The PoB
+// modifier parser intentionally does not emit an offensive/defensive modifier
+// for this property. Accept it only when the *exact same line* is present in
+// upstream item.base.implicit, and only when in the implicit group. No other
+// unparsed options are waived, and FIXLGS calculates no quality/DPS values.
+const sourceBackedQualityLimit = (
+  entry: { group: string; line: string }, upstream: NativeModAudit,
+) => entry.group === "implicit" && /^\+\d+% to maximum quality$/i.test(normalize(entry.line)) &&
+  (upstream.baseImplicitLines ?? []).some(line => normalize(line) === normalize(entry.line));
+
 export interface AuditOptions {
   /** Pre-equip only. Rune identity + native reconstructed effects must be verified after equipping. */
   deferNamedRunes?: boolean;
@@ -37,11 +47,12 @@ export function validateNativeItemAudit(
     (options.deferNamedRunes && group === "rune" && !/^\s*Bonded:/i.test(line)) ||
     (options.deferBonded && (group === "rune" || group === "explicit") && /^\s*Bonded:/i.test(line));
   for (const entry of upstream.unrecognized) {
-    if (!deferred(entry.group, entry.line))
+    if (!deferred(entry.group, entry.line) && !sourceBackedQualityLimit(entry, upstream))
       issues.push(`${entry.group}: ${entry.line} (원본 PoB 미해석: ${entry.extra || "상세 없음"})`);
   }
   for (const entry of upstream.emptyModifier) {
-    if (!deferred(entry.group, entry.line) && !structuralFlag(entry.line))
+    if (!deferred(entry.group, entry.line) && !structuralFlag(entry.line) &&
+        !sourceBackedQualityLimit(entry, upstream))
       issues.push(`${entry.group}: ${entry.line} (PoB 계산 modifier 생성 확인 불가)`);
   }
   const seen = new Map<string, number>();

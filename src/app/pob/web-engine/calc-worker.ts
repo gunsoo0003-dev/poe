@@ -2131,7 +2131,14 @@ end
 -- again or apply gameplay rules; Item.lua / ModParser.lua remain authoritative.
 -- A successful AddItem only means the base was accepted, not that all mods were.
 function pobWebNativeModAudit(item)
-  local audit = { lines = {}, unrecognized = {}, emptyModifier = {}, total = 0, nativeModifiers = 0 }
+  -- Report source-backed base implicits independently from parsed modifiers.
+  -- ItemBase data is upstream PoB's own authority for intrinsic properties.
+  local audit = { lines = {}, unrecognized = {}, emptyModifier = {}, baseImplicitLines = {}, total = 0, nativeModifiers = 0 }
+  if item.base and type(item.base.implicit) == "string" then
+    for baseLine in item.base.implicit:gmatch("[^" .. string.char(10) .. "]+") do
+      audit.baseImplicitLines[#audit.baseImplicitLines + 1] = baseLine
+    end
+  end
   local groups = {
     { name = "implicit", lines = item.implicitModLines },
     { name = "enchant", lines = item.enchantModLines },

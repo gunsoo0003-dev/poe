@@ -1,0 +1,24 @@
+FIXLGS POE2 PoB V231 - Native Breach Ring intrinsic quality-cap fix
+Based on V230, preserving V226 ring slot mapping, V227-230 integrity/skill changes and Extension V004.6.
+
+Cause:
+- Upstream PoB item base 'Breach Ring' declares '+20% to Maximum Quality' in item.base.implicit.
+- Upstream ModParser does not generate a numeric modifier for that intrinsic quality-ceiling property.
+- The FIXLGS native-integrity guard previously interpreted the lack of a modifier as an unknown effect and blocked all after-change calculations.
+
+Fix:
+- Lua audit now reports exact intrinsic implicit lines directly from upstream item.base.implicit.
+- Validation permits source-matched '+N% to Maximum Quality' only when it belongs to the upstream item's intrinsic implicit group.
+- Other unrecognized effects, malformed/collapsed text, or unmatched values still block.
+- Original PoB Lua data, DPS formulas, and extension V004.6 were NOT changed.
+
+Evidence:
+- Breach Ring '+20% to Maximum Quality' validated against upstream base data.
+- '+1 to Level of all Skills' independently generates an upstream native modifier.
+- Actual Lua/WASM Ring 1 equip and STATS recalculation succeeded in a fixture build.
+- Negative cases: +25% on +20% base, quality cap on unrelated base, impossible explicit modifier, malformed merged text all rejected.
+- Existing V210, V211, V225, V226, V227, V228, V229/V230 regression scripts passed.
+
+Caveat:
+- Browser/Vercel production build not verified in this environment due to incomplete Node dependencies.
+- Full official desktop PoB calculation parity not established. No numerical result is invented by FIXLGS.
