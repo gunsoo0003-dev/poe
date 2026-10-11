@@ -39,14 +39,18 @@ const mocks={
 };
 const pageCtx={exports:{},require:(id)=>{if(!(id in mocks))throw new Error(`mock needed: ${id}`);return mocks[id]}};
 vm.runInNewContext(compiled,pageCtx,{filename:'page.js'});
-const main=pageCtx.exports.buildMainSkillUi(snapshot,[
- {name:'Spark',supports:[]},{name:'Lightning Bolt',supports:[]}
-]);
-assert.match(main[0].name,/Lightning Bolt/);
-assert.match(main[0].name,/그룹 5/);
-assert.equal(main[0].dps,'1,200,000');
-assert.match(main[1].name,/그룹 6/);
-console.log('V229 group identity / main DPS / duplicate skill / weapon badge: PASS (9 checks)');
+const ninjaSkills=[{name:'Spark',supports:[],dpsValue:500000},{name:'Lightning Bolt',supports:[],dpsValue:300000}];
+const main=pageCtx.exports.buildMainSkillUi({...snapshot,skills:{...snapshot.skills,mainSocketGroup:5}},ninjaSkills,'Spark');
+assert.equal(main[0].name,'Spark','Ninja main skill has priority even when other PoB group has higher DPS');
+assert.equal(main[0].dps,'289,338.81');
+assert.equal(main[1].name,'Lightning Bolt','No extra PoB group suffix in original ninja skill name');
+assert.equal(main[1].dps,'1,200,000');
+const sameNameOtherMain=pageCtx.exports.buildMainSkillUi({...snapshot,skills:{...snapshot.skills,mainSocketGroup:6}},ninjaSkills,'Lightning Bolt');
+assert.equal(sameNameOtherMain[0].name,'Lightning Bolt');
+assert.equal(sameNameOtherMain[0].dps,'400,000','Duplicate group uses native PoB main identity, NOT highest DPS');
+const ambiguous=pageCtx.exports.buildMainSkillUi({...snapshot,skills:{...snapshot.skills,mainSocketGroup:1}},ninjaSkills,'Lightning Bolt');
+assert.equal(ambiguous[0].dps,'—','Unresolvable duplicate must not invent a DPS');
+console.log('V230 ninja authority / PoB group identity / weapon badge: PASS');
 // End-to-end mocked PoB capture confirms both Lightning Bolt groups are measured
 // without selecting the first group by name.
 const cache={};
@@ -84,5 +88,7 @@ const fakeEngine={
  assert.equal(observed.filter(x=>x[0]===5).length,1);
  assert.equal(observed.filter(x=>x[0]===6).length,1);
  assert.equal(result.original[2].calculatedSkills[5],undefined,'No borrowing group results into set II');
+ assert.equal(result.warnings.some(w=>w.includes('같은 이름의 PoB 그룹')),false,'Identical skill-group info is not a calculation warning');
+ assert.equal(result.equipmentTrace.some(w=>w.includes('같은 이름의 PoB 그룹')),true,'Identity info remains available in diagnostics');
  console.log('V229 duplicate-group capture integration: PASS (5 checks)');
 })().catch(e=>{console.error(e);process.exitCode=1;});

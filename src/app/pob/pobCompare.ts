@@ -119,11 +119,11 @@ export async function calculateComparison(
   if (candidateIndexes.length > MAX_SECONDARY_GROUPS) {
     warnings.push(`추가 스킬 그룹 ${candidateIndexes.length - MAX_SECONDARY_GROUPS}개는 계산 안전 한도로 인해 DPS 미검증`);
   }
+  const equipmentTrace: string[] = [];
   for (const name of new Set(preferredNames.map(normalize))) {
     const matches = enabledGroups.filter(group => group.activeSkillNames.some(active => normalize(active) === name));
-    if (matches.length > 1) warnings.push(`${matches[0].activeSkillNames.find(active => normalize(active) === name)}: 같은 이름의 PoB 그룹 ${matches.length}개를 별도 계산·식별`);
+    if (matches.length > 1) equipmentTrace.push(`정보: ${matches[0].activeSkillNames.find(active => normalize(active) === name)}: 같은 이름의 PoB 그룹 ${matches.length}개를 별도 계산·식별`);
   }
-  const equipmentTrace: string[] = [];
 
   // Secondary skills retain their *original* weapon set. Trying them in an
   // incompatible weapon set can hang Lua; never brute-force both weapon sets.

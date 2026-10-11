@@ -88,23 +88,38 @@ function weaponSlotMatches(cls: "weapon" | "offhand", set: 1 | 2, slot?: string)
 // Persist weapon overrides by physical weapon set, not by the currently visible tab.
 const physicalSlotKey = (slot: string, set: 1 | 2) =>
   slot === "weapon" || slot === "offhand" ? `${slot}-set-${set}` : slot;
-/** Only PoB-measured values may determine the main DPS display.
- * Socket index and weapon set keep duplicate Lightning Bolt groups distinct.
+/**
+ * Character skill names/order are owned by poe.ninja. PoB provides only
+ * independently measured numbers for a matching skill in the selected set.
+ * Never re-rank ninja main skills using PoB DPS.
  */
-export function buildMainSkillUi(snapshot: SetCalculation | undefined, importedSkills: ImportedSkill[]): UiSkill[] {
-  if (!snapshot) return [];
-  const ranked = rankMeasuredSkillGroups(snapshot);
-  const counts = new Map<string, number>();
-  for (const row of ranked) for (const name of row.activeSkillNames)
-    counts.set(name.trim().toLowerCase(), (counts.get(name.trim().toLowerCase()) || 0) + 1);
-  return ranked.slice(0, 2).map(result => {
-    const name = result.activeSkillNames[0] || `PoB Group ${result.groupIndex}`;
-    const skill = importedSkills.find(candidate => candidate.name.trim().toLowerCase() === name.trim().toLowerCase());
-    const ui = skill ? toUiSkill(skill) : { name, support: result.slot, dps: "—", tone: "gold" };
-    const duplicated = (counts.get(name.trim().toLowerCase()) || 0) > 1;
-    return { ...ui,
-      name: `${name}${duplicated ? ` · 그룹 ${result.groupIndex}` : ""} · Set ${result.weaponSet === 1 ? "I" : "II"}`,
-      dps: result.dps.toLocaleString("en-US", { maximumFractionDigits: 2 }) };
+export function buildMainSkillUi(snapshot: SetCalculation | undefined, importedSkills: ImportedSkill[], ninjaMainSkill?: string): UiSkill[] {
+  const normalize = (value: string) => value.trim().toLowerCase();
+  const ordered = [...importedSkills].sort((a, b) => (b.dpsValue ?? -1) - (a.dpsValue ?? -1));
+  const main = ninjaMainSkill?.trim();
+  const selected: ImportedSkill[] = main
+    ? [ordered.find(skill => normalize(skill.name) === normalize(main)) ?? { name: main, supports: [] },
+       ...ordered.filter(skill => normalize(skill.name) !== normalize(main))]
+    : ordered;
+  // No generated/example skills when poe.ninja provides none.
+  return selected.slice(0, 2).map(skill => {
+    const ui = toUiSkill(skill);
+    if (!snapshot) return { ...ui, dps: "—" };
+    const matches = snapshot.skills.groups.filter(group => group.enabled !== false &&
+      group.activeSkillNames.some(name => normalize(name) === normalize(skill.name)));
+    let measured: ReturnType<typeof getMeasuredSkill>;
+    if (matches.length === 1) {
+      measured = getMeasuredSkill(snapshot, skill.name);
+    } else if (matches.length > 1) {
+      // When two PoB groups have the same name, ONLY its native selected
+      // main group identifies the intended PoB value without guessing.
+      const nativeMain = snapshot.calculatedSkills[snapshot.skills.mainSocketGroup];
+      if (nativeMain && nativeMain.weaponSet === snapshot.weaponSet &&
+          matches.some(group => group.index === nativeMain.groupIndex && group.slot === nativeMain.slot)) {
+        measured = getMeasuredSkill(snapshot, skill.name, nativeMain.groupIndex);
+      }
+    }
+    return { ...ui, dps: measured ? measured.dps.toLocaleString("en-US", { maximumFractionDigits: 2 }) : "—" };
   });
 }
 
@@ -182,12 +197,6 @@ export default function Home() {
         before: before.dps, after: after.dps, weaponSet: after.weaponSet, groupIndex: after.groupIndex }];
     }).slice(0, 3);
   }, [compareBeforeSnapshot, afterSnapshot]);
-  const actualSkills = useMemo(() => importedCharacter?.skills ?? [], [importedCharacter]);
-  const actualStats = useMemo(() => importedCharacter?.stats ?? [], [importedCharacter]);
-
-  const engineMainSkills = (snapshot?: SetCalculation): UiSkill[] =>
-    buildMainSkillUi(snapshot, actualSkills);
-
   function moveItemTooltip(event: MouseEvent<HTMLElement>, item: ImportedItem) {
     const tooltipWidth = 360;
     const tooltipHeight = 460;
@@ -342,7 +351,7 @@ export default function Home() {
                   onHover={moveItemTooltip}
                   onLeave={() => setHoveredItem(null)}
                 />
-                <StatsCard title={`Stats · CURRENT (PoB2 · Set ${weaponSet === 1 ? "I" : "II"})`} stats={engineStatsBefore} mainSkills={engineMainSkills(beforeSnapshot)} />
+                <StatsCard title={`Stats · CURRENT (PoB2 · Set ${weaponSet === 1 ? "I" : "II"})`} stats={engineStatsBefore} mainSkills={buildMainSkillUi(beforeSnapshot, importedCharacter?.skills ?? [], importedCharacter?.mainSkill)} />
               </div>
               <SkillsPanel character={importedCharacter} />
             </section>
@@ -399,7 +408,7 @@ export default function Home() {
                     </form>
                   )}
                 </EquipmentPanel>
-                <StatsCard title={`Stats · After Change (PoB2 · Set ${simulationWeaponSet === 1 ? "I" : "II"})`} stats={engineStatsAfter} mainSkills={engineMainSkills(afterSnapshot)} emptyMessage={pobState?.nativeParserStatus === "blocked" ? "교체 아이템 원본 PoB 옵션 인식 검증 실패 · 변경 후 수치 표시 보류" : undefined} />
+                <StatsCard title={`Stats · After Change (PoB2 · Set ${simulationWeaponSet === 1 ? "I" : "II"})`} stats={engineStatsAfter} mainSkills={buildMainSkillUi(afterSnapshot, importedCharacter?.skills ?? [], importedCharacter?.mainSkill)} emptyMessage={pobState?.nativeParserStatus === "blocked" ? "교체 아이템 원본 PoB 옵션 인식 검증 실패 · 변경 후 수치 표시 보류" : undefined} />
               </div>
               <section className="gear-delta-panel" aria-live="polite">
                 <strong>PoB2 WASM · 엔진 계산 비교 (검증용)</strong>

@@ -1,0 +1,18 @@
+FIXLGS POE2 MAIN V230 / Ninja source authority fix
+
+Source of truth:
+- Current character main skill name/order/supports and other imported facts: poe.ninja only.
+- DPS/STATS and any after-change calculations: native PoB2 engine only.
+- FIXLGS displays and joins verified facts; does not independently rank main skills by PoB DPS.
+
+Changes:
+- Removed V229 PoB-DPS-based selection of displayed MAIN SKILLS.
+- Restored poe.ninja main skill preference / skill ranking from original imported data, preserving its icon and support gems.
+- When the original PoB main socket group identifies a duplicated skill, use its measured DPS even if another group has a higher DPS.
+- When duplicate group identity cannot be proven, show no DPS, never borrow another group number.
+- Duplicate-name detection is information in equipment trace, not a calculation-failure warning.
+- Actual incomplete/unrecognized calculations remain warnings.
+- Retains V226 ring slots, V227 verification, V229 weapon-set badges, extension V004.6.
+
+Not changed: PoB Lua/WASM source or damage formula.
+Needs live browser validation after deployment.
