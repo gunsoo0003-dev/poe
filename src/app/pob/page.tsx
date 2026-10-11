@@ -499,7 +499,7 @@ export default function Home() {
                   id="ninja-character-url"
                   type="url"
                   inputMode="url"
-                  placeholder="https://poe.ninja/poe2/builds/.../character/.../..."
+                  placeholder="https://poe.ninja/poe2/profile/.../.../character/..."
                   value={ninjaUrl}
                   onChange={(event) => setNinjaUrl(event.target.value)}
                   disabled={importing}

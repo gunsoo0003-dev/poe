@@ -1,0 +1,33 @@
+FIXLGS POE2 / PoB V219 - poe.ninja character URL compatibility fix
+
+Root cause (V218):
+  src/app/pob/ninjaImport.ts only accepted:
+  /poe2/builds/{league}/character/{account}/{character}
+
+  The affected user link uses:
+  /poe2/profile/{account}/{league}/character/{character}
+  V218 rejected this before fetching character data, regardless of character language.
+
+Fix (V219):
+  - Accept both builds and profile-style POE2 character detail links.
+  - Extract account/league/character at correct path positions.
+  - Decode non-ASCII URL path segments (Korean/Japanese/Chinese etc.) exactly once.
+  - Keep the strict HTTPS poe.ninja allowlist and reject malformed/unrecognized paths.
+  - Update the form placeholder to show the profile URL pattern.
+  - No changes to filter, PoB item parsing, stats, or snapshot API handling.
+
+Exact user-case parsed successfully:
+  account = 썩은통닭-2237
+  league  = runesofaldur
+  char    = 빅맥치킨
+
+Verification:
+  - TypeScript standalone strict typecheck of ninjaImport.ts: PASS
+  - 12 parser tests (Korean encoded/literal, English legacy/profile, Japanese,
+    Chinese, invalid domain/protocol/path/encoding): PASS
+  - Full Next.js build was not performed: npm dependency installation timed out
+    in the test environment. Run `npm ci && npm run build` locally or on Vercel.
+  - Live poe.ninja character API response was not tested, so verification of
+    inventory/skill data must be done after deployment.
+
+Archive layout: fixed root folder `fix-pob/`, no nested fix-pob/fix-pob.
