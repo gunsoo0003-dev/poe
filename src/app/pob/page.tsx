@@ -1,6 +1,8 @@
 "use client";
 
 import { FormEvent, MouseEvent, ReactNode, useMemo, useState, useEffect } from "react";
+import Link from "next/link";
+import { pobGuides } from "@/lib/pobGuides";
 import { parseTradeItem, type TradeItem } from "./tradeItem";
 import { calculateGearDelta } from "./gearDelta";
 import { calculateComparison, getMeasuredSkill, type ComparisonResult, type SetSnapshots, type SetCalculation, type WeaponSet } from "./pobCompare";
@@ -8,15 +10,7 @@ import { CalcClient } from "./web-engine/calc-client";
 import type { SkillsData } from "./web-engine/calc-api";
 import type { ImportedCharacter, ImportedCharacterStat, ImportedItem, ImportedSkill } from "./ninjaImport";
 
-const guideLinks = [
-  "DPS 이해하기",
-  "Increased vs More",
-  "적 저항과 관통",
-  "버프와 차지",
-  "패시브 계산 방식",
-  "간편 PoB 이용안내",
-  "FAQ",
-];
+const guideLinks = pobGuides.map(({label,slug}) => ({label,href:`/guides/pob/${slug}`}));
 
 const skills = [
   { name: "Whirling Slash", support: "Rage III · Rapid Attacks III · Blazing Critical", dps: "391k", tone: "gold" },
@@ -475,7 +469,7 @@ export default function Home() {
             </div>
             <div className="guide-links">
               {guideLinks.map((item) => (
-                <a href="#" key={item}>{item}</a>
+                <Link href={item.href} key={item.href}>{item.label}</Link>
               ))}
             </div>
           </nav>
@@ -507,12 +501,12 @@ export default function Home() {
                 />
                 <button type="submit" disabled={importing}>{importing ? "확인 중..." : "확인"}</button>
               </div>
-              <small>poe.ninja에 등록된 POE2 캐릭터 상세 링크만 지원합니다.</small>
+              <small>poe.ninja Builds에 실제 등록된 캐릭터 링크만 지원합니다. Eligible은 반영 전일 수 있습니다.</small>
               {importError && <p className="ninja-import-error" role="alert">{importError}</p>}
             </form>
 
             <div className="start-tools" aria-label="시작 도구">
-              <a className="start-tool-card" href="#pob-guide">
+              <a className="start-tool-card" href="/guides/pob/getting-started">
                 <span className="start-tool-kicker">GUIDE</span>
                 <strong>사용 가이드</strong>
                 <small>캐릭터 불러오기부터 거래소 아이템 비교까지 사용 순서를 확인합니다.</small>
@@ -551,7 +545,7 @@ export default function Home() {
 
       <footer>
         <a href="/"><strong>← FIX POE2</strong></a>
-        <span>FIX PoB · Unofficial fan-made tool. Not affiliated with or endorsed by Grinding Gear Games.</span>
+        <span>FIX PoB · Unofficial fan-made tool. Not affiliated with or endorsed by Grinding Gear Games. <Link href="/guides">사용 가이드</Link> · <Link href="/privacy/site">개인정보처리방침</Link> · <Link href="/contact">문의</Link></span>
       </footer>
     </main>
   );

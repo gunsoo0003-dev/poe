@@ -28,6 +28,7 @@ export default function PrivacyPage() {
           <div className={styles.kicker}>CHROME EXTENSION · PRIVACY</div>
           <h1>개인정보처리방침</h1>
           <p className={styles.lead}>FIXLGS POE2 Item Export</p>
+          <p>이 문서는 Chrome 확장프로그램 전용입니다. <Link href="/privacy/site">FIX POE2 웹사이트 개인정보처리방침</Link>은 별도로 확인해 주세요.</p>
           <p className={styles.date}>시행일: 2026년 10월 10일 · 운영자: 주식회사 엘지에스(LGS Co., Ltd.)</p>
 
           <div className={styles.summary}>

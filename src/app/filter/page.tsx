@@ -9,8 +9,7 @@ export default function FilterPage() {
         <nav aria-label="POE2 서비스 메뉴">
           <Link href="/pob">POB</Link>
           <Link className="is-current" href="/filter">FILTER</Link>
-          <span>TRADE</span>
-          <span>CRAFT</span>
+          <Link href="/filter/guide">GUIDE</Link>
           <Link href="/">HOME</Link>
         </nav>
       </header>
@@ -30,6 +29,8 @@ export default function FilterPage() {
         <strong>FIX POE2 · FILTER</strong>
         <h1>PC에서 이용해 주세요.</h1>
         <p>필터 커스터마이저는 넓은 PC 화면을 기준으로 제작하고 있습니다.</p>
+        <Link href="/filter/guide">필터 사용 가이드 →</Link>
+        <Link href="/guides/filter-troubleshooting">필터 오류 해결 →</Link>
         <Link href="/">메인으로 돌아가기</Link>
       </section>
     </main>

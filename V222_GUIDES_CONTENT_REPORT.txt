@@ -1,0 +1,14 @@
+FIXLGS POE2 V222 — guide and site-readiness content
+Base: V221 PoB2 frame settle fix (verified user test).
+Added: /guides index + 7 substantive PoB articles + filter troubleshooting.
+Improved: /filter/guide instructions incl. conditional NeverSink hide + sound folder and local vs game saving.
+Added: /about /contact /privacy/site /terms (Chrome extension /privacy unchanged).
+Navigation: PoB guide # placeholders replaced with actual article links; homepage GUIDE link and footer policies.
+Homepage: FILTER marked AVAILABLE; TRADE and CRAFT placeholder links hidden.
+SEO: metadata, sitemap.xml, robots.txt. /pob/engine-lab noindex and excluded from sitemap.
+Ad code: not inserted. Reserved ADSENSE mock labels hidden until approval.
+NOTICE: /downloads/FIXLGS_POE2_ITEM_EXPORT_V004.zip is referenced in V221, but the source ZIP does not contain the asset. Original CTA is preserved to avoid changing existing working extension functionality. Ensure this ZIP exists in your local public/downloads/ before publishing; otherwise the link can return 404.
+Validation completed: TypeScript/TSX syntax AST parse (48 source files), all valid; original V221 PoB2 WASM calc-worker byte-for-byte unchanged; static internal guide links present.
+Pending: Next.js full build and browser smoke test not available (npm dependencies missing/offline npm ci ENOTCACHED, online npm ci failed).
+Do not claim AdSense approval is guaranteed. No ads.txt or AdSense ad-script has been added.
+

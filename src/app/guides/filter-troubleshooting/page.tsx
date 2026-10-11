@@ -1,0 +1,12 @@
+import Link from "next/link";
+import type { Metadata } from "next";
+export const metadata: Metadata={title:"POE2 필터 설치·사운드·숨김 오류 해결 | FIX POE2",description:"필터가 게임에 보이지 않거나 커스텀 사운드가 재생되지 않을 때 확인할 저장 경로·조건부 NeverSink 규칙과 ZIP 설치 방법."};
+export default function FilterTroubleshooting(){return <main className="fix-content-main">
+<nav className="fix-breadcrumb"><Link href="/guides">전체 가이드</Link> / 필터 오류 해결</nav><p className="fix-content-eyebrow">FILTER · TROUBLESHOOTING</p><h1>필터가 적용되지 않을 때 확인할 것</h1><p className="fix-content-lead">필터 저장과 게임 내 선택, 드롭 숨김 규칙, 사운드 파일은 서로 다른 단계입니다. 문제가 생긴 단계부터 점검하면 불필요한 전체 초기화를 줄일 수 있습니다.</p>
+<section className="fix-content-section"><h2>1. 게임에서 필터 목록에 나타나지 않습니다</h2><p>필터를 저장한 뒤 POE2 게임 설정의 아이템 필터 목록에서 원하는 필터를 선택해야 합니다. 파일명이 같으면 덮어쓴 버전이 적용될 수 있으니 저장 완료 메시지와 파일 위치를 먼저 확인하세요.</p><p>일반적인 Windows 문서 폴더의 <code>My Games/Path of Exile 2</code> 아래에 <code>.filter</code> 파일이 있는지 확인하세요. 게임 설치 폴더와 필터 설정 폴더는 다를 수 있습니다.</p></section>
+<section className="fix-content-section"><h2>2. 저장과 다운로드는 서로 다릅니다</h2><p><strong>현재 설정 저장</strong>은 사이트 내 커스텀 프리셋 보관과 연결되고, <strong>게임 폴더에 설치</strong>는 브라우저의 폴더 접근 권한을 사용합니다. 브라우저가 직접 폴더 저장을 지원하지 않으면 파일 다운로드 후 직접 옮겨야 합니다.</p><p>브라우저 로컬 저장은 같은 기기·브라우저에서도 저장 데이터 삭제나 비공개 모드 이용 시 없어질 수 있습니다. 중요한 설정은 최종 필터 파일로 보관하세요.</p></section>
+<section className="fix-content-section"><h2>3. 체크를 껐는데도 아이템이 보입니다</h2><p>NeverSink에는 젬 레벨·지역 등 다른 조건에 따라 동일 아이템을 다시 표시하는 규칙이 있을 수 있습니다. 화면에 <strong>NS 조건부</strong>라고 표시되는 분류는 일반 체크를 끄는 것만으로 모든 상황에서 숨겨진다고 단정하면 안 됩니다.</p><p><strong>완전히 숨김</strong>은 해당 분류의 NeverSink 조건과 관계없이 숨기는 FIXLGS 우선 규칙입니다. 되돌리려면 해당 항목을 개별 초기화하세요. 모든 드롭에 무조건 이 옵션이 있는 것은 아닙니다.</p></section>
+<section className="fix-content-section"><h2>4. 커스텀 사운드가 재생되지 않습니다</h2><p>개인 MP3를 선택했다면 등록 과정의 검사와 미리듣기를 먼저 완료하세요. 사이트에서 생성한 ZIP을 사용할 경우 ZIP 안의 <code>.filter</code> 파일만 옮기면 소리를 찾을 수 없습니다.</p><p>ZIP에 포함된 <code>FIXLGS_SOUNDS</code> 폴더도 필터 파일과 같은 위치에 복사하세요. 압축 풀기로 폴더가 한 단계 더 중첩되면 소리 파일 경로가 달라질 수 있습니다.</p></section>
+<section className="fix-content-section"><h2>5. 시즌 업데이트 후 이전 필터가 다르게 동작합니다</h2><p>현재 원본 NeverSink 버전과 예전에 저장한 커스텀의 기준 버전이 다를 수 있습니다. 저장된 항목의 호환성을 살펴보고 새 원본으로 초기화 후 필요한 규칙만 재적용하는 편이 안전할 수 있습니다.</p><p>FIXLGS 사이트에서 수정하지 않은 항목은 선택한 NeverSink 원본 규칙을 우선 사용하도록 설계됐지만, 게임·원본 필터 변경 시 모든 과거 설정의 호환성이 보장되지는 않습니다.</p></section>
+<section className="fix-content-note"><strong>권장 확인 순서</strong><p>게임 내 선택 → .filter 저장 위치 → 원본 단계 → 조건부 숨김 → 사운드 폴더 → 최신 NeverSink 기준 순으로 확인하세요.</p></section><div className="fix-content-actions"><Link href="/filter/guide">필터 기본 사용법</Link><Link href="/filter">필터 편집기 열기 →</Link></div>
+</main>}

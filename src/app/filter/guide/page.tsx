@@ -1,4 +1,6 @@
 import Link from "next/link";
+import type { Metadata } from "next";
+export const metadata: Metadata = {title:"POE2 NeverSink 필터 설정·설치 가이드 | FIX POE2",description:"POE2 NeverSink 0~6 필터 단계, NS 기본값, 조건부 완전히 숨김, MP3 사운드, 게임 폴더 설치와 ZIP 다운로드 사용법."};
 
 export default function FilterGuidePage() {
   return (
@@ -78,6 +80,9 @@ export default function FilterGuidePage() {
           <p>현재 사용하는 NeverSink 단계를 원본으로 불러온 뒤, 불필요한 항목 몇 개만 숨겨 보세요. 익숙해지면 중요도와 사운드를 하나씩 조정하면 됩니다.</p>
         </section>
 
+        <section className="filter-guide-step"><em>07</em><div><h2>NS 조건부와 완전히 숨김</h2><p>일부 분류는 NeverSink가 젬 레벨, 지역 등 여러 조건으로 표시를 결정합니다. 이 경우 단순히 체크를 꺼도 다른 조건에 의해 아이템이 다시 표시될 수 있습니다.</p><p><b>완전히 숨김</b>을 선택하면 조건에 상관없이 해당 분류를 숨기는 상위 규칙을 적용합니다. 이 설정은 지원하는 분류에만 표시되며, 개별 초기화로 NS 원본으로 되돌릴 수 있습니다.</p></div></section>
+        <section className="filter-guide-step"><em>08</em><div><h2>저장 방식과 사운드 파일 확인</h2><p>왼쪽 <b>현재 설정 저장</b>은 브라우저에 커스텀 프리셋을 보관하고, 오른쪽 <b>현재 필터 저장</b> 및 <b>게임 폴더에 설치</b>는 실제 .filter를 게임 폴더에 쓰는 기능입니다.</p><p>브라우저에서 폴더 직접 쓰기를 지원하지 않는다면 <b>필터 다운로드</b> 또는 <b>ZIP 다운로드</b>를 사용하세요. 커스텀 사운드를 사용했다면 ZIP 속 .filter 파일과 FIXLGS_SOUNDS 폴더를 함께 설치해야 합니다.</p></div></section>
+        <section className="filter-guide-tip"><strong>문제가 해결되지 않는다면</strong><p>설치 폴더, 사운드 경로, 단계별 원본 및 조건부 숨김을 점검하는 <Link href="/guides/filter-troubleshooting">필터 오류 해결 가이드</Link>를 확인해 주세요. 또는 <Link href="/contact">오류를 제보</Link>할 수 있습니다.</p></section>
         <Link className="filter-guide-back" href="/filter">← 필터 화면으로 돌아가기</Link>
       </article>
     </main>

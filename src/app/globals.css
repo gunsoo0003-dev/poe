@@ -10916,3 +10916,58 @@ footer strong { color: #a99ab8; }
 /* V214: conditional NS default vs explicit Hide */
 .filter-v2-force-hide{display:inline-flex;align-items:center;justify-content:center;margin-top:4px;padding:3px 8px;border:1px solid rgba(230,160,90,.55);border-radius:5px;background:transparent;color:#eac39b;font-size:11px;cursor:pointer}
 .filter-v2-force-hide:hover{border-color:#ffc47c;color:#fff4df}
+
+
+/* V222: indexable help/guide and policy pages, separate from PC-first tool canvas. */
+.fix-content-app{min-height:100vh;background:radial-gradient(circle at 50% -15%,#302417 0,transparent 36%),#0d0d10;color:#e8e2d6;font-family:var(--font-geist-sans),Arial,sans-serif}
+.fix-content-app *{box-sizing:border-box}
+.fix-content-app a{color:#dec28e}
+.fix-content-header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:18px clamp(16px,4.5vw,72px);border-bottom:1px solid rgba(226,206,169,.16);background:rgba(10,10,12,.85)}
+.fix-content-brand{font:700 22px Georgia,serif;color:#f2e4cb!important;letter-spacing:.03em;text-decoration:none;white-space:nowrap}
+.fix-content-header nav{display:flex;gap:clamp(10px,2vw,26px);align-items:center;flex-wrap:wrap}
+.fix-content-header nav a{font-size:14px;color:#cbc2b2;text-decoration:none;font-weight:650}
+.fix-content-header nav a:hover,.fix-content-footer a:hover{color:#ffdb9e;text-decoration:underline}
+.fix-content-main{max-width:1000px;margin:auto;padding:66px 28px 110px}
+.fix-content-eyebrow{font-size:12px!important;letter-spacing:.2em;color:#bc9759!important;font-weight:800;text-transform:uppercase;margin-bottom:15px!important}
+.fix-content-main h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:clamp(34px,4.5vw,54px);line-height:1.2;letter-spacing:-.025em;color:#f9efdf;margin:0 0 23px}
+.fix-content-main h2{font-size:clamp(23px,2.7vw,29px);line-height:1.45;letter-spacing:-.02em;font-weight:750;color:#f6e8d1;margin:0 0 18px}
+.fix-content-lead{font-size:18px;line-height:1.9;color:#ddd0bc;max-width:890px;margin:0 0 52px}
+.fix-content-section{padding:29px 0 34px;border-top:1px solid rgba(232,218,194,.14)}
+.fix-content-section p{font-size:16px;line-height:1.95;color:#c9c4bf;margin:10px 0}
+.fix-content-section strong{font-weight:800;color:#f0d4a2}
+.fix-content-section code{font-size:.9em;padding:2px 5px;border-radius:3px;background:rgba(231,203,151,.10);overflow-wrap:anywhere;color:#f4d5a4}
+.fix-content-section ul{margin:18px 0 0;padding:0 0 0 24px}
+.fix-content-section li{font-size:16px;line-height:1.9;color:#c9c4bf;padding:4px 0}
+.fix-content-section a,.fix-content-note a{color:#edc886;text-underline-offset:3px}
+.fix-guide-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:24px}
+.fix-guide-card{display:flex;flex-direction:column;gap:10px;min-height:143px;padding:24px;background:linear-gradient(135deg,rgba(176,134,71,.09),rgba(255,255,255,.025));border:1px solid rgba(208,176,111,.23);border-radius:10px;text-decoration:none;transition:background .2s,border-color .2s}
+.fix-guide-card:hover{background:rgba(198,155,90,.12);border-color:rgba(235,190,111,.7)}
+.fix-guide-card strong{font-size:19px;color:#f4e2be;line-height:1.4}
+.fix-guide-card span{font-size:14px;color:#bcb5aa;line-height:1.7}
+.fix-content-note{margin:38px 0 26px;border-left:4px solid #c9a06b;background:rgba(227,178,93,.07);padding:24px 26px}
+.fix-content-note strong{display:block;font-size:19px;color:#f6d499;margin-bottom:8px}
+.fix-content-note p{margin:0;font-size:15px;line-height:1.85;color:#d1c6b4}
+.fix-breadcrumb{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin:0 0 45px;color:#a9a29a;font-size:13px}
+.fix-breadcrumb a{color:#dec28e;text-decoration:none}
+.fix-content-actions,.fix-content-next{display:flex;gap:12px;flex-wrap:wrap;margin:38px 0 0}
+.fix-content-actions a{min-height:48px;display:inline-flex;align-items:center;justify-content:center;padding:12px 20px;background:rgba(182,142,81,.14);color:#eed5a9;text-decoration:none;border:1px solid rgba(210,172,111,.4);border-radius:5px;font-weight:750}
+.fix-content-actions a:hover{background:rgba(182,142,81,.26)}
+.fix-content-next a{display:inline-flex;font-size:14px;color:#d4ba8e;border-bottom:1px solid rgba(212,186,142,.4);text-decoration:none;padding:7px 0}
+.fix-content-email{font-size:22px;font-weight:700;overflow-wrap:anywhere}
+.fix-content-footer{display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding:25px clamp(16px,4.5vw,72px);border-top:1px solid rgba(226,206,169,.16);background:rgba(6,6,8,.8)}
+.fix-content-footer a{color:#cdbfa8;font-size:13px;text-decoration:none}
+.fix-content-footer small{margin-left:auto;color:#827c73;font-size:12px}
+@media(max-width:700px){.fix-content-header{align-items:flex-start;flex-direction:column;gap:13px}.fix-content-main{padding:42px 18px 70px}.fix-content-lead{font-size:16px;line-height:1.75;margin-bottom:34px}.fix-content-section{padding:25px 0}.fix-content-section p,.fix-content-section li{font-size:15px;line-height:1.8}.fix-guide-grid{grid-template-columns:1fr}.fix-guide-card{min-height:0}.fix-content-footer small{width:100%;margin-left:0}}
+
+/* Reserved ad rail areas do not display pretend advertisements before approval. */
+.poe-v10-ad-placeholder,.filter-v2-ad,.ad-placeholder{visibility:hidden}
+
+/* V222 overview is a real, visible introduction on the home page. */
+.poe-content-overview{max-width:1100px;margin:0 auto;padding:68px 28px 76px;color:#c9c0b3}
+.poe-content-overview h2{color:#efe0c7;font-size:28px;line-height:1.4;font-weight:750;margin:0 0 20px}
+.poe-content-overview p{font-size:16px;line-height:1.85;margin:12px 0}
+.poe-content-overview>div{display:flex;gap:24px;flex-wrap:wrap;margin-top:25px}
+.poe-content-overview a{color:#e3c48b;font-size:14px;font-weight:700;text-underline-offset:5px}
+.poe-mobile-resource-links{display:flex;gap:16px;flex-wrap:wrap;margin-top:24px}
+.poe-mobile-resource-links a{color:#e0ba86;font-size:14px;text-decoration:underline;text-underline-offset:5px}
+@media(max-width:760px){.poe-content-overview{display:none}.poe-v11-footer{display:none}}

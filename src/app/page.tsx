@@ -12,9 +12,7 @@ const POE2_LOGO =
 
 const toolLinks = [
   { label: "POB", href: "/pob", meta: "AVAILABLE" },
-  { label: "FILTER", href: "/filter", meta: "NEXT" },
-  { label: "TRADE", href: "#", meta: "PLANNED" },
-  { label: "CRAFT", href: "#", meta: "PLANNED" },
+  { label: "FILTER", href: "/filter", meta: "AVAILABLE" },
 ];
 
 export const revalidate = 2592000;
@@ -42,8 +40,7 @@ export default async function PoeHome() {
           <nav className="poe-v11-nav-links" aria-label="POE2 서비스 메뉴">
             <Link href="/pob">POB</Link>
             <Link href="/filter">FILTER</Link>
-            <span>TRADE</span>
-            <span>CRAFT</span>
+            <Link href="/guides">GUIDES</Link>
             <a href="#official-video">YOUTUBE</a>
           </nav>
         </header>
@@ -112,12 +109,22 @@ export default async function PoeHome() {
           </RevealSection>
         </div>
 
+        <section className="poe-content-overview" aria-label="서비스 이용 안내">
+          <h2>Path of Exile 2 필터와 캐릭터 비교 가이드</h2>
+          <p>FIX POE2는 NeverSink 기반 아이템 필터를 원하는 규칙만 바꾸어 다운로드할 수 있는 필터 커스터마이저와, poe.ninja Builds 캐릭터를 불러와 장비 교체 전후의 수치 변화를 살펴보는 PoB2 비교 도구를 제공합니다. 두 도구는 PC 브라우저 사용을 권장합니다.</p>
+          <p>필터가 게임에 적용되지 않을 때는 저장 경로와 사운드 폴더를 확인하고, PoB 캐릭터가 불러와지지 않을 때는 ninja의 Builds 등록 상태와 선택한 시즌을 먼저 확인해 주세요. 계산 결과는 빌드 데이터와 엔진이 지원하는 조건에 따라 달라질 수 있습니다.</p>
+          <div><Link href="/guides">전체 가이드 보기 →</Link><Link href="/about">서비스 소개</Link><Link href="/contact">오류 제보</Link></div>
+        </section>
+
         <footer className="poe-v11-footer">
           <Link href="/" className="poe-v11-footer-brand">FIXLGS · FIX POE2</Link>
           <nav aria-label="푸터 메뉴">
             <Link href="/pob">POB</Link>
             <Link href="/filter">FILTER</Link>
-            <Link href="/privacy">개인정보처리방침</Link>
+            <Link href="/guides">GUIDES</Link>
+            <Link href="/about">ABOUT</Link>
+            <Link href="/privacy/site">개인정보처리방침</Link>
+            <Link href="/contact">CONTACT</Link>
             <a href="#official-video">YOUTUBE</a>
           </nav>
           <p>Unofficial fan-made tools. Not affiliated with or endorsed by Grinding Gear Games.</p>
@@ -127,7 +134,8 @@ export default async function PoeHome() {
       <section className="poe-mobile-guide" aria-label="PC 이용 안내">
         <strong>FIX POE2</strong>
         <h1>PC에서 이용해 주세요.</h1>
-        <p>PoB와 필터 편집 기능은 데스크톱 화면에 맞춰 제작되고 있습니다.</p>
+        <p>PoB와 필터 편집 기능은 데스크톱 화면에 맞춰 제작되고 있습니다. 모바일에서는 사용 가이드와 서비스 안내를 이용할 수 있습니다.</p>
+        <nav className="poe-mobile-resource-links" aria-label="모바일 안내 링크"><Link href="/guides">사용 가이드</Link><Link href="/about">서비스 소개</Link><Link href="/privacy/site">개인정보처리방침</Link><Link href="/contact">문의</Link></nav>
       </section>
     </main>
   );
