@@ -1,0 +1,35 @@
+FIXLGS POE2 V221 — PoB2 pending buildFlag 재계산 보강
+기준: V218 CONDTIONAL_HIDE_GUIDE (V219/V220 미포함)
+
+변경 파일:
+  src/app/pob/web-engine/calc-worker.ts
+
+변경 내용:
+  - 한 프레임의 계산 직후 buildFlag가 남으면 즉시 중단하던 처리 수정.
+  - PoB2 OnFrame을 최대 8회까지 추가 실행하여 실제 계산 완료 상태 확인.
+  - 성공 조건: buildFlag가 해제되고 MAIN 결과가 존재하며 outputRevision 유효.
+  - 장비 교체, 무기 세트 전환, 스킬 그룹 전환은 이전 revision 대비 갱신까지 확인.
+  - 재시도 한도를 초과하면 횟수, pending 플래그, output, revision을 오류로 표시.
+  - buildFlag 강제 초기화나 미계산 DPS의 성공 처리 없음.
+
+검증 완료:
+  - calc-worker.ts 관련 독립 TypeScript 컴파일 성공.
+  - 생성된 worker JavaScript 문법 검사 성공.
+  - 실제 PoB2 Lua WASM에서 영문 XML 및 한글 이름 포함 XML 로드 성공.
+  - 테스트 XML의 STATS와 무기 세트 I/II DPS 응답 정상.
+  - 지연 재계산(추가 1프레임) 주입 테스트 성공.
+  - 반복 지연(종료되지 않음) 주입 테스트: 8회 후 명확한 오류 반환.
+
+아직 검증하지 못한 항목:
+  - 실제 VD_VD 캐릭터의 PoB Export 원본 XML로 계산 성공 여부.
+  - Next.js 전체 빌드(현재 테스트 환경에 의존성 일부 누락, npm 오프라인 설치 불가).
+  - 브라우저 사용자 경로 전체 테스트 및 실배포.
+
+배포 후 확인:
+  1. 정상 작동하던 영문 캐릭터에서 DPS/STATS 유지 확인.
+  2. VD_VD 한글 계정 링크에서 계산 결과 확인.
+  3. 실패 시 페이지 하단 PoB2 WASM 진단 메시지(상세) 확보.
+  4. 기존 정상 기능에 영향이 있으면 V218 복원.
+
+패키징:
+  압축의 최상위 폴더는 fix-pob 한 개. 기존 폴더에 덮어쓰기.

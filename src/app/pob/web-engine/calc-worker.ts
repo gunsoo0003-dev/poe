@@ -289,6 +289,32 @@ local function getAllocatedNodeList()
   return nodes
 end
 
+-- A completed PoB frame can queue another calculation while refreshing tabs.
+-- Only PoB's own OnFrame may consume buildFlag; never clear it to fake success.
+-- revisionFloor is supplied for mutations so old MAIN output cannot pass.
+local function runPoBFramesUntilSettled(stage, revisionFloor)
+  local maxFrames = 8
+  local revision = tonumber(build and build.outputRevision) or 0
+  for pass = 1, maxFrames do
+    local frameOk, frameErr = pcall(runCallback, "OnFrame")
+    if not frameOk then
+      return false, stage .. " OnFrame failed at pass " .. pass .. ": " .. tostring(frameErr)
+    end
+    revision = tonumber(build and build.outputRevision) or 0
+    local output = build and build.calcsTab and build.calcsTab.mainOutput
+    if build and not build.buildFlag and output and revision > 0
+      and (revisionFloor == nil or revision > revisionFloor) then
+      return true, nil
+    end
+  end
+  local pending = build and build.buildFlag
+  local outputReady = build and build.calcsTab and build.calcsTab.mainOutput ~= nil
+  return false, stage .. " not settled after " .. maxFrames
+    .. " OnFrame passes (pending buildFlag=" .. tostring(pending)
+    .. ", output=" .. tostring(outputReady)
+    .. ", revision=" .. tostring(revision) .. ")"
+end
+
 function pobWebLoadBuild(jsonArg)
   local args = dkjson.decode(jsonArg)
   if not args or not args.xml then
@@ -305,15 +331,9 @@ function pobWebLoadBuild(jsonArg)
   -- Never claim a valid baseline if a frame failed or no MAIN output exists.
   build = mainObject.main.modes["BUILD"]
   pcall(installVarControlsStub)
-  local frameOk, frameErr = pcall(runCallback, "OnFrame")
+  local frameOk, frameErr = runPoBFramesUntilSettled("PoB baseline")
   if not frameOk then
-    return dkjson.encode({ error = "PoB initial OnFrame failed: " .. tostring(frameErr) })
-  end
-  if not (build and build.calcsTab and build.calcsTab.mainOutput) then
-    return dkjson.encode({ error = "PoB baseline MAIN calculation was not generated" })
-  end
-  if build.buildFlag then
-    return dkjson.encode({ error = "PoB baseline still has a pending buildFlag" })
+    return dkjson.encode({ error = frameErr })
   end
 
   local allocList = getAllocatedNodeList()
@@ -588,14 +608,16 @@ function pobWebSetWeaponSet(jsonArg)
     active.useSecondWeaponSet = nextSet2
     build.modFlag = true
     build.buildFlag = true
-    local ok, err = pcall(runCallback, "OnFrame")
-    if not ok or build.buildFlag or not build.calcsTab.mainOutput then
-      -- Restore the previous set in case a calculation failed.
+    local beforeRevision = tonumber(build.outputRevision) or 0
+    local ok, err = runPoBFramesUntilSettled("weapon set change", beforeRevision)
+    if not ok then
+      -- Restore the previous set and reject if PoB cannot confirm that state.
       active.useSecondWeaponSet = wasSet2
       build.modFlag = true
       build.buildFlag = true
-      pcall(runCallback, "OnFrame")
-      return dkjson.encode({ error = "PoB weapon set change calculation failed: " .. tostring(err) })
+      local restored, restoreErr = runPoBFramesUntilSettled("weapon set rollback")
+      return dkjson.encode({ error = "PoB weapon set change calculation failed: " .. tostring(err)
+        .. (restored and "" or "; rollback failed: " .. tostring(restoreErr)) })
     end
   end
   return dkjson.encode({ weaponSet = nextSet2 and 2 or 1, mainSocketGroup = build.mainSocketGroup, outputRevision = build.outputRevision })
@@ -625,8 +647,9 @@ function pobWebGetGroupDps(jsonArg)
     build.mainSocketGroup = index
     build.modFlag = true
     build.buildFlag = true
-    local ok, err = pcall(runCallback, "OnFrame")
-    if not ok or build.buildFlag or not (build.calcsTab and build.calcsTab.mainOutput) then
+    local beforeRevision = tonumber(build.outputRevision) or 0
+    local ok, err = runPoBFramesUntilSettled("group " .. index, beforeRevision)
+    if not ok then
       result.error = "group calculation failed: " .. tostring(err)
     end
   end
@@ -641,8 +664,9 @@ function pobWebGetGroupDps(jsonArg)
     build.mainSocketGroup = savedIndex
     build.modFlag = true
     build.buildFlag = true
-    local restoreOk, restoreErr = pcall(runCallback, "OnFrame")
-    if not restoreOk or build.buildFlag then
+    local restoreRevision = tonumber(build.outputRevision) or 0
+    local restoreOk, restoreErr = runPoBFramesUntilSettled("group restore", restoreRevision)
+    if not restoreOk then
       result.error = "failed to restore original main skill: " .. tostring(restoreErr)
     end
   end
@@ -2198,12 +2222,9 @@ function pobWebEquipItem(jsonArg)
   local previousRevision = build.outputRevision or 0
   local previousOutput = build.calcsTab and build.calcsTab.mainOutput
   build.buildFlag = true
-  local frameOk, frameErr = pcall(runCallback, "OnFrame")
+  local frameOk, frameErr = runPoBFramesUntilSettled("equipment swap", previousRevision)
   if not frameOk then
-    return dkjson.encode({ error = "PoB OnFrame failed after equipment swap: " .. tostring(frameErr) })
-  end
-  if build.buildFlag then
-    return dkjson.encode({ error = "PoB rebuild is still pending after OnFrame" })
+    return dkjson.encode({ error = frameErr })
   end
   local nextRevision = build.outputRevision or 0
   if nextRevision <= previousRevision then

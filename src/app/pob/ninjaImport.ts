@@ -91,50 +91,24 @@ export function parseNinjaCharacterUrl(input: string): NinjaCharacterRef {
   }
 
   const parts = url.pathname.split("/").filter(Boolean);
-  let leaguePart: string | undefined;
-  let accountPart: string | undefined;
-  let characterPart: string | undefined;
+  const poe2Index = parts.indexOf("poe2");
+  const buildsIndex = parts.indexOf("builds");
+  const characterIndex = parts.indexOf("character");
 
-  // poe.ninja supports more than one POE2 character URL layout.
-  // Legacy builds URL: /poe2/builds/{league}/character/{account}/{character}
-  // Profile URL:       /poe2/profile/{account}/{league}/character/{character}
-  // In particular, never assume that "account" always follows /character/.
   if (
-    parts.length === 6 &&
-    parts[0] === "poe2" &&
-    parts[1] === "builds" &&
-    parts[3] === "character"
+    poe2Index < 0 ||
+    buildsIndex < 0 ||
+    characterIndex < 0 ||
+    characterIndex + 2 >= parts.length
   ) {
-    leaguePart = parts[2];
-    accountPart = parts[4];
-    characterPart = parts[5];
-  } else if (
-    parts.length === 6 &&
-    parts[0] === "poe2" &&
-    parts[1] === "profile" &&
-    parts[4] === "character"
-  ) {
-    accountPart = parts[2];
-    leaguePart = parts[3];
-    characterPart = parts[5];
-  } else {
     throw new Error("POE2 poe.ninja 캐릭터 상세 링크를 입력해 주세요.");
   }
 
-  // URL.pathname stores non-ASCII segments percent-encoded. Decode every segment
-  // exactly once (including Korean/Japanese/Chinese account and character names).
-  let leagueSlug: string;
-  let account: string;
-  let character: string;
-  try {
-    leagueSlug = decodeURIComponent(leaguePart);
-    account = decodeURIComponent(accountPart);
-    character = decodeURIComponent(characterPart);
-  } catch {
-    throw new Error("링크의 계정명 또는 캐릭터명 URL 인코딩이 올바르지 않습니다.");
-  }
+  const leagueSlug = decodeURIComponent(parts[buildsIndex + 1] ?? "");
+  const account = decodeURIComponent(parts[characterIndex + 1] ?? "");
+  const character = decodeURIComponent(parts[characterIndex + 2] ?? "");
 
-  if (!leagueSlug.trim() || !account.trim() || !character.trim()) {
+  if (!leagueSlug || !account || !character) {
     throw new Error("링크에서 리그·계정·캐릭터 정보를 확인할 수 없습니다.");
   }
 
