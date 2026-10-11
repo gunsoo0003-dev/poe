@@ -37,6 +37,15 @@ export type CalcRequest =
   | { type: "importCharacter"; charJson: string }
   | { type: "exec"; code: string };
 
+/** Reported by upstream PoB Item:ParseRaw; never computed by FIXLGS. */
+export interface NativeModAudit {
+  lines: Array<{ group: string; line: string; modifierCount: number; extra: string }>;
+  unrecognized: Array<{ group: string; line: string; extra: string }>;
+  emptyModifier: Array<{ group: string; line: string }>;
+  total: number;
+  nativeModifiers: number;
+}
+
 /** Per-skill DPS entry from PoB's calcFullDPS (output.SkillDPS) */
 export interface SkillDpsEntry {
   name: string;
@@ -339,7 +348,7 @@ export type CalcResponse =
   | { type: "calcSupportDps"; data: { baseDps: number; results: { id: string; dps: number }[] }; error?: string }
   | { type: "switchSkillPart"; data: SwitchSkillResult; error?: string }
   | { type: "itemImpact"; data: { deltas: Record<string, ImpactDelta> }; error?: string }
-  | { type: "addCustomItem"; data: { success: boolean; error?: string; itemId?: number; primarySlot?: string }; error?: string }
+  | { type: "addCustomItem"; data: { success: boolean; error?: string; itemId?: number; primarySlot?: string; nativeAudit?: NativeModAudit }; error?: string }
   | { type: "slotItems"; data: SlotItemEntry[]; error?: string }
   | { type: "equipItem"; data: { items: EquippedItem[]; error?: string; equippedItemId?: number; equippedSlot?: string }; error?: string }
   | { type: "importCharacter"; data: { code: string }; error?: string }

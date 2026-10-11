@@ -4,7 +4,6 @@ import { FormEvent, MouseEvent, ReactNode, useMemo, useState, useEffect } from "
 import Link from "next/link";
 import { pobGuides } from "@/lib/pobGuides";
 import { parseTradeItem, type TradeItem } from "./tradeItem";
-import { calculateGearDelta } from "./gearDelta";
 import { calculateComparison, getMeasuredSkill, type ComparisonResult, type SetSnapshots, type SetCalculation, type WeaponSet } from "./pobCompare";
 import { CalcClient } from "./web-engine/calc-client";
 import type { SkillsData } from "./web-engine/calc-api";
@@ -165,7 +164,6 @@ export default function Home() {
         return [{ name: skill.name, before: before.dps, after: after.dps, weaponSet: after.weaponSet, groupIndex: after.groupIndex }];
       });
   }, [compareBeforeSnapshot, afterSnapshot, importedCharacter]);
-  const gearComparison = useMemo(() => calculateGearDelta(importedCharacter, simulationItems, simulationWeaponSet), [importedCharacter, simulationItems, simulationWeaponSet]);
   const actualSkills = useMemo(() => importedCharacter?.skills ?? [], [importedCharacter]);
   const actualStats = useMemo(() => importedCharacter?.stats ?? [], [importedCharacter]);
   const mainSkills = useMemo(() => {
@@ -400,11 +398,13 @@ export default function Home() {
                     </form>
                   )}
                 </EquipmentPanel>
-                <StatsCard title={`Stats · After Change (PoB2 · Set ${simulationWeaponSet === 1 ? "I" : "II"})`} stats={engineStatsAfter} mainSkills={engineMainSkills(afterSnapshot)} />
+                <StatsCard title={`Stats · After Change (PoB2 · Set ${simulationWeaponSet === 1 ? "I" : "II"})`} stats={engineStatsAfter} mainSkills={engineMainSkills(afterSnapshot)} emptyMessage={pobState?.nativeParserStatus === "blocked" ? "교체 아이템 원본 PoB 옵션 인식 검증 실패 · 변경 후 수치 표시 보류" : undefined} />
               </div>
               <section className="gear-delta-panel" aria-live="polite">
                 <strong>PoB2 WASM · 엔진 계산 비교 (검증용)</strong>
                 <p>{pobStatus}</p><p>증감량은 SIMULATION에서 선택한 동일 무기 세트의 원본과 변경 후를 비교합니다. CURRENT는 별도로 보존됩니다.</p>
+                {pobState?.nativeParserStatus === "blocked" && <p role="alert" style={{color: "#f3b870", fontWeight: 600}}>교체 아이템 일부 옵션을 PoB 원본 파서가 완전히 인식하지 못했습니다. 부정확할 수 있는 교체 후 DPS·STATS는 표시하지 않습니다. 현재 캐릭터 계산값은 유지됩니다.</p>}
+                {pobState?.nativeParserStatus === "passed" && <p>PoB 원본 아이템 옵션 파서 검사 통과 · 공식 데스크톱 PoB와 수치 대조는 별도 검증 필요</p>}
                 {changedCount > 0 && pobStats.length > 0 && <div className="gear-delta-grid">{pobStats.map(row => <div className="gear-delta-row" key={row.key}><span>{row.label}</span><b>{row.after.toLocaleString("en-US", {maximumFractionDigits:2})} ({row.delta >= 0 ? "+" : ""}{row.delta.toLocaleString("en-US", {maximumFractionDigits:2})})</b><small>기존 {row.before.toLocaleString("en-US", {maximumFractionDigits:2})} → 변경 {row.after.toLocaleString("en-US", {maximumFractionDigits:2})}</small></div>)}</div>}
                 {changedCount > 0 && skillDeltas.length > 0 && <div className="gear-delta-grid">{skillDeltas.map((skill, i) => <div className="gear-delta-row" key={`${skill.name}-${i}`}><span>{skill.name} DPS</span><b>{skill.after.toLocaleString("en-US", {maximumFractionDigits: 2})}</b><small>{skill.before === undefined ? "이전 스킬 식별자 없음" : `${skill.before.toLocaleString("en-US")} → ${skill.after.toLocaleString("en-US")} (${skill.after - skill.before >= 0 ? "+" : ""}${(skill.after - skill.before).toLocaleString("en-US")})`}</small></div>)}</div>}
                 {changedCount > 0 && !!pobState?.skillChanges?.length && <div className="gear-delta-grid" aria-label="스킬 변경">
@@ -415,12 +415,6 @@ export default function Home() {
                 {(pobState?.warnings || []).map((warning, i) => <p key={i} style={{color: "#f3b870"}}>부분 계산 주의: {warning}</p>)}
                 {changedCount > 0 && pobState?.equipmentTrace && <details style={{marginTop: 12}}><summary>PoB2 실제 장착·재계산 확인 기록</summary><pre style={{whiteSpace: "pre-wrap", fontSize: 12}}>{pobState.equipmentTrace.join("\n")}</pre></details>}
               </section>
-              {changedCount > 0 && <section className="gear-delta-panel" aria-live="polite">
-                <strong>장비 옵션 차이 · 웹 계산</strong>
-                <p>교체한 슬롯의 기존/신규 장비에서 직접 확인 가능한 고정 옵션만 비교해. 캐릭터 최종 Stats나 DPS 계산값은 아니야.</p>
-                {gearComparison.rows.length ? <div className="gear-delta-grid">{gearComparison.rows.map(row => <div className="gear-delta-row" key={row.key}><span>{row.label}</span><b>{row.delta > 0 ? "+" : ""}{row.delta}</b><small>기존 {row.before} → 변경 {row.after}</small></div>)}</div> : <p>현재 지원하는 고정 옵션에서 확인 가능한 변화가 없어. 무기 피해·공격 속도·스킬 DPS 등은 PoB2 웹 엔진 연결 후 계산해야 해.</p>}
-                {gearComparison.warnings.map(w => <p key={w}>{w}</p>)}
-              </section>}
               <SkillsPanel character={importedCharacter} simulation engineSkills={afterSnapshot?.skills} />
               <div className="simulation-stage-note">
                 <b>PoB2 ENGINE TEST</b>
@@ -756,10 +750,12 @@ function StatsCard({
   title,
   stats,
   mainSkills,
+  emptyMessage,
 }: {
   title: string;
   stats: ImportedCharacterStat[];
   mainSkills: UiSkill[];
+  emptyMessage?: string;
 }) {
   const groups = [
     { key: "overview", label: "CHARACTER" },
@@ -784,7 +780,7 @@ function StatsCard({
             </div>
           );
         }) : (
-          <div className="stats-empty">No character stats received from poe.ninja.</div>
+          <div className="stats-empty">{emptyMessage || "PoB2 계산된 캐릭터 수치가 없습니다."}</div>
         )}
       </div>
       <div className="main-skills-block">

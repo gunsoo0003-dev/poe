@@ -1,0 +1,9 @@
+{
+  "format": "FIXLGS-POB2-WASM-V225",
+  "upstreamCommit": "UNVERIFIED",
+  "luaFileCount": 997,
+  "sha256": {
+    "pob-lua.json": "a4183b98e08dacb257ab47652d76ff675790e3a287637d4e28119db1589c911e",
+    "lua.wasm": "3e286259ddd6d66b733222cb6aa86998fdaf11a9ac2743b7967d9432f7bdae25"
+  }
+}

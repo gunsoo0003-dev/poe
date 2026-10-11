@@ -7,6 +7,7 @@ import type { SkillsData } from "./web-engine/calc-api";
 import type { ImportedCharacter } from "./ninjaImport";
 import type { TradeItem } from "./tradeItem";
 import { convertTradeToPob } from "./tradeToPob";
+import { validateNativeItemAudit } from "./nativeIntegrity";
 import { auditSkillChanges, groupInventory, type SkillChange } from "./skillChangeAudit";
 
 export type WeaponSet = 1 | 2;
@@ -45,6 +46,8 @@ export interface ComparisonResult {
   warnings: string[];
   equipmentTrace: string[];
   skillChanges: SkillChange[];
+  /** Pass means PoB native item parsing passed, NOT desktop-engine parity. */
+  nativeParserStatus: "not-applicable" | "passed" | "blocked";
 }
 
 const slots: Record<string, string> = {
@@ -138,15 +141,28 @@ export async function calculateComparison(
   const entries = Object.entries(overrides);
   if (!entries.length) {
     return { status: "PoB2 원본 무기 세트 I·II 계산 완료 · 교체 장비 없음", original,
-      simulation: original, originalWeaponSet, warnings, equipmentTrace, skillChanges: [] };
+      simulation: original, originalWeaponSet, warnings, equipmentTrace, skillChanges: [], nativeParserStatus: "not-applicable" };
+  }
+  // Hold the correct CURRENT snapshots when a candidate item is not fully
+  // recognized by upstream PoB. No estimated After DPS is ever emitted.
+  function blocked(slot: string, issues: string[]): ComparisonResult {
+    return {
+      status: `교체 계산 보류 · ${slot}: 원본 PoB 옵션 인식 검증 실패 (DPS·STATS 변화값 표시 안 함)`,
+      original, simulation: {}, originalWeaponSet,
+      warnings: [`${slot}: ${issues.slice(0, 6).join(" / ")}${issues.length > 6 ? ` (외 ${issues.length - 6}건)` : ""}`],
+      equipmentTrace, skillChanges: [], nativeParserStatus: "blocked",
+    };
   }
   for (const [slot, item] of entries) {
     const target = slots[slot];
     if (!target) throw new Error(`PoB 미지원 장비 슬롯: ${slot}`);
     const converted = convertTradeToPob(item.raw);
-    if (converted.unsupported.length) warnings.push(`${slot}: 미검증 옵션 ${converted.unsupported.join(" / ")}`);
+    if (converted.unsupported.length) return blocked(slot, converted.unsupported);
     const added = await engine.addCustomItem(converted.rawText);
-    if (!added.success || !added.itemId) throw new Error(`${slot} 등록 실패: ${added.error || "아이템 ID 없음"}`);
+    if (!added.success || !added.itemId) return blocked(slot, [added.error || "PoB 아이템 등록 실패"]);
+    const audit = validateNativeItemAudit(added.nativeAudit, converted.included);
+    equipmentTrace.push(`${slot}: PoB 원본 파서 ${audit.verified ? "인식 확인" : "미해석/불완전"}; ${audit.parsedCount} modifiers; ${audit.issues.length} issues`);
+    if (!audit.verified) return blocked(slot, audit.issues);
     const equipped = await engine.equipItem(added.itemId, target);
     if (equipped.error || equipped.equippedItemId !== added.itemId || equipped.equippedSlot !== target)
       throw new Error(`${slot} 실제 장착 실패: ${equipped.error || "슬롯/ID 불일치"}`);
@@ -155,24 +171,23 @@ export async function calculateComparison(
       throw new Error(`${slot} 장착 상태 재조회 실패`);
     const trace = equipped.diagnostic;
     equipmentTrace.push(`${slot} → ${target}: item ${added.itemId}; modifier ${trace?.parsedModCount ?? "unknown"}; revision ${trace?.previousRevision ?? "?"}→${trace?.nextRevision ?? "?"}`);
-    if (!trace?.hasModList || !Number(trace.parsedModCount)) warnings.push(`${slot}: PoB 계산용 modifier 확인 불가`);
-    // A zero bonded effect is expected without the relevant condition.
-    // Report only evidence of lost or unsupported rune data, not mere sockets.
-    const expectedRunes = converted.rawText.split("\n").filter(line => /^\{rune\}/.test(line)).length;
-    if (expectedRunes !== Number(trace?.runeLineCount ?? -1))
-      warnings.push(`${slot}: 룬 인식 확인 필요`);
-    // Native PoB may reconstruct rune lines from the item names. Detect a
-    // numerical/content mismatch rather than silently trusting its output.
+    // Validation after native equipment rebuild must also fail closed.
+    // An item can have no modifiers (normal base): that alone is NOT an error.
+    if (!trace) return blocked(slot, ["PoB 실제 장착 계산 진단 결과 없음"]);
+    if (converted.included.length > 0 && (!trace.hasModList || !Number(trace.parsedModCount)))
+      return blocked(slot, ["장착한 아이템의 PoB 계산 modifier 확인 불가"]);
+    // Upstream PoB may construct rune effects from named socketed augments.
+    // Demand the native reconstructed effects are traceable to source lines.
     const expectedRuneLines = converted.rawText.split("\n").filter(line => line.startsWith("{rune}"))
       .map(line => line.slice("{rune}".length).trim()).sort();
-    const actualRuneLines = [...(trace?.runeParsedLines ?? [])].map(line => line.trim()).sort();
-    if (expectedRuneLines.length === actualRuneLines.length &&
+    const actualRuneLines = [...(trace.runeParsedLines ?? [])].map(line => line.trim()).sort();
+    if (expectedRuneLines.length !== Number(trace.runeLineCount ?? -1) ||
+        expectedRuneLines.length !== actualRuneLines.length ||
         expectedRuneLines.some((line, index) => line !== actualRuneLines[index]))
-      warnings.push(`${slot}: 룬 수치 확인 필요`);
-    if (trace?.runeUnknownLines?.length || trace?.runeNamesUnknown?.length)
-      warnings.push(`${slot}: 룬 효과 확인 필요`);
-    if (trace?.bondedEnabled && trace?.bondedUnknownLines?.length)
-      warnings.push(`${slot}: 결속 효과 확인 필요`);
+      return blocked(slot, ["룬 원본 데이터와 PoB 계산용 룬 데이터 불일치"]);
+    if (trace.runeUnknownLines?.length || trace.runeNamesUnknown?.length ||
+        (trace.bondedEnabled && trace.bondedUnknownLines?.length))
+      return blocked(slot, ["룬·결속 옵션을 PoB 원본이 완전히 해석하지 못함"]);
     // An inactive set is not an error: we explicitly calculate both sets next.
     if (trace && !trace.inactiveWeaponSet && trace.calculatedItemMatches === false)
       throw new Error(`${slot}: 활성 PoB 계산 장비가 교체 아이템과 불일치`);
@@ -201,5 +216,6 @@ export async function calculateComparison(
   return {
     status: `PoB2 원본 대비 장비 ${entries.length}개 교체 · Set I·II 모두 재계산 ${warnings.length ? "(검증 경고 있음)" : "완료"}`,
     original, simulation, originalWeaponSet, warnings: [...new Set(warnings)], equipmentTrace, skillChanges,
+    nativeParserStatus: "passed",
   };
 }

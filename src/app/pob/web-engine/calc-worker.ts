@@ -2125,6 +2125,40 @@ function pobWebGetItemsData(jsonArg)
   return dkjson.encode({ items = result })
 end
 
+-- V225: inspect PoB's OWN Item:ParseRaw result. This does NOT parse modifiers
+-- again or apply gameplay rules; Item.lua / ModParser.lua remain authoritative.
+-- A successful AddItem only means the base was accepted, not that all mods were.
+function pobWebNativeModAudit(item)
+  local audit = { lines = {}, unrecognized = {}, emptyModifier = {}, total = 0, nativeModifiers = 0 }
+  local groups = {
+    { name = "implicit", lines = item.implicitModLines },
+    { name = "enchant", lines = item.enchantModLines },
+    { name = "rune", lines = item.runeModLines },
+    { name = "explicit", lines = item.explicitModLines },
+    { name = "buff", lines = item.buffModLines },
+    { name = "classRequirement", lines = item.classRequirementModLines },
+  }
+  for _, group in ipairs(groups) do
+    for _, line in ipairs(group.lines or {}) do
+      local original = tostring(line.line or "")
+      local extra = line.extra ~= nil and tostring(line.extra) or ""
+      local count = #(line.modList or {})
+      local entry = { group = group.name, line = original, modifierCount = count, extra = extra }
+      audit.lines[#audit.lines + 1] = entry
+      audit.total = audit.total + 1
+      audit.nativeModifiers = audit.nativeModifiers + count
+      if extra ~= "" then
+        audit.unrecognized[#audit.unrecognized + 1] = { group = group.name, line = original, extra = extra }
+      elseif count == 0 then
+        -- Some PoB-native structural modifiers alter item flags rather than
+        -- numeric modList. Do NOT invent a value or flag them as parsed.
+        audit.emptyModifier[#audit.emptyModifier + 1] = { group = group.name, line = original }
+      end
+    end
+  end
+  return audit
+end
+
 -- Add a custom item from raw text (paste from game)
 function pobWebAddCustomItem(jsonArg)
   if not build or not build.itemsTab then
@@ -2143,6 +2177,9 @@ function pobWebAddCustomItem(jsonArg)
     return dkjson.encode({ success = false, error = "unrecognized item base" })
   end
 
+  -- Native Item:ParseRaw has already run; audit before subsequent slot/rune
+  -- updates so the adapter cannot mask a parse failure with a valid DPS number.
+  local nativeAudit = pobWebNativeModAudit(newItem)
   build.itemsTab:AddItem(newItem, true)
   local primarySlot = newItem:GetPrimarySlot()
 
@@ -2150,6 +2187,7 @@ function pobWebAddCustomItem(jsonArg)
     success = true,
     itemId = newItem.id,
     primarySlot = primarySlot or "",
+    nativeAudit = nativeAudit,
   })
 end
 

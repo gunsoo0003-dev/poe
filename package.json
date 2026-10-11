@@ -12,7 +12,11 @@
     "pob2:test": "powershell -ExecutionPolicy Bypass -File scripts/test-pob2-engine.ps1",
     "pob2:character": "node scripts/prepare-pob2-character.cjs",
     "pob:export-test": "node scripts/test-v210-contract.cjs",
-    "pob2:character-test": "powershell -ExecutionPolicy Bypass -File scripts/test-pob2-engine.ps1 -Character"
+    "pob2:character-test": "powershell -ExecutionPolicy Bypass -File scripts/test-pob2-engine.ps1 -Character",
+    "pob2:native-audit": "node scripts/test-v225-native-integrity.cjs",
+    "pob2:fingerprint": "node scripts/check-pob2-fingerprint.cjs",
+    "pob2:native-wasm": "node scripts/test-v225-native-wasm.mjs",
+    "pob2:comparison-guard": "node scripts/test-v225-comparison-guard.cjs"
   },
   "dependencies": {
     "next": "16.3.5",
