@@ -86,7 +86,7 @@ export function convertTradeToPob(source: string): ConvertedPobItem {
     const completeAugments = reliableSockets && augments.length === socketCount;
     // Rune/Soul Core-specific scalars require augment identities. Do not
     // claim exact scaling when the exporter supplies only a socket count.
-    if (!completeAugments && [...implicit, ...explicit].some(line => /increased effect of Socketed (?:Rune|Soul Core) Items/i.test(line)))
+    if (!completeAugments && [...implicit, ...explicit].some(line => /increased effect of Socketed (?:Runes?|Soul Cores?)(?: Items?)?/i.test(line)))
       warnings.push('소켓 증폭 확인 필요');
     const runeSpecs = completeAugments ? augments.map(entry => `Rune: ${entry.type!.trim()}`) : [];
     const rawText = [

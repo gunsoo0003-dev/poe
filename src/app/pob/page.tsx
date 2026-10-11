@@ -168,7 +168,7 @@ export default function Home() {
   const actualSkills = useMemo(() => importedCharacter?.skills ?? [], [importedCharacter]);
   const actualStats = useMemo(() => importedCharacter?.stats ?? [], [importedCharacter]);
   const mainSkills = useMemo(() => {
-    if (!actualSkills.length) return skills.slice(0, 2);
+    if (!actualSkills.length) return [];
     const ranked = actualSkills
       .filter((skill) => skill.dpsValue !== undefined)
       .sort((a, b) => (b.dpsValue ?? 0) - (a.dpsValue ?? 0));
@@ -510,7 +510,7 @@ export default function Home() {
               <div className="start-tool-card extension-card">
                 <span className="start-tool-kicker">TRADE EXTENSION</span>
                 <strong>거래소 확장프로그램 설치</strong>
-                <a className="extension-download" href="/downloads/FIXLGS_POE2_ITEM_EXPORT_V004.zip" download>설치파일 ↓</a>
+                <a className="extension-download" href="/downloads/FIXLGS_POE2_ITEM_EXPORT_V004_6.zip" download>설치파일 ↓</a>
               </div>
             </div>
           </section>
@@ -680,11 +680,24 @@ function SkillsPanel({ character, simulation = false, engineSkills }: { characte
   // Display the original skill gems in both panes. PoB2's SkillDPS is a
   // computed subset, not the inventory of socket groups; an empty SkillDPS
   // response must not erase the character's actual gem list.
-  const originalSkills = character?.skills?.length ? character.skills.map(toUiSkill) : skills;
-  const uiSkills = simulation ? originalSkills.map(skill => {
-    const matching = engineSkills?.skills.find(s => s.name.toLowerCase() === skill.name.toLowerCase());
-    return { ...skill, dps: matching ? matching.dps.toLocaleString("en-US", { maximumFractionDigits: 2 }) : "—" };
-  }) : originalSkills;
+  const originalSkills = character?.skills?.map(toUiSkill) ?? [];
+  const uiSkills = simulation ? (() => {
+    const existing = originalSkills.map(skill => {
+      const matches = (engineSkills?.skills ?? []).filter(s => s.name.toLowerCase() === skill.name.toLowerCase());
+      return { ...skill, dps: matches.length === 1 ? matches[0].dps.toLocaleString("en-US", { maximumFractionDigits: 2 }) : "—" };
+    });
+    const names = new Set(originalSkills.map(skill => skill.name.toLowerCase()));
+    const added: UiSkill[] = [];
+    for (const group of engineSkills?.groups ?? []) {
+      for (const name of group.activeSkillNames) {
+        if (!name.trim() || names.has(name.toLowerCase())) continue;
+        names.add(name.toLowerCase());
+        const matches = (engineSkills?.skills ?? []).filter(skill => skill.name.toLowerCase() === name.toLowerCase());
+        added.push({ name, support: "PoB 장비/스킬 그룹에서 추가 확인", dps: matches.length === 1 ? matches[0].dps.toLocaleString("en-US", {maximumFractionDigits: 2}) : "—", tone: "gold" });
+      }
+    }
+    return [...existing, ...added];
+  })() : originalSkills;
   return (
     <section className={`all-skills panel-card build-skill-panel ${simulation ? "simulation-skills" : ""}`}>
       <div className="panel-title">{simulation ? "All Skills · After Change (PoB2 일부 결과)" : "All Skills · poe.ninja 참고값"}</div>
@@ -692,6 +705,7 @@ function SkillsPanel({ character, simulation = false, engineSkills }: { characte
         <div className="actual-skill-note">{character.skills.length} SKILL SETS</div>
       )}
       <div className="skill-list">
+        {!uiSkills.length && <div className="stats-empty">스킬 데이터가 없습니다. 예시 스킬은 표시하지 않습니다.</div>}
         {uiSkills.map((skill, idx) => (
           <article className="skill-row" key={`${skill.name}-${idx}`}>
             <SkillIcon skill={skill} />

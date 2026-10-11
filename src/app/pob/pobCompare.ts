@@ -8,6 +8,7 @@ import type { ImportedCharacter } from "./ninjaImport";
 import type { TradeItem } from "./tradeItem";
 import { convertTradeToPob } from "./tradeToPob";
 import { validateNativeItemAudit } from "./nativeIntegrity";
+import { validateReconstructedRunes } from "./runeSourceAudit";
 import { auditSkillChanges, groupInventory, type SkillChange } from "./skillChangeAudit";
 
 export type WeaponSet = 1 | 2;
@@ -30,13 +31,22 @@ export interface SetCalculation {
 }
 
 /** Never borrow a DPS value from the other weapon set or ninja's displayed DPS. */
-export function getMeasuredSkill(snapshot: SetCalculation | undefined, skillName: string): CalculatedSkillResult | undefined {
+export function getMeasuredSkill(snapshot: SetCalculation | undefined, skillName: string, groupIndex?: number): CalculatedSkillResult | undefined {
   if (!snapshot) return undefined;
   const normal = (text: string) => text.trim().toLowerCase();
-  return Object.values(snapshot.calculatedSkills).find(result =>
+  // Check ALL PoB socket groups, including those not individually measured.
+  // Otherwise an unmeasured namesake could make a measured value ambiguous.
+  const possibleGroups = snapshot.skills?.groups?.filter(group => group.enabled !== false &&
+    group.activeSkillNames.some(name => normal(name) === normal(skillName))) ?? [];
+  if (groupIndex === undefined && possibleGroups.length > 1) return undefined;
+  const matches = Object.values(snapshot.calculatedSkills).filter(result =>
     result.weaponSet === snapshot.weaponSet && Number.isFinite(result.dps) &&
-    result.activeSkillNames.some(name => normal(name) === normal(skillName))
+    result.activeSkillNames.some(name => normal(name) === normal(skillName)) &&
+    (groupIndex === undefined || result.groupIndex === groupIndex)
   );
+  // Two groups with the same skill name are different skills, not a license
+  // to take the first group's DPS and label it as the other one.
+  return matches.length === 1 ? matches[0] : undefined;
 }
 export interface ComparisonResult {
   status: string;
@@ -74,11 +84,18 @@ export async function calculateComparison(
   const ranked = [...(character.skills || [])]
     .filter(skill => Number.isFinite(skill.dpsValue))
     .sort((a, b) => (b.dpsValue || 0) - (a.dpsValue || 0)).slice(0, 2);
-  const selectedGroups = [...new Set(ranked.map(skill => initialSkills.groups.find(group =>
-    group.activeSkillNames.some(name => name.trim().toLowerCase() === skill.name.trim().toLowerCase())
-  )?.index).filter((index): index is number => Number.isInteger(index)))];
+  const selectedGroups = [...new Set(ranked.map(skill => {
+    const matches = initialSkills.groups.filter(group => group.enabled !== false &&
+      group.activeSkillNames.some(name => name.trim().toLowerCase() === skill.name.trim().toLowerCase()));
+    return matches.length === 1 ? matches[0].index : undefined;
+  }).filter((index): index is number => Number.isInteger(index)))];
   const secondaryGroups = selectedGroups.filter(index => index !== mainGroup);
   const warnings: string[] = [];
+  for (const skill of ranked) {
+    const matches = initialSkills.groups.filter(group => group.enabled !== false &&
+      group.activeSkillNames.some(name => name.trim().toLowerCase() === skill.name.trim().toLowerCase()));
+    if (matches.length > 1) warnings.push(`${skill.name}: 같은 이름의 스킬 그룹 ${matches.length}개 · 자동 DPS 선택 보류`);
+  }
   const equipmentTrace: string[] = [];
 
   // Secondary skills retain their *original* weapon set. Trying them in an
@@ -138,6 +155,7 @@ export async function calculateComparison(
   }
 
   const original = await capture();
+  const initialMain = initialSkills.groups.find(group => group.index === mainGroup);
   const entries = Object.entries(overrides);
   if (!entries.length) {
     return { status: "PoB2 원본 무기 세트 I·II 계산 완료 · 교체 장비 없음", original,
@@ -153,6 +171,7 @@ export async function calculateComparison(
       equipmentTrace, skillChanges: [], nativeParserStatus: "blocked",
     };
   }
+  const equippedCandidates: Array<{ slot: string; target: string; itemId: number }> = [];
   for (const [slot, item] of entries) {
     const target = slots[slot];
     if (!target) throw new Error(`PoB 미지원 장비 슬롯: ${slot}`);
@@ -160,7 +179,11 @@ export async function calculateComparison(
     if (converted.unsupported.length) return blocked(slot, converted.unsupported);
     const added = await engine.addCustomItem(converted.rawText);
     if (!added.success || !added.itemId) return blocked(slot, [added.error || "PoB 아이템 등록 실패"]);
-    const audit = validateNativeItemAudit(added.nativeAudit, converted.included);
+    const exportHasNamedRunes = /^Rune: /m.test(converted.rawText);
+    const audit = validateNativeItemAudit(added.nativeAudit, converted.included, {
+      deferNamedRunes: exportHasNamedRunes,
+      deferBonded: true,
+    });
     equipmentTrace.push(`${slot}: PoB 원본 파서 ${audit.verified ? "인식 확인" : "미해석/불완전"}; ${audit.parsedCount} modifiers; ${audit.issues.length} issues`);
     if (!audit.verified) return blocked(slot, audit.issues);
     const equipped = await engine.equipItem(added.itemId, target);
@@ -174,25 +197,59 @@ export async function calculateComparison(
     // Validation after native equipment rebuild must also fail closed.
     // An item can have no modifiers (normal base): that alone is NOT an error.
     if (!trace) return blocked(slot, ["PoB 실제 장착 계산 진단 결과 없음"]);
-    if (converted.included.length > 0 && (!trace.hasModList || !Number(trace.parsedModCount)))
+    if (converted.included.length > 0 && (!trace.hasModList || !Number(trace.parsedModCount)) &&
+        Number(audit.parsedCount) > 0)
       return blocked(slot, ["장착한 아이템의 PoB 계산 modifier 확인 불가"]);
     // Upstream PoB may construct rune effects from named socketed augments.
     // Demand the native reconstructed effects are traceable to source lines.
     const expectedRuneLines = converted.rawText.split("\n").filter(line => line.startsWith("{rune}"))
-      .map(line => line.slice("{rune}".length).trim()).sort();
-    const actualRuneLines = [...(trace.runeParsedLines ?? [])].map(line => line.trim()).sort();
-    if (expectedRuneLines.length !== Number(trace.runeLineCount ?? -1) ||
-        expectedRuneLines.length !== actualRuneLines.length ||
-        expectedRuneLines.some((line, index) => line !== actualRuneLines[index]))
-      return blocked(slot, ["룬 원본 데이터와 PoB 계산용 룬 데이터 불일치"]);
-    if (trace.runeUnknownLines?.length || trace.runeNamesUnknown?.length ||
-        (trace.bondedEnabled && trace.bondedUnknownLines?.length))
-      return blocked(slot, ["룬·결속 옵션을 PoB 원본이 완전히 해석하지 못함"]);
+      .map(line => line.slice("{rune}".length).trim());
+    const actualRuneLines = [...(trace.runeParsedLines ?? [])].map(line => line.trim());
+    const declaredRuneNames = converted.rawText.split("\n").filter(line => line.startsWith("Rune: ")).length;
+    const declaredSockets = /^Sockets:\s*(.*)$/m.exec(converted.rawText)?.[1].trim().split(/\s+/).length || 0;
+    if (declaredRuneNames) {
+      if (Number(trace.namedRuneCount) !== declaredRuneNames || Number(trace.socketCount) !== declaredSockets ||
+          declaredRuneNames !== declaredSockets || !Number(trace.runeLineCount))
+        return blocked(slot, ["PoB 소켓·룬 정체성 재구성 검증 실패"]);
+      const runeIssues = validateReconstructedRunes(expectedRuneLines, actualRuneLines, converted.rawText);
+      if (runeIssues.length) return blocked(slot, runeIssues);
+    } else {
+      const expected = [...expectedRuneLines].sort();
+      const actual = [...actualRuneLines].sort();
+      if (expected.length !== Number(trace.runeLineCount ?? -1) ||
+          expected.length !== actual.length || expected.some((line, index) => line !== actual[index]))
+        return blocked(slot, ["룬 원본 데이터와 PoB 계산용 룬 데이터 불일치"]);
+    }
+    if (trace.runeUnknownLines?.length || trace.runeNamesUnknown?.length)
+      return blocked(slot, ["PoB가 룬 효과 또는 장착 룬 이름을 완전히 해석하지 못함"]);
     // An inactive set is not an error: we explicitly calculate both sets next.
     if (trace && !trace.inactiveWeaponSet && trace.calculatedItemMatches === false)
       throw new Error(`${slot}: 활성 PoB 계산 장비가 교체 아이템과 불일치`);
+    equippedCandidates.push({ slot, target, itemId: added.itemId });
+  }
+  // A second pass is essential: changing another item can enable Bonded
+  // conditions on a previously equipped item. Audit with ALL candidates present.
+  for (const candidate of equippedCandidates) {
+    const state = await engine.getSlotItems(candidate.target);
+    if (!state.some(entry => entry.isEquipped && entry.itemId === candidate.itemId))
+      return blocked(candidate.slot, ["최종 장비 구성에서 교체 아이템이 유지되지 않음"]);
+    const confirmed = await engine.equipItem(candidate.itemId, candidate.target);
+    if (confirmed.error || confirmed.equippedItemId !== candidate.itemId || confirmed.equippedSlot !== candidate.target)
+      return blocked(candidate.slot, ["최종 장비 구성 재검증 실패"]);
+    const diagnostic = confirmed.diagnostic;
+    if (!diagnostic || (diagnostic.bondedEnabled && diagnostic.bondedUnknownLines?.length))
+      return blocked(candidate.slot, ["최종 캐릭터 조건에서 활성 결속 옵션이 미지원됨"]);
   }
   const simulation = await capture();
+  // A new skill may be added by an item, but a numeric group index is NOT a
+  // stable identity. Hide results if the main group at that index changed.
+  for (const set of [1, 2] as const) {
+    const afterGroup = simulation[set]?.skills.groups.find(group => group.index === mainGroup);
+    if (!initialMain || !afterGroup || afterGroup.slot !== initialMain.slot ||
+        afterGroup.activeSkillNames.join("|") !== initialMain.activeSkillNames.join("|")) {
+      return blocked("메인 스킬", [`장비 교체 후 스킬 그룹 식별 변경 (Set ${set}) · DPS 표시 보류`]);
+    }
+  }
   // Snapshot original remains frozen even after changing the engine's gear.
   for (const set of [1, 2] as const) {
     if (!original[set] || !simulation[set]) throw new Error(`Set ${set} 비교 결과가 없습니다.`);

@@ -1,0 +1,23 @@
+FIXLGS-EN-V004
+Rarity: UNIQUE
+Runeseeker's Call
+Runic Fork
+Quality: 20
+Item Level: 86
+Implicits: 0
+105% increased [Spell] Damage (rune)
++270 to maximum Mana (rune)
++9 to Level of all [Spell|Spell] Skills (rune)
+84% increased [Critical|Critical Hit Chance] for [Spell|Spells] (rune)
+[Gain] 15% of Damage as Extra Damage of all [ElementalDamage|Elements] (rune)
+[ShamanOnlyMods|Bonded]: 15% increased maximum Mana (rune)
+[ShamanOnlyMods|Bonded]: 75% increased [CriticalDamageBonus|Critical Damage Bonus] (rune)
+[ShamanOnlyMods|Bonded]: 36% chance when collecting an [ElementalInfusion|Elemental Infusion] to gain an additional [ElementalInfusion|Elemental Infusion] of the same type (rune)
+[ShamanOnlyMods|Bonded]: [Archon] recovery period expires 90% faster (rune)
+[ShamanOnlyMods|Bonded]: [ArmourBreak|Break] [Armour] on [Critical|Critical Hit] with [Spell|Spells] equal to 36% of [Physical|Physical] Damage dealt (rune)
+[ShamanOnlyMods|Bonded]: [LifeLeech|Leeches] 3% of maximum Life when you Cast a [Spell|Spell] (rune)
+Only [Rune|Runes] can be Socketed in this item
+200% increased effect of Socketed [Rune|Runes]
+Grants Skill: Level 20 The Stars Answer
+Corrupted
+FIXLGS-META-V1:{"version":1,"source":"official-english-trade","quality":20,"qualitySource":"rendered.trade-row","sockets":"S S S S S S","socketed":[{"name":"","type":"Hedgewitch Assandra's Rune of Wisdom","mods":["Wand or Staff: +1 to Level of all [Spell|Spell] Skills"]},{"name":"","type":"Legacy of Lifesprig","mods":["Wands: +2 to Level of all [Spell|Spell] Skills"]},{"name":"","type":"Perfect Iron Rune","mods":["[MartialWeapon|Martial Weapon]: 20% increased [Physical] Damage","Wand or Staff: 35% increased [Spell] Damage","Armour: 20% increased [Armour|Armour], [Evasion|Evasion] and [EnergyShield|Energy Shield]"]},{"name":"","type":"Perfect Mind Rune","mods":["[MartialWeapon|Martial Weapon]: [ManaLeech|Leeches] 5% of [Physical|Physical] Damage as Mana","Wand or Staff: +90 to maximum Mana","Armour: +50 to maximum Mana"]},{"name":"","type":"Perfect Vision Rune","mods":["[MartialWeapon|Martial Weapon]: +150 to [Accuracy|Accuracy] Rating","Wand or Staff: 28% increased [Critical|Critical Hit Chance] for [Spell|Spells]","Armour: 20% increased Life and Mana Recovery from [Flask|Flasks]"]},{"name":"","type":"Saqawal's Rune of the Sky","mods":["[MartialWeapon|Martial Weapon]: [Gain] 5% of Damage as Extra Damage of all [ElementalDamage|Elements]","Wand or Staff: [Gain] 5% of Damage as Extra Damage of all [ElementalDamage|Elements]"]},{"name":"","type":"The Stars Answer","mods":[]}],"extraProperties":[],"unknownModGroups":{},"grants":["Grants Skill: Level 20 The Stars Answer"],"requirements":["Level: 65","[Intelligence|Int]: 114"],"unresolvedMods":[],"unknownGrantedData":[],"warnings":["Socketed item effects require PoB verification"]}

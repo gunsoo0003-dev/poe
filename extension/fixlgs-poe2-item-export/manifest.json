@@ -1,15 +1,13 @@
 {
   "manifest_version": 3,
   "name": "FIXLGS POE2 Item Export",
-  "version": "0.4.0",
-  "description": "Export POE2 trade listings as English PoB-compatible items via the official English trade endpoint.",
+  "version": "0.4.6",
+  "description": "Copy Path of Exile 2 trade items as English item text for FIXLGS PoB2 comparisons.",
   "permissions": [
     "clipboardWrite"
   ],
   "host_permissions": [
-    "https://www.pathofexile.com/*",
-    "https://pathofexile.com/*",
-    "https://poe.kakaogames.com/*"
+    "https://www.pathofexile.com/*"
   ],
   "content_scripts": [
     {
@@ -41,5 +39,10 @@
   ],
   "background": {
     "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
   }
 }

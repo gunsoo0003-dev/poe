@@ -4,8 +4,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request?.type !== "FIXLGS_ENGLISH_LISTING") return;
   const listingId = String(request.id || "");
   const searchId = String(request.query || "");
-  if (!/^[a-zA-Z0-9_-]{8,150}$/.test(listingId) || !/^[a-zA-Z0-9_-]{5,100}$/.test(searchId)) {
-    sendResponse({ok:false,error:"INVALID_LISTING_OR_QUERY_ID"});return;
+  if (!listingId) { sendResponse({ok:false,error:"LISTING_ID_MISSING"}); return; }
+  if (!searchId) { sendResponse({ok:false,error:"SEARCH_ID_MISSING"}); return; }
+  // ID shape and length may differ across regional services. URI-encode both
+  // parameters rather than assuming a particular ID length.
+  if (listingId.length > 500 || searchId.length > 500 || /[\s/#?]/.test(listingId + searchId)) {
+    sendResponse({ok:false,error:"INVALID_ID_FORMAT"});return;
   }
   (async () => {
     const url=`https://www.pathofexile.com/api/trade2/fetch/${encodeURIComponent(listingId)}?query=${encodeURIComponent(searchId)}`;

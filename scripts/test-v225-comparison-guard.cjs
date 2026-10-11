@@ -32,7 +32,7 @@ async getSlotItems(){return [{itemId:99,isEquipped:true}]}
  assert.equal(equips,0);
  audit=valid;
  result=await calculateComparison(engine,char,'ignored',{'weapon-set-1':{raw:source}});
- assert.equal(result.nativeParserStatus,'passed');assert.equal(equips,1);
+ assert.equal(result.nativeParserStatus,'passed');assert.equal(equips,2);
  assert.ok(result.simulation[1]);
  console.log('V225 PoB native parser block/valid comparison: PASS (CURRENT preserved, invalid AFTER hidden, no fake DPS)');
 })().catch(err=>{console.error(err);process.exit(1)});

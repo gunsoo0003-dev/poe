@@ -10,7 +10,7 @@ const transpiled=ts.transpileModule(fs.readFileSync(target,'utf8'),{
 }).outputText;
 const out={};vm.runInNewContext(transpiled,{exports:out,require:()=>({})});
 const {validateNativeItemAudit}=out;
-const line=(line,modifierCount=1,extra='')=>({line,group:'explicit',modifierCount,extra});
+const line=(line,modifierCount=1,extra='',group='explicit')=>({line,group,modifierCount,extra});
 const make=(lines,unrecognized=[],emptyModifier=[])=>({lines,unrecognized,emptyModifier,total:lines.length,nativeModifiers:lines.reduce((s,x)=>s+x.modifierCount,0)});
 const expected=['+15 to Strength'];
 assert.equal(validateNativeItemAudit(make([line('+15 to Strength')]),expected).verified,true);
@@ -18,6 +18,7 @@ assert.equal(validateNativeItemAudit(make([line('+15 to Strength'),line('Impossi
 assert.equal(validateNativeItemAudit(make([line('+15 to Strength',0)],[],[{group:'explicit',line:'+15 to Strength'}]),expected).verified,false);
 assert.equal(validateNativeItemAudit(make([line('20% increased Physical Damage')]),expected).verified,false);
 assert.equal(validateNativeItemAudit(undefined,expected).verified,false);
-assert.equal(validateNativeItemAudit(make([line('Gain 5% of Damage as Extra Damage of all Elements',3)]),['{rune}Gain 5% of Damage as Extra Damage of all Elements']).verified,true);
+assert.equal(validateNativeItemAudit(make([line('Gain 5% of Damage as Extra Damage of all Elements',3,'','rune')]),['{rune}Gain 5% of Damage as Extra Damage of all Elements']).verified,true);
 assert.equal(validateNativeItemAudit(make([line('+15 to Strength')]),['+15 to Strength','+15 to Strength']).verified,false);
-console.log('V225 native PoB parse evidence guard: PASS (7 cases; no custom DPS formulas)');
+assert.equal(validateNativeItemAudit(make([line('Gain 5% of Damage as Extra Damage of all Elements',3)]),['{rune}Gain 5% of Damage as Extra Damage of all Elements']).verified,false);
+console.log('V227 native PoB parse evidence guard: PASS (8 cases; class preserved)');

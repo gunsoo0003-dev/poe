@@ -655,7 +655,9 @@ function pobWebGetGroupDps(jsonArg)
   end
   if not result.error then
     local output = build.calcsTab.mainOutput
-    result.dps = output.CombinedDPS or output.TotalDPS or 0
+    local player = (output.CombinedDPS and output.CombinedDPS > 0) and output.CombinedDPS or (output.TotalDPS or 0)
+    local minion = output.Minion and (output.Minion.CombinedDPS or output.Minion.TotalDPS) or 0
+    result.dps = player > 0 and player or minion
     result.totalDps = output.TotalDPS or 0
     result.outputRevision = build.outputRevision or 0
   end

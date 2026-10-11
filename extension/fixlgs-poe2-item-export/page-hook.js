@@ -2,6 +2,17 @@
   if (window.__FIXLGS_POE2_HOOK__) return;
   window.__FIXLGS_POE2_HOOK__ = true;
 
+  // Only inspect official Path of Exile trade item responses. Never collect
+  // other JSON requests, account endpoints, or unrelated browsing activity.
+  const isTradeApiUrl = input => {
+    try {
+      const raw = typeof input === "string" ? input : input?.url ?? String(input);
+      const url = new URL(raw, location.href);
+      if (url.protocol !== "https:" || !["www.pathofexile.com", "pathofexile.com", "poe.kakaogames.com"].includes(url.hostname)) return false;
+      return /^\/api\/trade2\/(?:fetch|search)(?:\/|$)/.test(url.pathname);
+    } catch (_) { return false; }
+  };
+
   const emitJson = (payload, source) => {
     try {
       window.postMessage({
@@ -9,7 +20,7 @@
         type: "FIXLGS_TRADE_JSON",
         payload,
         transport: source,
-      }, "*");
+      }, location.origin);
     } catch (_) {}
   };
 
@@ -23,10 +34,12 @@
   const originalFetch = window.fetch;
   window.fetch = async function(...args) {
     const response = await originalFetch.apply(this, args);
-    try {
-      const clone = response.clone();
-      clone.text().then(text => maybeParseText(text, "fetch")).catch(() => {});
-    } catch (_) {}
+    if (isTradeApiUrl(args[0]) || isTradeApiUrl(response.url)) {
+      try {
+        const clone = response.clone();
+        clone.text().then(text => maybeParseText(text, "fetch")).catch(() => {});
+      } catch (_) {}
+    }
     return response;
   };
 
@@ -35,17 +48,19 @@
     const open = OriginalXHR.prototype.open;
     const send = OriginalXHR.prototype.send;
     OriginalXHR.prototype.open = function(method, url, ...rest) {
-      this.__fixlgsUrl = url;
+      this.__fixlgsTradeApi = isTradeApiUrl(url);
       return open.call(this, method, url, ...rest);
     };
     OriginalXHR.prototype.send = function(...args) {
-      this.addEventListener("load", function() {
-        try {
-          if (typeof this.responseText === "string") {
-            maybeParseText(this.responseText, "xhr");
-          }
-        } catch (_) {}
-      });
+      if (this.__fixlgsTradeApi) {
+        this.addEventListener("load", function() {
+          try {
+            if (typeof this.responseText === "string") {
+              maybeParseText(this.responseText, "xhr");
+            }
+          } catch (_) {}
+        });
+      }
       return send.apply(this, args);
     };
   }

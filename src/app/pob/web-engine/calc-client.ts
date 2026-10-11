@@ -6,7 +6,8 @@ import type { CalcRequest, CalcResponse, SkillsData, SwitchSkillResult, NodeImpa
 
 export class CalcClient {
   private worker: Worker;
-  private pending = new Map<string, { resolve: (v: CalcResponse) => void; reject: (e: Error) => void }>();
+  private pending = new Map<string, { resolve: (v: CalcResponse) => void; reject: (e: Error) => void; timeout: ReturnType<typeof setTimeout> }>();
+  private stopped = false;
   private idCounter = 0;
   private onLog?: (msg: string) => void;
   private onNodePowerProgress?: (processed: number, total: number) => void;
@@ -27,35 +28,38 @@ export class CalcClient {
         return;
       }
       if (_id && this.pending.has(_id)) {
-        this.pending.get(_id)!.resolve(response);
+        const entry = this.pending.get(_id)!;
+        clearTimeout(entry.timeout);
         this.pending.delete(_id);
+        entry.resolve(response);
       }
     };
     this.worker.onerror = (e) => {
       console.error("[CalcClient] Worker error:", e);
+      this.terminate(new Error("PoB 계산 엔진에 오류가 발생했습니다."));
     };
+    this.worker.onmessageerror = () => this.terminate(new Error("PoB Worker 응답 해석 실패"));
   }
 
-  private send(msg: CalcRequest): Promise<CalcResponse> {
+  private send(msg: CalcRequest, timeoutMs = 90000): Promise<CalcResponse> {
+    if (this.stopped) return Promise.reject(new Error("PoB Worker가 종료됐습니다. 계산을 다시 실행해 주세요."));
     const _id = String(++this.idCounter);
     return new Promise((resolve, reject) => {
-      this.pending.set(_id, { resolve, reject });
-      this.worker.postMessage({ ...msg, _id });
+      const timeout = setTimeout(() => {
+        this.terminate(new Error(`PoB 계산 제한 시간 초과: ${msg.type} (${timeoutMs / 1000}초)`));
+      }, timeoutMs);
+      this.pending.set(_id, { resolve, reject, timeout });
+      try { this.worker.postMessage({ ...msg, _id }); }
+      catch (error) {
+        clearTimeout(timeout);
+        this.pending.delete(_id);
+        reject(error instanceof Error ? error : new Error(String(error)));
+      }
     });
   }
 
-  /** Abort a genuinely stuck Lua calculation rather than leaving the UI waiting forever. */
   private sendWithTimeout(msg: CalcRequest, timeoutMs = 45000): Promise<CalcResponse> {
-    return new Promise((resolve, reject) => {
-      const handle = setTimeout(() => {
-        this.terminate();
-        reject(new Error(`PoB calculation timed out after ${timeoutMs / 1000}s (${msg.type})`));
-      }, timeoutMs);
-      this.send(msg).then(
-        result => { clearTimeout(handle); resolve(result); },
-        error => { clearTimeout(handle); reject(error); },
-      );
-    });
+    return this.send(msg, timeoutMs);
   }
 
   async init(): Promise<boolean> {
@@ -281,9 +285,14 @@ export class CalcClient {
     return undefined;
   }
 
-  terminate() {
+  terminate(reason = new Error("PoB worker terminated")) {
+    if (this.stopped) return;
+    this.stopped = true;
     this.worker.terminate();
-    for (const { reject } of this.pending.values()) reject(new Error("PoB worker terminated"));
+    for (const { reject, timeout } of this.pending.values()) {
+      clearTimeout(timeout);
+      reject(reason);
+    }
     this.pending.clear();
   }
 }
