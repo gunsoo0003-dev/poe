@@ -1,0 +1,27 @@
+FIXLGS PoB V229 — Weapon badges & main-skill group identity
+Base: V228_SKILL_DISPLAY_FIX, V227 engine integrity, V226 ring fix, V004.6 extension.
+
+Changes:
+- Display persistent 1/2 physical weapon set indicator above the weapon and offhand slots, for CURRENT and SIMULATION. Uses selected physical set, not inventory slot position.
+- Gather all matching original PoB socket groups for character main skill and ninja skill candidates, including duplicate Lightning Bolt groups. Calculate each candidate independently in its original weapon set; retain index + slot + set identity. At most 12 secondary groups per calculation to bound workload; skipped groups are not treated as zero.
+- Rank and display the highest verified PoB DPS groups, rather than picking two ninja skills then silently dropping duplicate names.
+- Separate duplicate skill groups in After Change list, displaying measured DPS only from that exact group; never borrow first namesake.
+- Compare per-group before/after only if index, slot, names, and physical set match. Do not claim DPS for unmeasured or changed groups.
+
+Tests executed:
+- V226 ring-slot 29 checks PASS (using local TS transpile require hook for Node 22)
+- V225 comparison guard PASS
+- V227 final bonded condition PASS
+- V227 integrity tests 8 PASS
+- V228 skills panel 6 PASS (updated for distinct same-name groups)
+- V229 main skill/group/badges 9 PASS
+- V229 duplicate-group calculateComparison integration 5 PASS
+- V210/V211 contract PASS
+
+Limitations:
+- Full Next.js production build NOT verified (dependencies incomplete in offline environment).
+- Web browser and live poe.ninja character validation not done.
+- Actual Lightning Bolt DPS shown only if the original PoB engine independently completes calculation for that group in its original weapon set. Explicit warnings for skipped/failed groups remain.
+- Official desktop PoB numeric parity is NOT verified.
+
+Installation: Extract ZIP; overlay its top-level fix-pob folder on the existing fix-pob directory. Git commit/push normally.

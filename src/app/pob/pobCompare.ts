@@ -48,6 +48,18 @@ export function getMeasuredSkill(snapshot: SetCalculation | undefined, skillName
   // to take the first group's DPS and label it as the other one.
   return matches.length === 1 ? matches[0] : undefined;
 }
+/** Rank independently verified PoB groups, never guessing from a matching name.
+ * Two same-named skills remain separate via index + slot + weapon set.
+ */
+export function rankMeasuredSkillGroups(snapshot: SetCalculation | undefined): CalculatedSkillResult[] {
+  if (!snapshot) return [];
+  return Object.values(snapshot.calculatedSkills)
+    .filter(result => result.weaponSet === snapshot.weaponSet && Number.isFinite(result.dps) &&
+      snapshot.skills.groups.some(group => group.index === result.groupIndex && group.enabled !== false &&
+        group.slot === result.slot && group.activeSkillNames.some(name => result.activeSkillNames.includes(name))))
+    .sort((a, b) => b.dps - a.dps || a.groupIndex - b.groupIndex);
+}
+
 export interface ComparisonResult {
   status: string;
   original: SetSnapshots;
@@ -81,20 +93,35 @@ export async function calculateComparison(
   if (!initialSkills.groups.length) throw new Error("PoB 원본 스킬 그룹이 비어 있습니다.");
   const originalWeaponSet: WeaponSet = initialSkills.weaponSet === 2 ? 2 : 1;
   const mainGroup = initialSkills.mainSocketGroup;
-  const ranked = [...(character.skills || [])]
-    .filter(skill => Number.isFinite(skill.dpsValue))
-    .sort((a, b) => (b.dpsValue || 0) - (a.dpsValue || 0)).slice(0, 2);
-  const selectedGroups = [...new Set(ranked.map(skill => {
-    const matches = initialSkills.groups.filter(group => group.enabled !== false &&
-      group.activeSkillNames.some(name => name.trim().toLowerCase() === skill.name.trim().toLowerCase()));
-    return matches.length === 1 ? matches[0].index : undefined;
-  }).filter((index): index is number => Number.isInteger(index)))];
-  const secondaryGroups = selectedGroups.filter(index => index !== mainGroup);
   const warnings: string[] = [];
-  for (const skill of ranked) {
-    const matches = initialSkills.groups.filter(group => group.enabled !== false &&
-      group.activeSkillNames.some(name => name.trim().toLowerCase() === skill.name.trim().toLowerCase()));
-    if (matches.length > 1) warnings.push(`${skill.name}: 같은 이름의 스킬 그룹 ${matches.length}개 · 자동 DPS 선택 보류`);
+  const enabledGroups = initialSkills.groups.filter(group => group.enabled !== false);
+  // Import order and ninja DPS are *candidate discovery*, not PoB DPS.
+  // Include all matching socket groups for a skill; formerly two Lightning Bolt
+  // groups caused both to be silently skipped. Evaluate candidates separately.
+  const preferredNames = [character.mainSkill, ...[...(character.skills || [])]
+    .sort((a, b) => (b.dpsValue ?? -1) - (a.dpsValue ?? -1))
+    .map(skill => skill.name)]
+    .filter((name): name is string => Boolean(name?.trim()));
+  const normalize = (name: string) => name.trim().toLowerCase();
+  const candidateIndexes: number[] = [];
+  for (const name of preferredNames) {
+    for (const group of enabledGroups) {
+      if (group.activeSkillNames.some(active => normalize(active) === normalize(name)) &&
+          !candidateIndexes.includes(group.index) && group.index !== mainGroup) {
+        candidateIndexes.push(group.index);
+      }
+    }
+  }
+  // Avoid unbounded Lua group switching for characters with many socket groups.
+  // A skipped group must not be treated as zero DPS or assigned another group's value.
+  const MAX_SECONDARY_GROUPS = 12;
+  const secondaryGroups = candidateIndexes.slice(0, MAX_SECONDARY_GROUPS);
+  if (candidateIndexes.length > MAX_SECONDARY_GROUPS) {
+    warnings.push(`추가 스킬 그룹 ${candidateIndexes.length - MAX_SECONDARY_GROUPS}개는 계산 안전 한도로 인해 DPS 미검증`);
+  }
+  for (const name of new Set(preferredNames.map(normalize))) {
+    const matches = enabledGroups.filter(group => group.activeSkillNames.some(active => normalize(active) === name));
+    if (matches.length > 1) warnings.push(`${matches[0].activeSkillNames.find(active => normalize(active) === name)}: 같은 이름의 PoB 그룹 ${matches.length}개를 별도 계산·식별`);
   }
   const equipmentTrace: string[] = [];
 

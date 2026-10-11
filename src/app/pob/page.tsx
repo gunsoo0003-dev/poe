@@ -4,9 +4,8 @@ import { FormEvent, MouseEvent, ReactNode, useMemo, useState, useEffect } from "
 import Link from "next/link";
 import { pobGuides } from "@/lib/pobGuides";
 import { parseTradeItem, type TradeItem } from "./tradeItem";
-import { calculateComparison, getMeasuredSkill, type ComparisonResult, type SetSnapshots, type SetCalculation, type WeaponSet } from "./pobCompare";
+import { calculateComparison, getMeasuredSkill, rankMeasuredSkillGroups, type ComparisonResult, type SetSnapshots, type SetCalculation, type WeaponSet } from "./pobCompare";
 import { CalcClient } from "./web-engine/calc-client";
-import type { SkillsData } from "./web-engine/calc-api";
 import type { ImportedCharacter, ImportedCharacterStat, ImportedItem, ImportedSkill } from "./ninjaImport";
 import { matchesRingSlot } from "./ringSlots";
 
@@ -89,6 +88,26 @@ function weaponSlotMatches(cls: "weapon" | "offhand", set: 1 | 2, slot?: string)
 // Persist weapon overrides by physical weapon set, not by the currently visible tab.
 const physicalSlotKey = (slot: string, set: 1 | 2) =>
   slot === "weapon" || slot === "offhand" ? `${slot}-set-${set}` : slot;
+/** Only PoB-measured values may determine the main DPS display.
+ * Socket index and weapon set keep duplicate Lightning Bolt groups distinct.
+ */
+export function buildMainSkillUi(snapshot: SetCalculation | undefined, importedSkills: ImportedSkill[]): UiSkill[] {
+  if (!snapshot) return [];
+  const ranked = rankMeasuredSkillGroups(snapshot);
+  const counts = new Map<string, number>();
+  for (const row of ranked) for (const name of row.activeSkillNames)
+    counts.set(name.trim().toLowerCase(), (counts.get(name.trim().toLowerCase()) || 0) + 1);
+  return ranked.slice(0, 2).map(result => {
+    const name = result.activeSkillNames[0] || `PoB Group ${result.groupIndex}`;
+    const skill = importedSkills.find(candidate => candidate.name.trim().toLowerCase() === name.trim().toLowerCase());
+    const ui = skill ? toUiSkill(skill) : { name, support: result.slot, dps: "—", tone: "gold" };
+    const duplicated = (counts.get(name.trim().toLowerCase()) || 0) > 1;
+    return { ...ui,
+      name: `${name}${duplicated ? ` · 그룹 ${result.groupIndex}` : ""} · Set ${result.weaponSet === 1 ? "I" : "II"}`,
+      dps: result.dps.toLocaleString("en-US", { maximumFractionDigits: 2 }) };
+  });
+}
+
 export default function Home() {
   const [screen, setScreen] = useState<"landing" | "game">("landing");
   const [ninjaUrl, setNinjaUrl] = useState("");
@@ -147,46 +166,27 @@ export default function Home() {
   const engineStatsAfter = statsFor(afterSnapshot?.stats);
   const pobStats = useMemo(() => {
     if (!compareBeforeSnapshot || !afterSnapshot) return [];
-    const labels: Record<string, string> = { TotalDPS: "Main Skill DPS", CombinedDPS: "Combined DPS", Life: "Life", EnergyShield: "Energy Shield", Mana: "Mana", Armour: "Armour", Evasion: "Evasion", FireResist: "Fire Resistance", ColdResist: "Cold Resistance", LightningResist: "Lightning Resistance", ChaosResist: "Chaos Resistance" };
+    const labels: Record<string, string> = { TotalDPS: "PoB 선택 그룹 Total DPS", CombinedDPS: "Combined DPS", Life: "Life", EnergyShield: "Energy Shield", Mana: "Mana", Armour: "Armour", Evasion: "Evasion", FireResist: "Fire Resistance", ColdResist: "Cold Resistance", LightningResist: "Lightning Resistance", ChaosResist: "Chaos Resistance" };
     return Object.entries(compareBeforeSnapshot.stats)
       .filter(([key, value]) => !key.startsWith("_") && Number.isFinite(value) && Number.isFinite(afterSnapshot.stats[key]))
       .map(([key, before]) => ({ key, label: labels[key] || key, before, after: afterSnapshot.stats[key], delta: afterSnapshot.stats[key] - before }));
   }, [compareBeforeSnapshot, afterSnapshot]);
+  // Match measured groups by their stable PoB socket identity, not by name.
   const skillDeltas = useMemo(() => {
     if (!compareBeforeSnapshot || !afterSnapshot) return [];
-    return [...(importedCharacter?.skills || [])].filter(skill => Number.isFinite(skill.dpsValue))
-      .sort((a, b) => (b.dpsValue || 0) - (a.dpsValue || 0)).slice(0, 2)
-      .flatMap(skill => {
-        const before = getMeasuredSkill(compareBeforeSnapshot, skill.name);
-        const after = getMeasuredSkill(afterSnapshot, skill.name);
-        // The same PoB group MUST have been calculated in the same physical set.
-        if (!before || !after || before.weaponSet !== after.weaponSet || before.groupIndex !== after.groupIndex || before.slot !== after.slot)
-          return [];
-        return [{ name: skill.name, before: before.dps, after: after.dps, weaponSet: after.weaponSet, groupIndex: after.groupIndex }];
-      });
-  }, [compareBeforeSnapshot, afterSnapshot, importedCharacter]);
+    return rankMeasuredSkillGroups(afterSnapshot).flatMap(after => {
+      const before = compareBeforeSnapshot.calculatedSkills[after.groupIndex];
+      if (!before || before.weaponSet !== after.weaponSet || before.slot !== after.slot ||
+          before.activeSkillNames.join("|") !== after.activeSkillNames.join("|")) return [];
+      return [{ name: after.activeSkillNames[0] || `Group ${after.groupIndex}`,
+        before: before.dps, after: after.dps, weaponSet: after.weaponSet, groupIndex: after.groupIndex }];
+    }).slice(0, 3);
+  }, [compareBeforeSnapshot, afterSnapshot]);
   const actualSkills = useMemo(() => importedCharacter?.skills ?? [], [importedCharacter]);
   const actualStats = useMemo(() => importedCharacter?.stats ?? [], [importedCharacter]);
-  const mainSkills = useMemo(() => {
-    if (!actualSkills.length) return [];
-    const ranked = actualSkills
-      .filter((skill) => skill.dpsValue !== undefined)
-      .sort((a, b) => (b.dpsValue ?? 0) - (a.dpsValue ?? 0));
-    const source = ranked.length ? ranked : actualSkills;
-    return source.slice(0, 2).map(toUiSkill);
-  }, [actualSkills]);
 
-  // The visual skill names/supports come from ninja; DPS comes only from PoB2.
-  // Do not substitute ninja DPS when PoB has not computed a matching skill.
-  const engineMainSkills = (snapshot?: SetCalculation): UiSkill[] => {
-    if (!snapshot) return [];
-    return mainSkills.flatMap(skill => {
-      const result = getMeasuredSkill(snapshot, skill.name);
-      if (!result) return []; // Not measured in this set: don't reuse another set's DPS.
-      return [{ ...skill, name: `${skill.name} · Set ${result.weaponSet === 1 ? "I" : "II"}`,
-        dps: result.dps.toLocaleString("en-US", { maximumFractionDigits: 2 }) }];
-    });
-  };
+  const engineMainSkills = (snapshot?: SetCalculation): UiSkill[] =>
+    buildMainSkillUi(snapshot, actualSkills);
 
   function moveItemTooltip(event: MouseEvent<HTMLElement>, item: ImportedItem) {
     const tooltipWidth = 360;
@@ -416,7 +416,7 @@ export default function Home() {
                 {(pobState?.warnings || []).map((warning, i) => <p key={i} style={{color: "#f3b870"}}>부분 계산 주의: {warning}</p>)}
                 {changedCount > 0 && pobState?.equipmentTrace && <details style={{marginTop: 12}}><summary>PoB2 실제 장착·재계산 확인 기록</summary><pre style={{whiteSpace: "pre-wrap", fontSize: 12}}>{pobState.equipmentTrace.join("\n")}</pre></details>}
               </section>
-              <SkillsPanel character={importedCharacter} simulation engineSkills={afterSnapshot?.skills} />
+              <SkillsPanel character={importedCharacter} simulation engineSnapshot={afterSnapshot} skillChanges={pobState?.skillChanges} />
               <div className="simulation-stage-note">
                 <b>PoB2 ENGINE TEST</b>
                 <span>CURRENT와 SIMULATION Stats는 PoB2 엔진 계산값을 사용합니다. 미인식 옵션 및 빌드 누락이 있으면 완전한 계산으로 간주하지 마세요.</span>
@@ -634,6 +634,11 @@ function EquipmentPanel({
                   </>
                 )}
               </button>
+              {(item.cls === "weapon" || item.cls === "offhand") && (
+                <span className="weapon-slot-set-badge" aria-label={`현재 무기 세트 ${weaponSet}`}>
+                  {weaponSet}
+                </span>
+              )}
               {simulation && linked && (
                 <button className="simulation-slot-reset" type="button" onClick={() => onClearSlot?.(item.cls)} title="Reset to current item">↺</button>
               )}
@@ -676,24 +681,59 @@ function EquipmentPanel({
   );
 }
 
-function SkillsPanel({ character, simulation = false, engineSkills }: { character: ImportedCharacter | null; simulation?: boolean; engineSkills?: SkillsData }) {
-  // Display the original skill gems in both panes. PoB2's SkillDPS is a
-  // computed subset, not the inventory of socket groups; an empty SkillDPS
-  // response must not erase the character's actual gem list.
+function SkillsPanel({ character, simulation = false, engineSnapshot, skillChanges = [] }: {
+  character: ImportedCharacter | null;
+  simulation?: boolean;
+  engineSnapshot?: SetCalculation;
+  skillChanges?: ComparisonResult["skillChanges"];
+}) {
   const originalSkills = character?.skills?.map(toUiSkill) ?? [];
-  const uiSkills = simulation ? (() => {
-    const existing = originalSkills.map(skill => {
-      const matches = (engineSkills?.skills ?? []).filter(s => s.name.toLowerCase() === skill.name.toLowerCase());
-      return { ...skill, dps: matches.length === 1 ? matches[0].dps.toLocaleString("en-US", { maximumFractionDigits: 2 }) : "—" };
-    });
-    const names = new Set(originalSkills.map(skill => skill.name.toLowerCase()));
+  const uiSkills: UiSkill[] = simulation ? (() => {
+    // Never show the pre-change inventory as an after-change result when
+    // the native calculation was blocked or did not produce a snapshot.
+    if (!engineSnapshot) return [];
+    const activeGroups = engineSnapshot.skills.groups.filter(group => group.enabled !== false);
+    const lower = (name: string) => name.trim().toLowerCase();
+    const stillPresent = (name: string) => activeGroups.some(group =>
+      group.activeSkillNames.some(activeName => lower(activeName) === lower(name)));
+    const removed = new Set(skillChanges.filter(change => change.kind === "removed").map(change => lower(change.name)));
+    // PoB can legitimately have two same-named groups. A removal of one
+    // group must not remove a name that survives in another socket group.
+    const measured = rankMeasuredSkillGroups(engineSnapshot);
+    const matchingGroups = (name: string) => activeGroups.filter(group =>
+      group.activeSkillNames.some(active => lower(active) === lower(name)));
+    const usedGroups = new Set<number>();
+    const existing = originalSkills
+      .filter(skill => !removed.has(lower(skill.name)) || stillPresent(skill.name))
+      .flatMap(skill => {
+        const groups = matchingGroups(skill.name);
+        if (groups.length > 1) {
+          // Separate same-name PoB groups. Never borrow damage from a namesake.
+          return groups.map(group => {
+            usedGroups.add(group.index);
+            const result = measured.find(entry => entry.groupIndex === group.index && entry.slot === group.slot);
+            return { ...skill, name: `${skill.name} · 그룹 ${group.index}`,
+              dps: result ? result.dps.toLocaleString("en-US", { maximumFractionDigits: 2 }) : "—" };
+          });
+        }
+        if (groups[0]) usedGroups.add(groups[0].index);
+        const dps = getMeasuredSkill(engineSnapshot, skill.name)?.dps;
+        return [{ ...skill, dps: dps !== undefined && Number.isFinite(dps)
+          ? dps.toLocaleString("en-US", { maximumFractionDigits: 2 }) : "—" }];
+      });
+    const names = new Set(existing.map(skill => lower(skill.name)));
     const added: UiSkill[] = [];
-    for (const group of engineSkills?.groups ?? []) {
+    for (const group of activeGroups) {
+      if (usedGroups.has(group.index)) continue;
       for (const name of group.activeSkillNames) {
-        if (!name.trim() || names.has(name.toLowerCase())) continue;
-        names.add(name.toLowerCase());
-        const matches = (engineSkills?.skills ?? []).filter(skill => skill.name.toLowerCase() === name.toLowerCase());
-        added.push({ name, support: "PoB 장비/스킬 그룹에서 추가 확인", dps: matches.length === 1 ? matches[0].dps.toLocaleString("en-US", {maximumFractionDigits: 2}) : "—", tone: "gold" });
+        if (!name.trim()) continue;
+        const sameNames = activeGroups.filter(entry => entry.activeSkillNames.some(active => lower(active) === lower(name)));
+        if (sameNames.length === 1 && names.has(lower(name))) continue;
+        const result = measured.find(entry => entry.groupIndex === group.index && entry.slot === group.slot);
+        added.push({ name: sameNames.length > 1 ? `${name} · 그룹 ${group.index}` : name,
+          support: "PoB 장비/스킬 그룹에서 추가 확인",
+          dps: result ? result.dps.toLocaleString("en-US", { maximumFractionDigits: 2 }) : "—", tone: "gold" });
+        names.add(lower(name));
       }
     }
     return [...existing, ...added];
@@ -701,11 +741,11 @@ function SkillsPanel({ character, simulation = false, engineSkills }: { characte
   return (
     <section className={`all-skills panel-card build-skill-panel ${simulation ? "simulation-skills" : ""}`}>
       <div className="panel-title">{simulation ? "All Skills · After Change (PoB2 일부 결과)" : "All Skills · poe.ninja 참고값"}</div>
-      {character?.skills && character.skills.length > 0 && (
-        <div className="actual-skill-note">{character.skills.length} SKILL SETS</div>
-      )}
+      {uiSkills.length > 0 && <div className="actual-skill-note">{uiSkills.length} SKILL SETS</div>}
       <div className="skill-list">
-        {!uiSkills.length && <div className="stats-empty">스킬 데이터가 없습니다. 예시 스킬은 표시하지 않습니다.</div>}
+        {!uiSkills.length && <div className="stats-empty">{simulation
+          ? "변경 후 스킬 계산 결과가 없습니다."
+          : "스킬 데이터가 없습니다. 예시 스킬은 표시하지 않습니다."}</div>}
         {uiSkills.map((skill, idx) => (
           <article className="skill-row" key={`${skill.name}-${idx}`}>
             <SkillIcon skill={skill} />

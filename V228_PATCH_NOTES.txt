@@ -1,0 +1,23 @@
+FIXLGS PoB V228 – SIMULATION skill display consistency patch (2026-10-12)
+Source baseline: V227 + extension V004.6. No PoB Lua/WASM engine changes.
+
+Symptoms confirmed from user screenshot and V227 page.tsx:
+1. Spark measured DPS was 289,338.81 in the after-change main skill panel but "—" in All Skills.
+2. Spellslinger was reported removed by the upstream skill-change audit yet remained in After Change All Skills.
+3. "Main Skill DPS" label could be mistaken for Spark even when PoB selected a different main group.
+
+Fixes:
+- After Change All Skills uses the SAME measured skill data as Main Skills, never the unrelated generic SkillDPS list.
+- Explicitly removed skills are excluded unless another active PoB group still contains the same skill name.
+- PoB-confirmed added skills appear in the after-change inventory (without invented DPS).
+- When computation is blocked, After Change All Skills is not populated with unchanged original skills as if it were real.
+- After-change displayed skill count reflects displayed skill rows, not pre-change ninja skill count.
+- TotalDPS label clarifies it is the "PoB selected group", not automatically Spark DPS.
+
+Unchanged:
+- All 997 original Lua sources and WASM payloads.
+- Core item conversion, rune reconstruction and PoB calculations.
+- V226 ring slot identity fix; V227 integrity checks; extension V004.6.
+
+Important limitation:
+- This fixes provable DISPLAY inconsistencies. The reported Spark DPS delta (-91,287.39) cannot be proven numerically correct or wrong from the screenshot alone. Comparing the replaced original weapon and PoB identical-Config calculation is necessary.

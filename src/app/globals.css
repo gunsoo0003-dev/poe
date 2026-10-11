@@ -10963,3 +10963,24 @@ footer strong { color: #a99ab8; }
 .poe-mobile-resource-links{display:flex;gap:16px;flex-wrap:wrap;margin-top:24px}
 .poe-mobile-resource-links a{color:#e0ba86;font-size:14px;text-decoration:underline;text-underline-offset:5px}
 @media(max-width:760px){.poe-content-overview{display:none}.poe-v11-footer{display:none}}
+
+/* V229: persistent weapon-set number above both physical weapon slots. */
+.equipment-slot-wrap.weapon .weapon-slot-set-badge,
+.equipment-slot-wrap.offhand .weapon-slot-set-badge {
+  position: absolute;
+  z-index: 12;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid #9fb5b2;
+  border-radius: 5px;
+  background: #182a32;
+  color: #f2f6f5;
+  font-size: 15px;
+  font-weight: 800;
+  pointer-events: none;
+}
