@@ -509,14 +509,12 @@ export default function Home() {
               <a className="start-tool-card" href="/guides/pob/getting-started">
                 <span className="start-tool-kicker">GUIDE</span>
                 <strong>사용 가이드</strong>
-                <small>캐릭터 불러오기부터 거래소 아이템 비교까지 사용 순서를 확인합니다.</small>
                 <b>가이드 보기 →</b>
               </a>
 
               <div className="start-tool-card extension-card">
                 <span className="start-tool-kicker">TRADE EXTENSION</span>
                 <strong>거래소 확장프로그램 설치</strong>
-                <small>Google Chrome에서 거래소를 열고 원하는 매물을 Export해 Simulation 장비로 가져옵니다.</small>
                 <a className="extension-download" href="/downloads/FIXLGS_POE2_ITEM_EXPORT_V004.zip" download>설치파일 ↓</a>
               </div>
             </div>

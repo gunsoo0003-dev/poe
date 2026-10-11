@@ -10759,8 +10759,8 @@ footer strong { color: #a99ab8; }
 }
 .start-tool-card {
   min-width: 0;
-  min-height: 104px;
-  padding: 15px 17px;
+  min-height: 76px;
+  padding: 12px 17px;
   border: 1px solid rgba(216,197,255,.14);
   background: rgba(255,255,255,.024);
   color: inherit;
@@ -10769,8 +10769,7 @@ footer strong { color: #a99ab8; }
   grid-template-columns: 1fr auto;
   grid-template-areas:
     "kicker action"
-    "title action"
-    "copy action";
+    "title action";
   column-gap: 20px;
   align-items: center;
   transition: border-color .18s ease, background .18s ease, transform .18s ease;
@@ -10792,13 +10791,6 @@ footer strong { color: #a99ab8; }
   margin-top: 3px;
   color: #f2eef7;
   font-size: 16px;
-}
-.start-tool-card small {
-  grid-area: copy;
-  margin-top: 5px;
-  color: #958d9f;
-  font-size: 11px;
-  line-height: 1.55;
 }
 .start-tool-card > b {
   grid-area: action;
@@ -10837,7 +10829,7 @@ footer strong { color: #a99ab8; }
 
 @media (max-width: 760px) {
   .start-tools { grid-template-columns: 1fr; }
-  .start-tool-card { grid-template-columns: 1fr; grid-template-areas: "kicker" "title" "copy" "action"; row-gap: 2px; }
+  .start-tool-card { grid-template-columns: 1fr; grid-template-areas: "kicker" "title" "action"; row-gap: 2px; }
   .start-tool-card > b,
   .start-tool-card > button,
 .start-tool-card > .extension-download { margin-top: 10px; justify-self: start; }

@@ -2,6 +2,7 @@ export type GuideSection = { heading: string; paragraphs: string[]; points?: str
 export type PobGuide = {
   slug: string; label: string; title: string; description: string;
   lead: string; sections: GuideSection[]; caveat: string;
+  resources?: { title: string; href: string }[];
 };
 
 // Each entry is an independent explanatory article rather than a placeholder link.
@@ -18,6 +19,70 @@ export const pobGuides: PobGuide[] = [
       { heading: "5. 계산 오류가 나면", paragraphs: ["캐릭터가 Builds에 실제로 존재하는지 먼저 확인하세요. 장비는 보이는데 DPS가 비어 있다면 링크 검사와 별개로 PoB Export 또는 계산 엔진 오류일 수 있습니다.", "V221에서는 계산이 끝나기 전에 남아 있던 pending buildFlag를 제한적으로 재시도하도록 개선했습니다. 그래도 실패하면 엔진 진단 화면의 오류를 확인해야 합니다."] },
     ],
     caveat: "FIXLGS PoB는 실제 게임 서버의 전투 결과를 측정하는 기능이 아닙니다. 설정, 대상 적, 조건부 버프, 원본 빌드 데이터에 따라 결과가 달라질 수 있습니다."
+  },
+  {
+    slug: "kakao-poe-ninja",
+    label: "한국 유저 닌자 연결법",
+    title: "카카오게임즈 POE2 계정 poe.ninja 연동 방법: 한국 유저 캐릭터 등록과 Builds 확인",
+    description: "카카오게임즈 패스 오브 엑자일 2 한국 계정의 poe.ninja 연결 과정, GGG 로그인 문제, 캐릭터 갱신, Eligible와 In Builds section 차이, FIXLGS PoB 링크 입력 방법을 안내합니다.",
+    lead: "한국에서 카카오게임즈 계정으로 패스 오브 엑자일 2(POE2)를 이용한다면 poe.ninja에 캐릭터를 연결할 때 글로벌 GGG 로그인 화면이 나와 당황할 수 있습니다. 이 글은 한국 계정으로 poe.ninja 캐릭터 목록과 Builds 등록 상태를 확인하고 FIXLGS PoB에 불러오기까지 필요한 절차를 정리한 가이드입니다.",
+    sections: [
+      {
+        heading: "1. 카카오게임즈 POE2 공식 계정에 먼저 로그인",
+        paragraphs: [
+          "카카오게임즈 패스 오브 엑자일 공식 사이트에 게임에서 사용 중인 한국 계정으로 로그인합니다. 계정이 다르면 poe.ninja에서 원하는 캐릭터가 보이지 않을 수 있습니다.",
+          "과거 한국 이용자들이 사용한 방법 중에는 카카오게임즈 공식 거래소에 로그인한 뒤 우측 상단의 영국 국기 또는 English 언어 전환 메뉴를 통해 영문 화면으로 이동하는 경로가 있습니다. 사이트 개편에 따라 메뉴 위치나 인증 방식이 달라질 수 있으므로, 영어 화면 전환만으로 연동이 완료된다고 단정하지 마세요."
+        ],
+        points: ["새로운 글로벌 계정을 별도로 만들기 전에 기존 카카오게임즈 게임 계정으로 로그인했는지 확인", "공식 사이트의 언어 메뉴와 거래소 화면은 업데이트에 따라 달라질 수 있음"]
+      },
+      {
+        heading: "2. poe.ninja Account에서 계정 연결 확인",
+        paragraphs: [
+          "같은 브라우저에서 poe.ninja의 Account 페이지를 열고 계정 연결(Connect account) 또는 캐릭터 추가(Add your character) 흐름을 진행합니다. 권한 승인 화면이 나타나면 연결 대상 계정이 본인의 게임 계정인지 확인하세요.",
+          "로그인 페이지에 EMAIL, STEAM 등만 표시되고 카카오 선택지가 없다면 그 화면만으로 카카오 로그인을 할 수 있다고 가정하지 마세요. 이 경우 먼저 카카오게임즈 로그인 세션을 확인하고 공식 로그인·언어 전환 경로를 재확인해야 합니다. 한국 계정의 인증 화면은 시점과 계정 연결 상태에 따라 다르게 나타날 수 있습니다."
+        ],
+        points: ["로그인 인증 정보는 카카오게임즈·GGG·poe.ninja 공식 페이지에만 입력", "권한 승인 후 poe.ninja Account에서 본인 계정과 캐릭터 목록 표시 여부 확인"]
+      },
+      {
+        heading: "3. 캐릭터 목록 새로고침과 공개 상태 확인",
+        paragraphs: [
+          "poe.ninja 계정 페이지에서 Refresh character list를 실행하고 필요한 캐릭터를 갱신합니다. 캐릭터가 보이면 이름, 시즌, 레벨, 최근 업데이트 시각을 확인하세요.",
+          "캐릭터가 목록에 나타나지 않는다면 카카오게임즈의 프로필·캐릭터 비공개 설정을 확인합니다. 공개 설정을 바꾼 뒤에도 데이터 반영에는 시간이 걸릴 수 있습니다."
+        ]
+      },
+      {
+        heading: "4. Eligible와 In Builds section은 다릅니다",
+        paragraphs: [
+          "poe.ninja에서 Eligible(자격 있음)은 Builds 목록에 올라갈 조건을 충족했다는 표시이지, 지금 바로 Builds 데이터가 준비됐다는 뜻이 아닙니다. 몇 시간마다 진행되는 수집·갱신을 기다려야 할 수 있습니다.",
+          "In Builds section으로 표시되고 실제 /poe2/builds/ 경로에서 장비와 스킬이 확인되면 FIXLGS PoB에서 불러올 조건을 갖춘 것입니다. 계정 Profile에만 있는 캐릭터는 Builds 데이터가 없어 404 오류가 날 수 있습니다.",
+          "이전 시즌 캐릭터는 최신 Time Machine 스냅샷에 없을 수 있습니다. 해당 시즌의 과거 스냅샷에 기록이 있는지도 별도로 확인하세요."
+        ],
+        points: ["Eligible: Builds 수집 대상이지만 아직 목록에 없을 수 있음", "In Builds section: 실제 Builds에 수집된 캐릭터", "Inactive: 현재 활성 수집 대상이 아닌 상태일 수 있음"]
+      },
+      {
+        heading: "5. FIXLGS PoB에 정상적인 Builds 캐릭터 링크 입력",
+        paragraphs: [
+          "poe.ninja의 POE2 Builds 화면에서 캐릭터를 열고 브라우저 주소창의 상세 링크를 복사하세요. FIXLGS PoB 첫 화면에 붙여넣고 확인을 누르면 장비·주얼·스킬·PoB Export 수신 상태를 확인할 수 있습니다.",
+          "예시 주소 형식: https://poe.ninja/poe2/builds/리그/character/계정/캐릭터. /poe2/profile/ 형식의 공유 주소를 임의로 /builds/로 바꾼다고 캐릭터가 Builds에 등록되는 것은 아닙니다.",
+          "한글 계정명도 지원됩니다. 실제로 한글 계정명과 영문 캐릭터명이 조합된 Builds 링크에서 장비·스킬 및 PoB2 계산 성공을 확인했습니다. 한글이 들어갔다는 이유만으로 글로벌 영문 계정을 만들 필요는 없습니다."
+        ]
+      },
+      {
+        heading: "6. 한국 계정 연결 오류·HTTP 404 자주 묻는 질문",
+        paragraphs: [
+          "Q. 카카오게임즈로 로그인했는데 poe.ninja에서는 글로벌 GGG 로그인만 보여요? A. 두 사이트의 로그인 흐름이 다를 수 있습니다. 같은 브라우저의 카카오 로그인 상태와 영문 페이지 전환 경로를 확인하되, 계정 정보를 임의의 외부 연동 사이트에 입력하지 마세요.",
+          "Q. 캐릭터는 보이는데 FIXLGS에서 HTTP 404가 뜹니다. A. 먼저 poe.ninja의 Builds 상세 페이지에서 해당 캐릭터가 실제로 열리는지 확인하세요. Profile에만 등록되어 있고 Build status가 Eligible라면 수집 대기일 가능성이 있습니다.",
+          "Q. 계정명이 한글이라 PoB2 계산이 안 되나요? A. 한글 이름 그 자체가 실패 원인이라고 단정할 수 없습니다. 계산 실패가 발생하면 실제 엔진 오류와 스킬·무기 세트 상태를 확인해야 합니다.",
+          "Q. 등록 즉시 검색되나요? A. 아니요. 계정 캐릭터 새로고침과 공개 Builds 데이터 반영은 서로 다르며, 시즌과 수집 주기에 따라 지연될 수 있습니다."
+        ]
+      }
+    ],
+    resources: [
+      { title: "카카오게임즈 Path of Exile 공식 사이트", href: "https://poe.kakaogames.com/" },
+      { title: "poe.ninja 계정·캐릭터 관리", href: "https://poe.ninja/account" },
+      { title: "poe.ninja Builds 등록 기능 공식 설명", href: "https://poe.ninja/posts/dawn-of-the-hunt" }
+    ],
+    caveat: "이 가이드는 FIXLGS에서 작성한 비공식 이용 안내입니다. 카카오게임즈 또는 poe.ninja의 로그인·계정 연동 화면은 변경될 수 있으며, 특정 인증 경로가 모든 한국 계정에 적용된다고 보장하지 않습니다. 비밀번호·인증 코드는 타인에게 공유하지 마세요."
   },
   {
     slug: "dps", label: "DPS 이해하기", title: "POE2 DPS는 어떻게 읽어야 할까?",
