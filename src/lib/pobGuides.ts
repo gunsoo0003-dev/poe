@@ -9,15 +9,16 @@ export type PobGuide = {
 export const pobGuides: PobGuide[] = [
   {
     slug: "getting-started", label: "간편 PoB 이용안내", title: "FIXLGS PoB 캐릭터 불러오기와 장비 비교 사용법",
-    description: "poe.ninja Builds 캐릭터 등록 조건, 링크 입력, 원본 STATS, 거래소 장비 비교, 오류 확인 방법을 안내합니다.",
+    description: "poe.ninja Builds 캐릭터 등록과 링크 입력, Chrome 웹스토어 확장프로그램 설치, 거래소 장비 비교 및 오류 확인 방법을 안내합니다.",
     lead: "FIXLGS PoB는 poe.ninja에 수집된 Path of Exile 2 캐릭터를 불러와 현재 상태와 장비 교체 후 상태를 비교하는 웹 도구입니다. 직접 빌드를 처음부터 입력하는 도구가 아니며, 계산 가능 여부는 원본 데이터의 완전성에 따라 달라집니다.",
     sections: [
       { heading: "1. 캐릭터를 먼저 Builds에 등록하기", paragraphs: ["poe.ninja 계정 페이지에서 캐릭터를 연결하면 캐릭터가 보일 수 있습니다. 하지만 프로필에 보이는 것과 Builds 데이터베이스에 수집되는 것은 별개입니다.", "상태가 Eligible이면 수집 대상 조건을 충족했으나 Builds 반영 전일 수 있습니다. In Builds section으로 바뀌고 캐릭터의 Builds 상세 페이지가 열리는지 확인하세요."], points: ["Eligible: Builds 반영 대기 가능성이 있는 상태", "In Builds section: Builds 목록에서 확인되는 상태", "수집 주기와 시즌별 스냅샷에 따라 반영까지 시간이 걸릴 수 있습니다."] },
       { heading: "2. 올바른 캐릭터 링크 넣기", paragraphs: ["poe.ninja의 POE2 Builds에서 캐릭터를 열고 주소를 복사하세요. 일반적으로 /poe2/builds/시즌/character/계정/캐릭터 형식을 사용합니다.", "계정명에 한글이 들어가도 별도 영문 계정을 만들 필요는 없습니다. FIXLGS에서는 한글 계정명이 포함된 Builds 링크의 장비와 계산 성공을 확인했습니다. 다만 개별 빌드에서는 다른 데이터 오류가 발생할 수 있습니다.", "Profile 공유 링크는 Builds 데이터가 없을 수 있으므로 단순히 주소만 바꿔 붙여넣는 것으로 해결되지 않을 수 있습니다."] },
       { heading: "3. CURRENT와 SIMULATION 이해하기", paragraphs: ["CURRENT는 가져온 캐릭터의 원본 장비·스킬·수치를 보여줍니다. SIMULATION은 비교하고 싶은 장비 슬롯을 골라 거래소 아이템 정보를 적용하는 영역입니다.", "두 영역에서 동일한 무기 세트와 동일하게 계산 가능한 스킬을 비교해야 변화량이 의미가 있습니다. 무기 세트 I과 II를 바꿔 볼 때는 현재·변경 후의 세트 선택을 확인하세요."] },
-      { heading: "4. 거래소 아이템 비교하기", paragraphs: ["공식 POE2 거래소에서 아이템을 찾고 FIXLGS Item Export 확장프로그램으로 텍스트를 복사한 다음, SIMULATION에서 해당 장비 슬롯을 열고 붙여넣으세요.", "교체한 아이템의 장착 가능 여부, 옵션 인식 상태, 스킬 변화 및 PoB2 계산 결과를 함께 확인하세요. 지원하지 않는 옵션은 완전한 시뮬레이션 결과로 해석하면 안 됩니다."] },
+      { heading: "4. 크롬 웹스토어 확장프로그램 설치와 거래소 아이템 비교", paragraphs: ["Chrome 웹스토어에서 FIXLGS POE2 Item Export를 열고 ‘Chrome에 추가’를 눌러 설치하세요. ZIP 다운로드, 압축 해제, 개발자 모드는 필요하지 않습니다. Chrome이 확장프로그램을 자동 업데이트합니다.", "이미 공식 POE2 거래소 페이지를 열어 두었다면 설치 후 해당 탭을 새로고침하세요. 원하는 매물의 FIXLGS EXPORT 버튼을 누르면 아이템 영문 텍스트가 클립보드에 복사됩니다.", "FIXLGS PoB의 SIMULATION에서 교체할 장비 슬롯을 선택하고 복사한 텍스트를 붙여넣으세요. 교체 아이템의 장착 가능 여부, 옵션 인식 상태, 스킬 변화 및 PoB2 계산 결과를 확인하세요. 지원하지 않는 옵션은 완전한 시뮬레이션 결과로 해석하면 안 됩니다."] },
       { heading: "5. 계산 오류가 나면", paragraphs: ["캐릭터가 Builds에 실제로 존재하는지 먼저 확인하세요. 장비는 보이는데 DPS가 비어 있다면 링크 검사와 별개로 PoB Export 또는 계산 엔진 오류일 수 있습니다.", "V221에서는 계산이 끝나기 전에 남아 있던 pending buildFlag를 제한적으로 재시도하도록 개선했습니다. 그래도 실패하면 엔진 진단 화면의 오류를 확인해야 합니다."] },
     ],
+    resources: [{ title: "FIXLGS POE2 Item Export — Chrome 웹스토어에서 설치", href: "https://chromewebstore.google.com/detail/fixlgs-poe2-item-export/cdhhjobcolejcdiianepndmkmmkgbeea" }],
     caveat: "FIXLGS PoB는 실제 게임 서버의 전투 결과를 측정하는 기능이 아닙니다. 설정, 대상 적, 조건부 버프, 원본 빌드 데이터에 따라 결과가 달라질 수 있습니다."
   },
   {

@@ -519,7 +519,7 @@ export default function Home() {
               <div className="start-tool-card extension-card">
                 <span className="start-tool-kicker">TRADE EXTENSION</span>
                 <strong>거래소 확장프로그램 설치</strong>
-                <a className="extension-download" href="/downloads/FIXLGS_POE2_ITEM_EXPORT_V004_6.zip" download>설치파일 ↓</a>
+                <a className="extension-download" href="https://chromewebstore.google.com/detail/fixlgs-poe2-item-export/cdhhjobcolejcdiianepndmkmmkgbeea" target="_blank" rel="noopener noreferrer" aria-label="Chrome 웹스토어에서 FIXLGS POE2 Item Export 설치 (새 창)">웹스토어 설치 ↗</a>
               </div>
             </div>
           </section>
