@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "next dev --webpack",
     "build": "next build",
+    "build:cloudflare": "node scripts/prepare-cloudflare-assets.cjs && npm run build",
+    "restore:cloudflare-assets": "node scripts/prepare-cloudflare-assets.cjs --restore",
     "start": "next start",
     "lint": "eslint",
     "dev:turbo": "next dev --turbopack",

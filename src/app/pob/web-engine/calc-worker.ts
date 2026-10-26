@@ -55,10 +55,24 @@ function writeFile(FS: any, path: string, content: string) {
  */
 async function loadPobFiles(FS: any): Promise<number> {
   log("Fetching PoB Lua bundle...");
-  const resp = await fetch("/data/pob-lua.json");
-  if (!resp.ok) throw new Error(`Failed to fetch pob-lua.json: ${resp.status}`);
-
-  const bundle = await resp.json();
+  // Cloudflare deploys the byte-identical PoB dataset as gzip because its
+  // original JSON exceeds the 25 MiB static-asset limit. Other hosts (and
+  // local development) may continue serving the original JSON unchanged.
+  const compressed = await fetch("/data/pob-lua.json.gz");
+  let bundle: { files: Record<string, string> };
+  if (compressed.ok) {
+    if (typeof DecompressionStream === "undefined" || !compressed.body) {
+      throw new Error("This browser does not support gzip PoB data decoding.");
+    }
+    // Static .gz files have no Content-Encoding: gzip header; explicitly
+    // expand them inside the calculation Web Worker, not on the server.
+    const stream = compressed.body.pipeThrough(new DecompressionStream("gzip"));
+    bundle = await new Response(stream).json();
+  } else {
+    const resp = await fetch("/data/pob-lua.json");
+    if (!resp.ok) throw new Error(`Failed to fetch pob-lua.json: ${resp.status}`);
+    bundle = await resp.json();
+  }
   const entries = Object.entries(bundle.files);
   log(`Writing ${entries.length} files to MEMFS...`);
 
