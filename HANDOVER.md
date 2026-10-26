@@ -14,7 +14,14 @@
 - `extension/fixlgs-poe2-item-export/`: V0.4.6 확장프로그램 코드·manifest. Chrome 웹스토어에 공개된 등록본을 별도 소스 수정 없이 사용.
 - `public/data/pob-lua.json`, `public/wasm/lua.wasm`: 기존 PoB Lua 데이터·WASM 런타임.
 
-## 3. 최신 구현 상태 (2026-10-26, V233, Cloudflare 시험 배포 준비)
+## 3. 최신 구현 상태 (2026-10-26, V234, Cloudflare 두 번째 시험 배포 원인 수정)
+### V234 최신 운영 상태 및 결정
+- **실제 배포 로그 / 2026-10-26 두 번째 실패**: Cloudflare 빌드 `npm run build:cloudflare`에서 PoB 원본(45,082,029바이트)이 gzip(4,858,503바이트)으로 성공 변환. Next.js와 OpenNext Worker 빌드 완료, 정적 자산 84개 업로드 성공. Worker 최종 게시 시 `WORKER_SELF_REFERENCE`가 없는 `fix-pob` Worker를 바라봐 Cloudflare API 오류 `10143` 발생. 따라서 현재도 Cloudflare 온라인 배포는 실패 상태임.
+- **원인과 재발 방지**: Cloudflare 실제 Worker 프로젝트는 `fixlgs-poe2`인데 OpenNext 자동 설정의 자기 자신 service binding은 `fix-pob`로 생성되었다. 서버 리디렉션이나 PoB 계산 로직 문제가 아님. 자동 마이그레이션이 패키지명을 기준으로 설정할 가능성이 높다고 판단하여 **시험 브랜치에서만** `package.json`과 `package-lock.json`의 루트 패키지명을 `fixlgs-poe2`로 일치시킴. 실제 자동 생성 결과/실배포 성공 여부는 재시험 필수. 공식 권장 조건은 `wrangler.jsonc`의 name과 `WORKER_SELF_REFERENCE.service`를 같게 두는 것(https://opennext.js.org/cloudflare/get-started).
+- **보호 기준**: `main`은 건드리지 않고 `cloudflare-poe2-assetfix-v233` 시험 브랜치에서 V234 추가 커밋. 브라우저 WASM/PoB Lua 원본/필터/Chrome 확장/계산방어 로직 변경 없음. Cloudflare `빌드 명령 = npm run build:cloudflare`, `배포 명령 = npx wrangler deploy`, production branch는 위 시험 브랜치를 유지.
+- **우선 검증**: 다음 Cloudflare 로그에서 `WORKER_SELF_REFERENCE`의 서비스가 `fixlgs-poe2`인지 확인하고 API 10143 해소 여부 판별. 실패 시 자동 마이그레이션 의존을 중단하고 명시적 Wrangler/OpenNext 설정을 버전·Next.js peer compatibility와 함께 재검증. 성공해도 `workers.dev`에서 `/pob`, `/filter`, 다운로드, 계산/WASM, ninja API, 모바일 확인 전 도메인 연결 금지.
+- **이번 검증 구분**: 새 패키지명/lockfile 루트 일치와 회귀 테스트는 로컬에서 검사. GitHub 푸시·Cloudflare 재배포·브라우저 기능 확인은 이 수정본 작성 시점에 미실시.
+
 ### Cloudflare 이전의 현재 기준
 - **사용자 확정**: 기존 `gunsoo0003-dev/poe`의 웹사이트를 Cloudflare Workers 시험 배포한 후 `poe2.fixlgs.com`으로 연결한다. Vercel의 별도 `fixlgs-poe2` 프로젝트/도메인은 정상 검증 전까지 건드리지 않는다. 현재 Cloudflare 배포는 **실패 상태이며 아직 성공하지 않았다**.
 - **실제 실패 로그**: 2026-10-26 Cloudflare `fixlgs-poe2` 빌드에서 Next.js 및 OpenNext 변환은 성공. 배포 중 `public/data/pob-lua.json` 크기 43MiB가 정적 파일 한도 25MiB를 초과하여 `Asset too large` 발생. Next.js 16.3.5 ↔ OpenNext 1.20.13 버전 경고와 서버 측 headless 동적 파일 트레이싱 경고도 있으나, 이 실패의 직접 원인은 자산 용량이다.
@@ -22,7 +29,7 @@
 - **검증 필요**: GitHub에 변경된 코드 반영, Cloudflare Workers 빌드 설정의 명령을 `npm run build:cloudflare`로 변경, 시험 배포 재시도, `workers.dev`의 PoB/필터/API/모바일 실동작 확인. 자동 OpenNext 마이그레이션은 원격 빌드 중 수행되므로 실제 배포 성공은 보장되지 않음.
 - Cloudflare 문서 기준: 개별 Worker 정적 자산은 25MiB까지 허용. 브라우저 gzip DecompressionStream은 널리 지원되지만 구형 브라우저는 별도 검증 필요. 근거: https://developers.cloudflare.com/workers/platform/limits/ ; https://developer.mozilla.org/en-US/docs/Web/API/DecompressionStream
 - 신규 코드 경로: `scripts/prepare-cloudflare-assets.cjs`, `scripts/test-v233-cloudflare-assets.cjs`. 기존 계산·필터·확장프로그램 규칙/원본 엔진 및 데이터 바이트는 변경하지 않았다.
-- 보관 자료/과거 보고서 색인: `docs/handover/INDEX.md`. `docs/handover/HISTORY_V*.md` 분리본은 현재 없음.
+- 보관 자료/과거 보고서 색인: `docs/handover/INDEX.md` (기존 보고서 145개 색인, 루트 143개 및 엔진 내부 2개). `docs/handover/HISTORY_V*.md` 분리본은 현재 없음.
 
 ### 이전 V232 상태 (2026-10-14)
 ### 실제 파일로 확인한 사실
@@ -85,3 +92,9 @@
 - **구현/영향**: `src/app/pob/web-engine/calc-worker.ts`, `package.json`, `scripts/prepare-cloudflare-assets.cjs`, `scripts/test-v233-cloudflare-assets.cjs`; 관련 `docs/handover/INDEX.md` 생성. Cloudflare 단계에서만 임시 이동; 로컬 복구는 `npm run restore:cloudflare-assets`.
 - **실제 검증**: 43MiB 원본(45,082,029 바이트)의 997개 Lua 파일, 원본 SHA-256 `a4183b98e08dacb257ab47652d76ff675790e3a287637d4e28119db1589c911e`; gzip 크기 4,858,503 바이트로 변환·복원 SHA 일치. 실제 stage/restore 파일 복구 확인. 기존 V210/V211/V225/V226/V228/V229/V230/V232 계약 테스트 실행 결과 통과. 전체 Next.js 패키지 설치/신규 Cloudflare 빌드·실서비스 동작은 미검증.
 - **남은 위험**: OpenNext 버전 경고, native headless 서버 기능/동적 트레이싱, 웹 WASM 초기화 및 자산의 실제 HTTP 헤더/브라우저 지원을 Worker 환경에서 재검증. 무료 Worker 25MiB 파일 제한은 그대로 적용.
+
+### 2026-10-26 · V234 · Cloudflare WORKER_SELF_REFERENCE 오류 10143 대응
+- **실제 로그**: `npm run build:cloudflare` 및 84개 정적 파일 업로드 성공 후 Wrangler가 `WORKER_SELF_REFERENCE → fix-pob` service binding을 참조하면서 `code:10143`로 최종 Worker 등록 실패.
+- **원인 가설 / 최소 수정**: 운영 Worker 명 `fixlgs-poe2`와 패키지 식별명 `fix-pob` 간 불일치가 자동 OpenNext 설정에 전달된 것으로 판단. Vercel `main` 및 프로젝트 기능에는 영향을 주지 않도록 별도 Cloudflare 시험 브랜치에서 `package.json` / `package-lock.json`의 루트 이름만 `fixlgs-poe2`로 변경. 이름 불일치 회귀 검사 추가, 나머지 계산 로직·데이터·엔진은 보존.
+- **확인된 사실 / 한계**: Cloudflare 공식 OpenNext 문서는 `WORKER_SELF_REFERENCE.service`와 Worker 이름이 같아야 함을 명시. 자동 마이그레이션의 패키지명 참조는 로그 기반 가설로서 V234 재배포 결과로 검증해야 함. 로컬 구성 검증과 Git diff/ZIP 무결성 검사만 수행한 단계이며 실제 온라인 배포 결과는 미확인.
+- **재발 방지**: 후속 배포 로그에서 자기 참조 대상 Worker 이름 검증. 빌드 재시도 전에 불일치 없는지 확인. 자동 생성 실패가 반복되면 명시적 `wrangler.jsonc` 및 adapter 빌드 단계를 설계하되 현 16.3.5 버전 호환 경고를 먼저 해결한다.

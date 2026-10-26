@@ -3,7 +3,7 @@
 - 프로젝트 루트 기준 상대경로. 이 목록은 `HISTORY_V*.md`로 분리된 확정 이력이 아니라 기존에 존재하던 V버전/감사 보고서의 탐색용 색인이다. 보고서 원문은 변경·삭제하지 않는다.
 - 파일명에서 확인 가능한 버전·주제만 기록한다. 정확한 작성 날짜/코드 반영 여부/테스트 결과는 해당 원문과 실제 코드를 다시 열어 확인한다. 모든 보고서가 유효한 최신 기준은 아니며 `HANDOVER.md` 상단이 우선한다.
 - **다시 읽을 조건**: 관련 기능을 변경하거나 이전 오류가 재발할 때 해당 파일을 열고, 특히 원본 엔진/계산·WASM·필터·룬·반지·확장프로그램 변경 시 보호·재발 방지·검증 기록을 확인한다.
-- Cloudflare 관련 핵심 이력: `HANDOVER.md` V233, `V225_POB_NATIVE_INTEGRITY_REPORT.md`, `V231_PATCH_NOTES.txt`; 동적 headless 진단·PoB 계산·원본/확장프로그램을 독립 검증할 때 재확인한다.
+- Cloudflare 관련 핵심 이력: `HANDOVER.md` V233/V234 (정적 파일 25MiB 제한 해결과 `WORKER_SELF_REFERENCE` 10143 이름 불일치), `V225_POB_NATIVE_INTEGRITY_REPORT.md`, `V231_PATCH_NOTES.txt`; Cloudflare 재배포/동적 headless 진단·PoB 계산·원본/확장프로그램을 독립 검증할 때 다시 읽는다.
 
 ## 실재하는 기존 보고서 목록
 
@@ -154,3 +154,6 @@
 | `V231_PATCH_NOTES.txt` | PATCH_NOTES | 미확인 | 해당 기능 변경·검증·오류 재발 시 |
 
 실제 파일 목록 대조: 143개 (2026-10-26). 기타 참고 문서/스크립트는 원본 프로젝트 내 보존.
+
+| `engine/pob2/V184_README.txt` | V184 · poe.ninja PoB 내보내기 Base64/XML 디코드 준비 단계, 실제 캐릭터 계산 불가 기록 | 원문 날짜 미확인 | ninja Import/원본 XML 준비·엔진 연결 변경 시 |
+| `engine/pob2/V185_README.txt` | V185 · Windows 로컬 캐릭터 계산 시험 절차, 웹 연결 미완료 한계 | 원문 날짜 미확인 | native headless/Cloudflare 호환성·캐릭터 가져오기 변경 시 |

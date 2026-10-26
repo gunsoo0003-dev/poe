@@ -1,5 +1,5 @@
 {
-  "name": "fix-pob",
+  "name": "fixlgs-poe2",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -19,7 +19,8 @@
     "pob2:fingerprint": "node scripts/check-pob2-fingerprint.cjs",
     "pob2:native-wasm": "node scripts/test-v225-native-wasm.mjs",
     "pob2:comparison-guard": "node scripts/test-v225-comparison-guard.cjs",
-    "pob:ring-slots-test": "node --experimental-strip-types scripts/test-v226-ring-slots.cjs"
+    "pob:ring-slots-test": "node --experimental-strip-types scripts/test-v226-ring-slots.cjs",
+    "test:cloudflare-name": "node scripts/test-v234-worker-name.cjs"
   },
   "dependencies": {
     "next": "16.3.5",
