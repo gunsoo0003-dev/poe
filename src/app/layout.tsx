@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://poe.fixlgs.com"),
+  metadataBase: new URL("https://poe2.fixlgs.com"),
   title: "FIX POE2 | Path of Exile 2 Tools",
   description: "POE2 NeverSink 아이템 필터 커스터마이저, poe.ninja Builds 캐릭터 PoB2 비교와 실제 사용 가이드를 제공하는 비공식 도구 사이트.",
 
