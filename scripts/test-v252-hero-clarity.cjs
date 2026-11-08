@@ -1,0 +1,18 @@
+const fs=require('node:fs');
+const assert=require('node:assert/strict');
+const ts=require('/opt/nvm/versions/node/v22.16.0/lib/node_modules/typescript/lib/typescript.js');
+const home=fs.readFileSync('src/app/page.tsx','utf8');
+const css=fs.readFileSync('src/app/globals.css','utf8');
+assert(!home.includes('heroLinks')&&!home.includes('poe-v239-link-row'),'Old 3-link row removed');
+assert(!home.includes('poe-v250-intro'),'Old repeated intro removed');
+assert(home.includes('poe-v252-value-strip')&&home.includes('POE2 필터 적용, 복잡한 과정 없이'));
+assert(home.includes('POE2 거래소 아이템, 구매 전에 비교'));
+assert(home.includes('poe.ninja 캐릭터 링크')&&home.includes('게임용 필터를 준비합니다'));
+assert(!home.includes('실시간 가격 정보')&&!home.includes('실전 공략과 활용 팁'));
+assert(home.includes('<HomeToolCard item={toolLinks[0]} />')&&home.includes('<HomeToolCard item={toolLinks[1]} />'));
+assert(home.includes('<FireText label={item.label}')&&home.includes('poe2-official-logo.webp'));
+for(const target of ['id="market"','id="guides"','id="official-video"','guidePaths.map((path)','<LatestVideoGallery videos={latestVideos} />'])assert(home.includes(target));
+assert(css.includes('.poe-v252-home .poe-v252-value-strip')&&css.includes('grid-template-columns:1fr'));
+const sf=ts.createSourceFile('src/app/page.tsx',home,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
+assert.equal(sf.parseDiagnostics.length,0,sf.parseDiagnostics.map(d=>ts.flattenDiagnosticMessageText(d.messageText,' ')).join('; '));
+console.log('PASS V252: duplicate links and introduction removed; distinct benefits; links, guide cards, original fire, logo and TSX syntax preserved');

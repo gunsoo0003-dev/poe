@@ -1,0 +1,30 @@
+# Optional for publishing this standalone static design as repository ROOT.
+# Does NOT run automatically before the user deploys this folder as a repository.
+name: Refresh POE2 official videos
+on:
+  schedule:
+    - cron: '0 1 * * 1' # Monday 10:00 KST, best-effort GitHub scheduler
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Update videos without paid API
+        run: node scripts/update-videos.mjs
+      - name: Commit only when videos changed
+        run: |
+          if git diff --quiet -- video-data.js; then
+            echo 'Video snapshot unchanged.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add video-data.js
+          git commit -m 'Update latest official POE2 video snapshot'
+          git push

@@ -1,4 +1,4 @@
-export type GuideSection = { heading: string; paragraphs: string[]; points?: string[] };
+export type GuideSection = { heading: string; paragraphs: string[]; points?: string[]; id?: string };
 export type PobGuide = {
   slug: string; label: string; title: string; description: string;
   lead: string; sections: GuideSection[]; caveat: string;
@@ -8,12 +8,12 @@ export type PobGuide = {
 // Each entry is an independent explanatory article rather than a placeholder link.
 export const pobGuides: PobGuide[] = [
   {
-    slug: "getting-started", label: "간편 PoB 이용안내", title: "FIXLGS PoB 캐릭터 불러오기와 장비 비교 사용법",
+    slug: "getting-started", label: "PoB 캐릭터 불러오기", title: "FIXLGS PoB 캐릭터 불러오기와 장비 비교 사용법",
     description: "poe.ninja Builds 캐릭터 등록과 링크 입력, Chrome 웹스토어 확장프로그램 설치, 거래소 장비 비교 및 오류 확인 방법을 안내합니다.",
     lead: "FIXLGS PoB는 poe.ninja에 수집된 Path of Exile 2 캐릭터를 불러와 현재 상태와 장비 교체 후 상태를 비교하는 웹 도구입니다. 직접 빌드를 처음부터 입력하는 도구가 아니며, 계산 가능 여부는 원본 데이터의 완전성에 따라 달라집니다.",
     sections: [
       { heading: "1. 캐릭터를 먼저 Builds에 등록하기", paragraphs: ["poe.ninja 계정 페이지에서 캐릭터를 연결하면 캐릭터가 보일 수 있습니다. 하지만 프로필에 보이는 것과 Builds 데이터베이스에 수집되는 것은 별개입니다.", "상태가 Eligible이면 수집 대상 조건을 충족했으나 Builds 반영 전일 수 있습니다. In Builds section으로 바뀌고 캐릭터의 Builds 상세 페이지가 열리는지 확인하세요."], points: ["Eligible: Builds 반영 대기 가능성이 있는 상태", "In Builds section: Builds 목록에서 확인되는 상태", "수집 주기와 시즌별 스냅샷에 따라 반영까지 시간이 걸릴 수 있습니다."] },
-      { heading: "2. 올바른 캐릭터 링크 넣기", paragraphs: ["poe.ninja의 POE2 Builds에서 캐릭터를 열고 주소를 복사하세요. 일반적으로 /poe2/builds/시즌/character/계정/캐릭터 형식을 사용합니다.", "계정명에 한글이 들어가도 별도 영문 계정을 만들 필요는 없습니다. FIXLGS에서는 한글 계정명이 포함된 Builds 링크의 장비와 계산 성공을 확인했습니다. 다만 개별 빌드에서는 다른 데이터 오류가 발생할 수 있습니다.", "Profile 공유 링크는 Builds 데이터가 없을 수 있으므로 단순히 주소만 바꿔 붙여넣는 것으로 해결되지 않을 수 있습니다."] },
+      { id: "character-import", heading: "2. PoB 캐릭터 불러오기: 올바른 poe.ninja Builds 링크", paragraphs: ["poe.ninja의 POE2 Builds에서 캐릭터를 열고 주소를 복사하세요. 일반적으로 /poe2/builds/시즌/character/계정/캐릭터 형식을 사용합니다.", "계정명에 한글이 들어가도 별도 영문 계정을 만들 필요는 없습니다. FIXLGS에서는 한글 계정명이 포함된 Builds 링크의 장비와 계산 성공을 확인했습니다. 다만 개별 빌드에서는 다른 데이터 오류가 발생할 수 있습니다.", "Profile 공유 링크는 Builds 데이터가 없을 수 있으므로 단순히 주소만 바꿔 붙여넣는 것으로 해결되지 않을 수 있습니다."] },
       { heading: "3. CURRENT와 SIMULATION 이해하기", paragraphs: ["CURRENT는 가져온 캐릭터의 원본 장비·스킬·수치를 보여줍니다. SIMULATION은 비교하고 싶은 장비 슬롯을 골라 거래소 아이템 정보를 적용하는 영역입니다.", "두 영역에서 동일한 무기 세트와 동일하게 계산 가능한 스킬을 비교해야 변화량이 의미가 있습니다. 무기 세트 I과 II를 바꿔 볼 때는 현재·변경 후의 세트 선택을 확인하세요."] },
       { heading: "4. 크롬 웹스토어 확장프로그램 설치와 거래소 아이템 비교", paragraphs: ["Chrome 웹스토어에서 FIXLGS POE2 Item Export를 열고 ‘Chrome에 추가’를 눌러 설치하세요. ZIP 다운로드, 압축 해제, 개발자 모드는 필요하지 않습니다. Chrome이 확장프로그램을 자동 업데이트합니다.", "이미 공식 POE2 거래소 페이지를 열어 두었다면 설치 후 해당 탭을 새로고침하세요. 원하는 매물의 FIXLGS EXPORT 버튼을 누르면 아이템 영문 텍스트가 클립보드에 복사됩니다.", "FIXLGS PoB의 SIMULATION에서 교체할 장비 슬롯을 선택하고 복사한 텍스트를 붙여넣으세요. 교체 아이템의 장착 가능 여부, 옵션 인식 상태, 스킬 변화 및 PoB2 계산 결과를 확인하세요. 지원하지 않는 옵션은 완전한 시뮬레이션 결과로 해석하면 안 됩니다."] },
       { heading: "5. 계산 오류가 나면", paragraphs: ["캐릭터가 Builds에 실제로 존재하는지 먼저 확인하세요. 장비는 보이는데 DPS가 비어 있다면 링크 검사와 별개로 PoB Export 또는 계산 엔진 오류일 수 있습니다.", "V221에서는 계산이 끝나기 전에 남아 있던 pending buildFlag를 제한적으로 재시도하도록 개선했습니다. 그래도 실패하면 엔진 진단 화면의 오류를 확인해야 합니다."] },
@@ -86,13 +86,13 @@ export const pobGuides: PobGuide[] = [
     caveat: "이 가이드는 FIXLGS에서 작성한 비공식 이용 안내입니다. 카카오게임즈 또는 poe.ninja의 로그인·계정 연동 화면은 변경될 수 있으며, 특정 인증 경로가 모든 한국 계정에 적용된다고 보장하지 않습니다. 비밀번호·인증 코드는 타인에게 공유하지 마세요."
   },
   {
-    slug: "dps", label: "DPS 이해하기", title: "POE2 DPS는 어떻게 읽어야 할까?",
+    slug: "dps", label: "PoB DPS 계산 기준", title: "POE2 PoB DPS 계산 기준과 수치 해석",
     description: "단일 타격 피해, 공격·시전 빈도, 스킬 DPS, 합산 DPS와 PoB2 계산 결과를 구분하는 방법입니다.",
     lead: "DPS(Damage Per Second)는 일정 조건에서 초당 가하는 피해를 뜻합니다. 아이템 옵션 하나의 숫자와 실제 전투에서 내는 피해는 같지 않습니다. 먼저 어떤 스킬과 조건으로 계산했는지 확인해야 합니다.",
     sections: [
       { heading: "1. 한 번의 피해와 DPS는 다릅니다", paragraphs: ["단순 예로 1회 타격이 1,000이고 초당 2번 적중한다면 초당 2,000의 피해가 됩니다. 공격 빈도가 빨라져도 회피·이동·자원 부족 때문에 실제 전투에서는 같은 빈도를 유지하지 못할 수 있습니다.", "지속 피해, 설치형 스킬, 여러 투사체의 중복 적중 같은 요소는 단순 곱셈으로 계산하기 어렵습니다."] },
       { heading: "2. Main Skill과 Combined DPS를 구분하세요", paragraphs: ["Main Skill DPS는 선택한 주력 스킬의 계산값입니다. Combined DPS는 빌드·계산기 설정에 따라 여러 스킬의 피해를 합산한 값일 수 있습니다. 두 숫자를 같은 지표로 비교하면 오해가 생깁니다.", "FIXLGS에서는 PoB2에서 실제로 계산된 스킬과 무기 세트에 대한 결과를 우선합니다. 데이터가 없다면 임의의 DPS 수치를 만들어 채우지 않습니다."] },
-      { heading: "3. 비교 조건을 통일하세요", paragraphs: ["같은 캐릭터라도 적 저항, 보스 종류, 조건부 효과, 버프 활성 상태, 주무기/보조무기 선택에 따라 계산 결과가 달라집니다.", "아이템 교체 전후에는 가능한 한 같은 스킬 그룹·대상·설정으로 비교하고, 먼저 계산이 완전히 완료됐는지 확인하세요."] },
+      { id: "dps-criteria", heading: "3. PoB DPS 계산 기준: 비교 조건 통일", paragraphs: ["같은 캐릭터라도 적 저항, 보스 종류, 조건부 효과, 버프 활성 상태, 주무기/보조무기 선택에 따라 계산 결과가 달라집니다.", "장비 교체 전후에는 먼저 주력 스킬과 무기 세트, 적용 가능한 버프·적 조건이 동일한지 확인하세요. Main Skill DPS와 여러 스킬을 합산할 수 있는 Combined DPS는 서로 다른 지표이므로 같은 종류의 수치끼리 비교해야 합니다.", "계산이 끝나지 않았거나 옵션이 인식되지 않은 경우에는 값이 비어 있거나 변하지 않을 수 있습니다. 수치가 같다는 이유만으로 장비 효과가 없다고 단정하지 말고, 계산 상태와 경고를 확인하세요."] },
       { heading: "4. DPS가 올라도 무조건 좋은 장비는 아닙니다", paragraphs: ["저항, 생명력, 방어, 이동 성능, 자원 소모가 악화되면 사냥 안정성이 낮아질 수 있습니다. DPS 변화량은 구매 판단의 일부이며, 아이템 가격과 요구 능력치도 함께 검토하세요."] }
     ],
     caveat: "예시 숫자는 개념 설명을 위한 것이며 특정 캐릭터·리그의 실측값이 아닙니다."

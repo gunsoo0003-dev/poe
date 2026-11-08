@@ -1,0 +1,258 @@
+/* V019 design: scope to home to prevent changing V256 tool routes. No global resets. */
+.poe-v019-root{--ink:#080808;--paper:#191715;--cream:#e9ddc8;--white:#f6f0e8;--ash:#bdb1a1;--red:#821d19;--gold:#b9a17c;--line:rgba(204,177,145,.22)}
+.poe-v019-root, .poe-v019-root *{box-sizing:border-box}
+.poe-v019-root{scroll-behavior:smooth}
+.poe-v019-root{margin:0;background:#080808;color:var(--cream);font-family:"Malgun Gothic","Apple SD Gothic Neo",Arial,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.65}
+.poe-v019-root::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:99;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23fff' filter='url(%23n)' d='M0 0h160v160H0z'/%3E%3C/svg%3E")}
+.poe-v019-root a{color:inherit}
+.poe-v019-root button{font:inherit}
+.poe-v019-root button:focus-visible,.poe-v019-root a:focus-visible{outline:2px solid #e0bc86;outline-offset:4px}
+.poe-v019-root .content-width{width:min(1336px,calc(100% - 80px));margin:auto}
+.poe-v019-root .site-header{height:75px;padding:0 35px;display:flex;align-items:center;gap:26px;background:rgba(9,9,9,.94);border-bottom:1px solid rgba(192,155,123,.13);position:sticky;top:0;z-index:50;backdrop-filter:blur(18px)}
+.poe-v019-root .company{font-family:Georgia,serif;font-size:21px;font-weight:900;color:#bba894;letter-spacing:-.07em;text-decoration:none;white-space:nowrap}
+.poe-v019-root .nav-separator{width:1px;height:26px;background:rgba(255,255,255,.22)}
+.poe-v019-root .top-mark{font:700 22px Georgia,serif;letter-spacing:.12em;text-decoration:none;white-space:nowrap;color:#dfd5cb}
+.poe-v019-root .top-mark span{color:#912322}
+.poe-v019-root .primary-nav{display:flex;gap:29px;margin-left:28px;align-items:center;height:100%}
+.poe-v019-root .primary-nav a{font-size:13px;text-decoration:none;color:#cebbb0;white-space:nowrap;transition:color .2s}
+.poe-v019-root .primary-nav a:hover{color:white}
+.poe-v019-root .header-actions{display:flex;margin-left:auto;align-items:center;gap:15px}
+.poe-v019-root .header-game{color:#f0e7de;text-decoration:none;font-size:12px;border:1px solid rgba(180,158,129,.55);padding:8px 14px}
+.poe-v019-root .header-game:hover{background:#3d2825}
+.poe-v019-root .menu-toggle{display:none;background:none;color:white;border:0;padding:5px;cursor:pointer}
+.poe-v019-root .menu-toggle span{width:24px;height:2px;background:#ccb99b;display:block;margin:5px}
+.poe-v019-root .section{position:relative;padding:115px 0}
+.poe-v019-root .section h2,.poe-v019-root .section h3,.poe-v019-root .hero h1{font-family:Georgia,"Times New Roman","Malgun Gothic",serif;letter-spacing:-.045em;font-weight:500;line-height:1.19}
+.poe-v019-root .section h2{font-size:clamp(36px,4.1vw,64px);margin:13px 0 18px}
+.poe-v019-root .section-header{margin:0 auto 47px}
+.poe-v019-root .section-header.centered{text-align:center;max-width:900px}
+.poe-v019-root .section-header .intro{font-size:16px;color:#bfb2a4;max-width:780px;margin:20px auto 0}
+.poe-v019-root .overline{color:#b9a17c;text-transform:uppercase;font-size:12px;letter-spacing:.26em;font-weight:700}
+.poe-v019-root .red-divider{width:90px;height:3px;background:linear-gradient(90deg,#5a1312,#ad3a2f,#5c1815);margin:24px 0}
+.poe-v019-root .centered-divider{margin:24px auto}
+.poe-v019-root .section-paper{background:radial-gradient(ellipse at 50% 0,rgba(106,76,54,.13),transparent 60%),linear-gradient(90deg,#171411,#211c17 50%,#171411);border-top:1px solid rgba(153,119,94,.14);border-bottom:1px solid rgba(153,119,94,.14)}
+.poe-v019-root .media-art{background-position:center;background-size:cover;background-repeat:no-repeat}
+.poe-v019-root .hero{height:min(800px,calc(100svh - 75px));min-height:590px;display:flex;align-items:center;position:relative;overflow:hidden;background:radial-gradient(ellipse at 75% 52%,#762718 0%,#210b0a 45%,#100b0a 78%)}
+.poe-v019-root .hero-art{position:absolute;inset:0;background-image:url("/poe-home/assets/poe2-hero-ranger.webp");background-position:50% 45%;filter:saturate(.82)}
+.poe-v019-root .hero-vignette{position:absolute;inset:0;background:linear-gradient(90deg,rgba(6,5,5,.83) 0,rgba(8,5,5,.32) 58%,rgba(0,0,0,.13)),linear-gradient(0deg,#090909 0%,transparent 25%,transparent 80%,rgba(10,5,5,.45))}
+.poe-v019-root .hero-content{position:relative;z-index:1;padding:30px 0 35px;max-width:1336px}
+.poe-v019-root .hero-content>*{max-width:610px}
+.poe-v019-root .hero .overline{margin-bottom:18px;color:#f1dfcd}
+.poe-v019-root .hero-title-art{font-family:Georgia,serif;font-size:clamp(55px,7vw,110px);line-height:.85;color:#eee8de;letter-spacing:.11em;text-shadow:2px 4px 16px #000;margin:15px 0;display:flex;align-items:baseline;gap:7px;position:relative}
+.poe-v019-root .hero-title-art strong{color:#8d1714;font-size:1.38em;letter-spacing:-.15em}
+.poe-v019-root .hero-title-art small{display:block;position:absolute;bottom:-26px;left:35px;font-size:12px;letter-spacing:.4em;color:#d5bba4}
+.poe-v019-root .hero h1{font-size:clamp(28px,3vw,42px);margin:55px 0 16px}
+.poe-v019-root .hero-sub{font-size:15px;color:#e5d7c7;margin:0 0 27px}
+.poe-v019-root .hero-actions{display:flex;flex-wrap:wrap;gap:14px}
+.poe-v019-root .btn{min-height:50px;display:inline-flex;align-items:center;justify-content:center;gap:18px;padding:12px 24px;font-size:14px;text-decoration:none;font-weight:700;letter-spacing:.02em;transition:transform .2s,background .2s,border-color .2s}
+.poe-v019-root .btn:hover{transform:translateY(-2px)}
+.poe-v019-root .btn-crimson{background:linear-gradient(#a83428,#7d231c);color:#f6e9d8;border:1px solid #d05d49;box-shadow:inset 0 0 0 1px rgba(0,0,0,.35)}
+.poe-v019-root .btn-crimson:hover{background:linear-gradient(#bb463a,#88231d)}
+.poe-v019-root .btn-outline{background:rgba(22,15,14,.78);border:1px solid #8b7762;color:#eee0d1}
+.poe-v019-root .btn-outline:hover{border-color:#e3bb83}
+.poe-v019-root .scroll-hint{position:absolute;bottom:25px;left:50%;transform:translateX(-50%);z-index:2;text-align:center;text-decoration:none;color:#c4a58b;letter-spacing:.26em;font-size:10px}
+.poe-v019-root .scroll-hint b{display:block;font-size:24px;font-weight:400;line-height:1.1}
+.poe-v019-root .welcome{min-height:680px;padding:120px 0;background:#090a0a;overflow:hidden}
+.poe-v019-root .welcome-art{position:absolute;inset:0 40% 0 0;background-image:linear-gradient(90deg,rgba(0,0,0,.06),#090a0a 98%),url("/poe-home/assets/poe2-character-boss.webp");background-position:43% center;opacity:.63}
+.poe-v019-root .split-inner{position:relative;display:grid;grid-template-columns:1fr 1fr;align-items:center;min-height:380px}
+.poe-v019-root .split-copy{max-width:560px;padding:0 15px}
+.poe-v019-root .split-copy p:not(.overline){font-size:16px;line-height:1.95;color:#bcb0a6}
+.poe-v019-root .split-copy h2{color:#f0e8dd}
+.poe-v019-root .pob-title-art{font-size:clamp(50px,5vw,76px);margin:18px 0 52px;max-width:100%}
+.poe-v019-root .text-link{display:inline-flex;margin-top:15px;align-items:center;gap:12px;text-decoration:none;color:#d9b18a;font-weight:700;letter-spacing:.02em}
+.poe-v019-root .text-link:hover{color:#ffdcaa}
+.poe-v019-root .news{padding-bottom:123px}
+.poe-v019-root .news-feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
+.poe-v019-root .news-feature{min-width:0;display:block;text-decoration:none;color:inherit;background:#100e0d;border:1px solid rgba(200,171,138,.16);transition:border-color .2s,transform .2s}
+.poe-v019-root .news-feature:hover{transform:translateY(-3px);border-color:#9f6748}
+.poe-v019-root .news-image{height:310px;background-color:#2f1111}
+.poe-v019-root .news-expansion .news-image{background-image:url("/poe-home/assets/poe2-ranger-classes.webp");background-position:center 50%}
+.poe-v019-root .news-season .news-image{background-image:url("/poe-home/assets/poe2-character-combat.webp")}
+.poe-v019-root .news-copy{padding:30px 33px 38px}
+.poe-v019-root .tag{font-size:12px;letter-spacing:.14em;color:#dcb795;font-weight:700}
+.poe-v019-root .news-copy h3{font-size:34px;margin:10px 0 12px;color:#f1e7d9}
+.poe-v019-root .news-copy p{color:#ac9e90;font-size:14px;line-height:1.85}
+.poe-v019-root .news-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:35px;gap:0 34px}
+.poe-v019-root .news-list a{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding:20px 8px;text-decoration:none;color:#cabead}
+.poe-v019-root .news-list a:hover{color:#fff1d6}
+.poe-v019-root .news-list a span+span{color:#a14d39}
+.poe-v019-root .news-date{font-size:12px;color:#ab9885;white-space:nowrap;letter-spacing:.01em}
+.poe-v019-root .news-copy .news-date{margin-left:14px}
+.poe-v019-root .news-list .news-date{margin-left:12px}
+.poe-v019-root .news-more{text-align:right;margin-top:12px}
+.poe-v019-root .overview{background:linear-gradient(rgba(9,9,9,.82),rgba(9,9,9,.94)),url("/poe-home/assets/poe2-lightning-combat.webp") center/cover;background-color:#101010}
+.poe-v019-root .overview .poe2-digit{font-size:1.12em;line-height:0;vertical-align:baseline}
+.poe-v019-root .feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:48px;margin-top:77px}
+.poe-v019-root .feature{text-align:center;padding:24px 28px 15px}
+.poe-v019-root .feature-engraving{font:400 54px Georgia;color:#a27554;display:block;margin-bottom:20px}
+.poe-v019-root .feature h3{font-size:32px;margin:0 0 19px;color:#e4d8c6}
+.poe-v019-root .feature p{font-size:15px;line-height:1.95;color:#b6aba1}
+.poe-v019-root .realms{padding-bottom:145px}
+.poe-v019-root .segment{display:flex;margin:0 auto 34px;width:min(580px,100%);border:1px solid rgba(178,145,110,.38)}
+.poe-v019-root .segment-tab{flex:1;min-height:55px;background:#120f0d;border:0;color:#ab9c8d;cursor:pointer;font:700 16px Georgia,"Malgun Gothic",serif}
+.poe-v019-root .segment-tab.active{background:#582820;color:#f9e7d2}
+.poe-v019-root .segment-tab+button{border-left:1px solid rgba(178,145,110,.24)}
+.poe-v019-root .realm-panel{display:grid;grid-template-columns:1.1fr 1fr;background:rgba(6,6,6,.56);border:1px solid rgba(165,133,111,.2);min-height:440px}
+.poe-v019-root .realm-art{background:linear-gradient(90deg,transparent,rgba(0,0,0,.7)),url("/poe-home/assets/poe2-lightning-combat.webp") center/cover;background-color:#4c4235}
+.poe-v019-root .realm-text{padding:57px 55px}
+.poe-v019-root .realm-text h3{font-size:43px;margin:10px 0 20px}
+.poe-v019-root .realm-text p{font-size:15px;color:#baab9e;line-height:1.95}
+.poe-v019-root .realm-text ul{color:#d2bcaa;padding-left:21px}
+.poe-v019-root .realm-text li{margin:9px 0}
+.poe-v019-root .classes{background:radial-gradient(ellipse at 65% 30%,rgba(111,37,25,.23),transparent 47%),linear-gradient(180deg,#080808,#1a100e 58%,#070707);min-height:780px}
+.poe-v019-root .class-selector{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;padding-bottom:30px;border-bottom:1px solid var(--line)}
+.poe-v019-root .class-selector button{background:transparent;border:1px solid transparent;color:#aa9486;cursor:pointer;padding:9px 13px;font:700 15px "Malgun Gothic",sans-serif}
+.poe-v019-root .class-selector button.active{color:#f3d7b4;border-color:rgba(185,136,93,.47);background:#2b1c17}
+.poe-v019-root .class-selector button:hover{color:white}
+.poe-v019-root .class-stage{display:grid;grid-template-columns:1fr 1fr;align-items:center;min-height:390px}
+.poe-v019-root .class-symbol{font:400 210px Georgia,serif;text-align:center;color:#9b5135;text-shadow:0 0 90px #711c1a,0 0 11px #c25532;opacity:.65}
+.poe-v019-root .class-stage-copy{padding:35px}
+.poe-v019-root .class-stage-copy h3{font-size:clamp(46px,5vw,75px);margin:10px 0}
+.poe-v019-root .class-stage-copy p:not(.overline){font-size:16px;color:#c3b0a3;max-width:500px;line-height:1.9}
+.poe-v019-root .edition-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.poe-v019-root .edition{background:linear-gradient(#171310,#100e0d);border:1px solid rgba(177,148,114,.35);min-height:540px;display:flex;flex-direction:column;align-items:center;padding:30px 27px 32px;text-align:center}
+.poe-v019-root .edition.featured{border-color:#ad6550;background:linear-gradient(#251511,#120c0b)}
+.poe-v019-root .edition-badge{font-size:12px;color:#ceb390;letter-spacing:.17em}
+.poe-v019-root .edition-mark{color:#ccbca6;font:700 30px Georgia,serif;letter-spacing:.13em;min-height:120px;display:flex;align-items:center;justify-content:center;gap:6px}
+.poe-v019-root .edition-mark span{font-size:46px;color:#9c302b}
+.poe-v019-root .edition h3{font-size:28px;margin:0 0 12px}
+.poe-v019-root .edition p{color:#b8a99c;font-size:14px}
+.poe-v019-root .edition ul{text-align:left;padding-left:18px;align-self:stretch;color:#d1bfa9;font-size:13px;margin:21px auto;line-height:2.1}
+.poe-v019-root .edition .btn{margin-top:auto;width:100%;font-size:13px}
+.poe-v019-root .legal-details{border-top:1px solid var(--line);margin-top:38px;padding:20px;color:#c7b8a5}
+.poe-v019-root .legal-details summary{cursor:pointer;display:flex;justify-content:space-between}
+.poe-v019-root .legal-details p{max-width:900px;font-size:13px;color:#ab9c8e}
+.poe-v019-root .platform{text-align:center;background:radial-gradient(ellipse at center,rgba(114,30,25,.29),transparent 58%),#0b0808}
+.poe-v019-root .platform-emblem{font:110px Georgia,serif;color:#802822;text-shadow:0 0 50px rgba(146,47,41,.4)}
+.poe-v019-root .platform h2{font-size:46px;margin:0 0 18px}
+.poe-v019-root .platform p{color:#b7a69b;margin-bottom:30px}
+.poe-v019-root .platform .platform-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:14px}
+.poe-v019-root .platform .platform-actions .btn{width:252px;min-height:50px}
+.poe-v019-root .footer{background:#090909;color:#9a8c7e;border-top:1px solid var(--line);padding:55px 0}
+.poe-v019-root .footer .content-width{display:flex;flex-direction:column;align-items:center;gap:15px}
+.poe-v019-root .footer-brand{font:bold 26px Georgia;color:#cab4a0}
+.poe-v019-root .footer-brand span{font:12px Arial;letter-spacing:.25em}
+.poe-v019-root .footer nav{display:flex;gap:27px}
+.poe-v019-root .footer a,.poe-v019-root .footer nav span{font-size:12px;color:#a59a8a;text-decoration:none}
+.poe-v019-root .footer p{font-size:11px;text-align:center;max-width:820px;color:#817970}
+.poe-v019-root .classes .class-item-symbol{position:relative;display:flex;align-items:center;justify-content:center;min-height:310px}
+.poe-v019-root .classes .class-item-symbol img{max-width:230px;max-height:260px;width:auto;height:auto;object-fit:contain;filter:drop-shadow(0 0 32px rgba(162,69,39,.4));display:none}
+.poe-v019-root .classes .class-item-symbol.has-item-art{opacity:1}
+.poe-v019-root .classes .class-item-symbol.has-item-art img{display:block}
+.poe-v019-root .classes .class-item-symbol.has-item-art #class-item-fallback{display:none}
+.poe-v019-root .classes .class-all-link{display:inline-block;margin-top:17px;text-decoration:none}
+.poe-v019-root .classes .class-all-link:hover{text-decoration:underline;color:#f3d7b4}
+.poe-v019-root .editions .content-width{width:min(1760px,calc(100% - 40px))}
+.poe-v019-root .editions .section-header h2{word-break:keep-all}
+.poe-v019-root .editions .edition-grid{gap:22px;align-items:stretch}
+.poe-v019-root .editions .video-edition{position:relative;isolation:isolate;min-height:0;aspect-ratio:16/9;display:block;padding:0;overflow:hidden;text-align:left;background:#100e0d}
+.poe-v019-root .editions .video-edition .edition-video{position:absolute;inset:0;width:100%;height:100%;min-height:0;aspect-ratio:auto;margin:0;border:0;background:#080808;overflow:hidden;z-index:0}
+.poe-v019-root .editions .video-edition .edition-video::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(8,4,3,.45),transparent 30%,rgba(5,3,3,.25) 55%,rgba(5,3,3,.88));z-index:1}
+.poe-v019-root .editions .video-edition .edition-video.is-playing::after{display:none}
+.poe-v019-root .editions .video-edition .video-poster{position:absolute;inset:0;background-position:center;background-repeat:no-repeat;background-size:cover;display:flex;justify-content:center;align-items:center;transition:opacity .2s}
+.poe-v019-root .editions .video-combat .video-poster{background-image:url("/poe-home/assets/poe2-character-combat.webp")}
+.poe-v019-root .editions .video-build .video-poster{background-image:url("/poe-home/assets/poe2-ranger-classes.webp")}
+.poe-v019-root .editions .video-gameplay .video-poster{background-image:url("/poe-home/assets/poe2-lightning-combat.webp")}
+.poe-v019-root .editions .video-play-symbol{display:grid;place-items:center;border:1px solid rgba(237,215,191,.75);border-radius:50%;width:72px;height:72px;background:rgba(18,9,7,.55);font-size:30px;color:#f0d9c2;padding-left:5px}
+.poe-v019-root .editions .video-placeholder{position:absolute;top:17px;right:17px;left:auto;bottom:auto;text-align:right;color:#edd3b8;font-size:11px;text-shadow:0 2px 6px #000;z-index:2}
+.poe-v019-root .editions .video-player,.poe-v019-root .editions .video-player iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+.poe-v019-root .editions .edition-video.is-playing .video-poster,.poe-v019-root .editions .edition-video.is-playing .video-placeholder{display:none}
+.poe-v019-root .editions .video-edition .edition-badge{position:absolute;top:17px;left:20px;z-index:2;color:#edd0ae;text-shadow:0 1px 8px #000}
+.poe-v019-root .editions .video-edition h3{position:absolute;left:20px;right:20px;bottom:73px;z-index:2;margin:0;font-size:clamp(20px,2vw,30px);line-height:1.2;color:#f0e3d3;text-shadow:0 2px 9px #000}
+.poe-v019-root .editions .video-edition p{position:absolute;left:20px;right:20px;bottom:22px;z-index:2;max-width:none;margin:0;font-size:13px;line-height:1.55;color:#d6c9ba;text-shadow:0 2px 8px #000}
+.poe-v019-root .editions .video-edition .video-action{position:absolute;top:10px;right:10px;z-index:3;width:auto;min-height:36px;padding:6px 13px;font-size:12px;cursor:pointer;margin:0}
+.poe-v019-root .editions .video-edition .video-action:disabled{display:none}
+.poe-v019-root .editions .video-edition .video-sound{position:absolute;right:10px;top:10px;z-index:4;background:rgba(10,8,8,.87);border:1px solid rgba(185,161,125,.6);color:#f4e8d8;font-size:12px;cursor:pointer;padding:6px 10px}
+.poe-v019-root .editions .video-edition .video-sound[hidden]{display:none}
+.poe-v019-root .editions .video-edition .video-sound:hover{background:#4a2621}
+.poe-v019-root .editions .video-edition:has(.edition-video.is-playing)>.edition-badge,.poe-v019-root .editions .video-edition:has(.edition-video.is-playing)>h3,.poe-v019-root .editions .video-edition:has(.edition-video.is-playing)>p,.poe-v019-root .editions .video-edition:has(.edition-video.is-playing)>.video-action{display:none}
+.poe-v019-root .editions .video-status{text-align:center;margin:21px auto 0;color:#ac9885;font-size:12px;max-width:880px}
+@media (min-width:781px) and (max-width:1150px){.poe-v019-root .editions .video-edition h3{left:12px;right:12px;bottom:58px;font-size:20px}
+.poe-v019-root .editions .video-edition p{left:12px;right:12px;bottom:13px;font-size:11px}
+.poe-v019-root .editions .video-edition .edition-badge{left:12px;top:11px;font-size:10px}
+.poe-v019-root .editions .video-play-symbol{width:54px;height:54px;font-size:23px}
+.poe-v019-root .editions .video-placeholder{top:11px;right:11px;font-size:10px}}
+@media (min-width:781px){.poe-v019-root .hero .hero-actions .btn,.poe-v019-root .welcome .hero-actions .btn{width:252px}}
+@media (max-width:1090px){.poe-v019-root .primary-nav{gap:16px;margin-left:4px}
+.poe-v019-root .primary-nav a{font-size:12px}
+.poe-v019-root .site-header{padding:0 20px;gap:14px}
+.poe-v019-root .content-width{width:min(1336px,calc(100% - 44px))}
+.poe-v019-root .news-image{height:265px}
+.poe-v019-root .feature-grid{gap:15px}
+.poe-v019-root .feature{padding:20px 16px}}
+@media (max-width:780px){.poe-v019-root .site-header{height:64px;gap:12px}
+.poe-v019-root .company{font-size:17px}
+.poe-v019-root .top-mark{font-size:20px}
+.poe-v019-root .header-game{display:none}
+.poe-v019-root .menu-toggle{display:block}
+.poe-v019-root .primary-nav{display:none;position:absolute;top:64px;left:0;right:0;background:#0d0b0b;padding:19px 23px 24px;margin:0;height:auto;flex-direction:column;align-items:stretch;gap:0;border-bottom:1px solid #49332a}
+.poe-v019-root .primary-nav.open{display:flex}
+.poe-v019-root .primary-nav a{font-size:14px;padding:12px 0;border-bottom:1px solid #322723}
+.poe-v019-root .content-width{width:calc(100% - 34px)}
+.poe-v019-root .section{padding:73px 0}
+.poe-v019-root .section h2{font-size:38px}
+.poe-v019-root .section-header{margin-bottom:35px}
+.poe-v019-root .hero{min-height:620px;height:calc(100svh - 64px);max-height:750px}
+.poe-v019-root .hero-art{background-position:62% center}
+.poe-v019-root .hero-vignette{background:linear-gradient(90deg,rgba(4,4,4,.8),rgba(4,4,4,.26)),linear-gradient(0deg,#090909,transparent 30%)}
+.poe-v019-root .hero-content>*{max-width:100%}
+.poe-v019-root .hero-title-art{font-size:clamp(47px,10vw,77px)}
+.poe-v019-root .hero-title-art small{font-size:9px;bottom:-23px}
+.poe-v019-root .hero h1{font-size:30px;margin-top:50px}
+.poe-v019-root .hero-sub{font-size:14px}
+.poe-v019-root .hero-actions .btn{width:100%}
+.poe-v019-root .scroll-hint{bottom:13px}
+.poe-v019-root .welcome{padding:110px 0 70px;min-height:560px}
+.poe-v019-root .welcome-art{inset:0;background-position:center;opacity:.22}
+.poe-v019-root .split-inner{grid-template-columns:1fr}
+.poe-v019-root .split-spacer{display:none}
+.poe-v019-root .split-copy{padding:0}
+.poe-v019-root .split-copy p:not(.overline){font-size:14px}
+.poe-v019-root .news-feature-grid,.poe-v019-root .feature-grid,.poe-v019-root .edition-grid{grid-template-columns:1fr}
+.poe-v019-root .news-feature-grid{gap:18px}
+.poe-v019-root .news-image{height:245px}
+.poe-v019-root .news-copy{padding:21px}
+.poe-v019-root .news-copy h3{font-size:27px}
+.poe-v019-root .news-list{grid-template-columns:1fr}
+.poe-v019-root .news-list a{padding:16px 6px}
+.poe-v019-root .feature-grid{gap:22px;margin-top:35px}
+.poe-v019-root .feature{text-align:left;display:grid;grid-template-columns:75px 1fr;align-items:start;gap:0 18px;padding:13px}
+.poe-v019-root .feature-engraving{grid-row:span 2;font-size:47px}
+.poe-v019-root .feature h3{font-size:23px}
+.poe-v019-root .feature p{font-size:14px;margin:0}
+.poe-v019-root .realm-panel{grid-template-columns:1fr}
+.poe-v019-root .realm-art{min-height:205px}
+.poe-v019-root .realm-text{padding:27px 25px}
+.poe-v019-root .realm-text h3{font-size:30px}
+.poe-v019-root .class-selector{gap:3px}
+.poe-v019-root .class-selector button{font-size:12px;padding:8px 10px}
+.poe-v019-root .class-stage{grid-template-columns:1fr;min-height:450px}
+.poe-v019-root .class-symbol{font-size:120px;line-height:1.3}
+.poe-v019-root .class-stage-copy{text-align:center;padding:0 12px}
+.poe-v019-root .class-stage-copy .red-divider{margin:18px auto}
+.poe-v019-root .class-stage-copy h3{font-size:43px}
+.poe-v019-root .edition-grid{gap:16px}
+.poe-v019-root .edition{min-height:410px;padding:25px}
+.poe-v019-root .edition-mark{min-height:90px}
+.poe-v019-root .platform-emblem{font-size:80px}
+.poe-v019-root .platform h2{font-size:35px}}
+@media (max-width:780px){.poe-v019-root .editions .content-width{width:calc(100% - 34px)}
+.poe-v019-root .editions .edition-grid{gap:16px}
+.poe-v019-root .editions .video-edition{min-height:0;aspect-ratio:16/9;padding:0}
+.poe-v019-root .editions .video-edition .edition-video{min-height:0}
+.poe-v019-root .editions .video-edition .edition-badge{top:10px;left:12px;font-size:10px}
+.poe-v019-root .editions .video-edition h3{left:12px;right:12px;bottom:57px;font-size:20px}
+.poe-v019-root .editions .video-edition p{left:12px;right:12px;bottom:14px;font-size:11px;line-height:1.45}
+.poe-v019-root .editions .video-play-symbol{width:52px;height:52px;font-size:22px}
+.poe-v019-root .editions .video-placeholder{top:10px;right:12px;font-size:10px}}
+@media (max-width:390px){.poe-v019-root .company{font-size:15px}
+.poe-v019-root .top-mark{font-size:18px}
+.poe-v019-root .site-header{padding:0 12px}
+.poe-v019-root .hero-title-art{font-size:43px}
+.poe-v019-root .hero h1{font-size:27px}
+.poe-v019-root .feature{grid-template-columns:55px 1fr;gap:0 13px}
+.poe-v019-root .feature-engraving{font-size:38px}
+.poe-v019-root .class-selector button{padding:7px 8px}
+.poe-v019-root .footer nav{gap:17px}}
+@media (prefers-reduced-motion:reduce){.poe-v019-root, .poe-v019-root *,.poe-v019-root *::before,.poe-v019-root *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media (max-width:780px){.poe-v019-root .platform .platform-actions .btn{width:100%}}

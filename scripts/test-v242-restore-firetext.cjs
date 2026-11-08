@@ -1,0 +1,17 @@
+const fs = require('node:fs');
+const assert = require('node:assert/strict');
+const path = require('node:path');
+const root = path.resolve(__dirname, '..');
+const page = fs.readFileSync(path.join(root,'src/app/page.tsx'),'utf8');
+const fire = fs.readFileSync(path.join(root,'src/app/FireText.tsx'),'utf8');
+const css = fs.readFileSync(path.join(root,'src/app/globals.css'),'utf8');
+assert.match(page,/import FireText from "\.\/FireText"/);
+assert.match(page,/<strong><FireText label=\{item\.label\} tone=\{item\.tone === "blue" \? "blue" : "warm"\} \/><\/strong>/);
+assert.match(page,/href: "\/filter"/); assert.match(page,/href: "\/pob"/);
+assert.match(page,/getLatestOfficialVideos\(4\)/);
+assert.match(fire,/tone === "blue" \? \(hovered \? WARM : BLUE\) : \(hovered \? BLUE : WARM\)/);
+assert.match(fire,/prefers-reduced-motion/);
+assert.match(css,/\.poe-v241-home \.poe-v239-tool \.poe-v53-fire-canvas/);
+assert.match(css,/\.poe-v242-fire-warm/);
+assert.match(css,/\.poe-v242-fire-blue/);
+console.log('PASS V242 FireText reuse, both tool labels, tones, existing links and reduced motion');

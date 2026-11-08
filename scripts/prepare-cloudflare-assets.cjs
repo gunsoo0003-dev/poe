@@ -4,8 +4,8 @@
  * temporarily out of the project tree. Never modify the canonical bytes.
  *
  * Intended CI order:
- *   node scripts/prepare-cloudflare-assets.cjs && npm run build
- *   npx wrangler deploy  (Cloudflare's OpenNext auto-configuration)
+ *   npm run build:cloudflare     (staging + one OpenNext build + restore in finally)
+ *   npm run deploy:cloudflare    (deploy prebuilt .open-next output)
  *
  * The Git repository and normal `npm run build` (Vercel) remain unchanged.
  * Local cleanup if necessary: node scripts/prepare-cloudflare-assets.cjs --restore

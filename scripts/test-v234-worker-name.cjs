@@ -8,7 +8,12 @@ const name = 'fixlgs-poe2';
 if (pkg.name !== name || lock.name !== name || lock.packages[''].name !== name) {
  throw new Error(`Cloudflare Worker name mismatch: expected ${name}, got ${[pkg.name,lock.name,lock.packages[''].name].join(',')}`);
 }
-if (pkg.scripts.build !== 'next build' || !pkg.scripts['build:cloudflare']?.includes('prepare-cloudflare-assets.cjs')) {
+const cfBuild = pkg.scripts['build:cloudflare'] || '';
+const stagedByCommand = cfBuild.includes('prepare-cloudflare-assets.cjs');
+const stagedByWrapper = cfBuild === 'node scripts/build-cloudflare.cjs' &&
+  fs.existsSync(path.join(root, 'scripts/build-cloudflare.cjs')) &&
+  fs.readFileSync(path.join(root, 'scripts/build-cloudflare.cjs'), 'utf8').includes('prepare-cloudflare-assets.cjs');
+if (pkg.scripts.build !== 'next build' || !(stagedByCommand || stagedByWrapper)) {
  throw new Error('Vercel/Cloudflare build separation changed unexpectedly.');
 }
 console.log('PASS V234: package.json / package-lock.json identify fixlgs-poe2; Vercel build preserved.');

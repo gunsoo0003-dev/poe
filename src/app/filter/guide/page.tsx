@@ -24,12 +24,14 @@ export default function FilterGuidePage() {
           <div><span>현재 필터 저장</span><strong>게임에 적용</strong></div>
         </section>
 
-        <section className="filter-guide-step">
+        <section className="filter-guide-step" id="neversink-strictness">
           <em>01</em>
           <div>
             <h2>먼저 필터 단계를 선택하세요</h2>
             <p>왼쪽 위에서 NeverSink 0-SOFT부터 6-UBER PLUS STRICT까지 선택할 수 있습니다. 숫자가 높아질수록 불필요한 드롭이 더 많이 숨겨집니다.</p>
             <p>각 단계는 따로 커스텀해서 사용할 수 있습니다. 예를 들어 2단계는 아이템을 많이 보고 싶을 때, 5단계는 일반 사냥용처럼 나눠 둘 수 있습니다.</p>
+            <p>선택 기준은 간단합니다. 필요한 드롭이 너무 많이 가려진다면 숫자가 낮은 단계부터 확인하고, 화면에 불필요한 아이템이 지나치게 많다면 더 엄격한 단계로 옮겨 보세요. 높은 단계가 모든 캐릭터와 파밍 상황에 더 좋은 것은 아닙니다.</p>
+            <p>먼저 NeverSink 원본 단계 그대로 사용해 보고, 원하는 아이템만 개별 설정으로 조정하면 처음부터 모든 규칙을 편집할 필요가 없습니다.</p>
           </div>
         </section>
 
@@ -66,12 +68,13 @@ export default function FilterGuidePage() {
           </div>
         </section>
 
-        <section className="filter-guide-step is-important">
+        <section className="filter-guide-step is-important" id="filter-install">
           <em>06</em>
           <div>
-            <h2>마지막에는 반드시 ‘현재 필터 저장’</h2>
-            <p>체크, 중요도, 사운드를 바꾼 뒤 <b>현재 필터 저장</b>을 누르면 지금 만든 필터가 게임 필터 폴더에 저장·적용됩니다.</p>
-            <p>처음 사용할 때만 Path of Exile 2 필터 폴더를 선택하면 되고, 이후에는 같은 폴더에 바로 저장할 수 있습니다.</p>
+            <h2>POE2 필터 적용 방법: 저장하고 게임에서 선택하기</h2>
+            <p>체크, 중요도, 사운드를 바꾼 뒤 <b>현재 필터 저장</b>을 누르세요. 브라우저에서 게임 필터 폴더 접근을 허용하면 해당 위치에 .filter 파일을 쓸 수 있습니다. 처음에는 Path of Exile 2 필터 폴더를 직접 선택해야 할 수 있습니다.</p>
+            <p>게임 설정의 <b>아이템 필터 목록</b>에서 저장한 필터를 선택하고, 실제 드롭 표시가 바뀌는지 확인하세요. 파일 저장과 게임 내 필터 선택은 구별해야 합니다.</p>
+            <p>브라우저에서 폴더 저장이 지원되지 않는 경우에는 필터 파일을 다운로드한 뒤 게임 설정용 필터 폴더로 옮기면 됩니다. 사운드가 포함된 경우에는 아래 ZIP 설치 안내도 함께 확인하세요.</p>
           </div>
         </section>
 

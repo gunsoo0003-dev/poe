@@ -29,7 +29,9 @@ assert.equal(ranked({...snapshot,weaponSet:2}).length,0,'Cannot borrow DPS acros
 const page=read('src/app/pob/page.tsx');
 assert.match(page,/weapon-slot-set-badge/);
 assert.match(page,/>\s*\{weaponSet\}\s*<\/span>/);
-const compiled=ts.transpileModule(page,{fileName:'page.tsx',compilerOptions:{jsx:ts.JsxEmit.ReactJSX,module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}}).outputText;
+// Only Next.js-supported fields may be exported from app/pob/page.tsx.
+// Expose the existing private helper only inside the in-memory test module.
+const compiled=ts.transpileModule(page+'\nexport { buildMainSkillUi };',{fileName:'page.tsx',compilerOptions:{jsx:ts.JsxEmit.ReactJSX,module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}}).outputText;
 const jsx=(type,props,key)=>({type,props,key});
 const mocks={
  'react/jsx-runtime':{jsx,jsxs:jsx},'react':{},'next/link':{default:'Link'},

@@ -1,0 +1,23 @@
+const fs = require('node:fs');
+const assert = require('node:assert/strict');
+const page = fs.readFileSync('src/app/page.tsx','utf8');
+const css = fs.readFileSync('src/app/globals.css','utf8');
+const hero = fs.readFileSync('public/images/poe2/cinematic-hero.webp');
+const media = fs.readFileSync('public/images/poe2/cinematic-media.webp');
+assert(page.includes('poe-v240-home'));
+assert(css.includes("url('/images/poe2/cinematic-hero.webp')"),'actual image background');
+assert(css.includes("url('/images/poe2/cinematic-media.webp')"),'actual media background');
+assert(hero.length > 40000 && hero.subarray(0,4).toString('ascii')==='RIFF');
+assert(media.length > 3000 && media.subarray(0,4).toString('ascii')==='RIFF');
+assert(page.includes('item.mark === "filter"'),'real svg icon');
+assert(page.includes('poe-v239-tool-blue')===false || page.includes('poe-v239-tool-${item.tone}'));
+assert(page.indexOf('label: "FILTER"') < page.indexOf('label: "POB"'));
+assert(page.includes('getLatestOfficialVideos(4)'));
+// V253 current confirmed section order supersedes the original V240 market-first layout.
+assert(page.indexOf('id="guides"') < page.indexOf('id="market"') && page.indexOf('id="market"') < page.indexOf('id="official-video"'));
+assert(css.includes('.poe-v240-home .poe-v239-tool{') && css.includes('.poe-v240-home .poe-v239-tool-blue{'));
+assert(css.includes('.poe-v240-home .poe-v238-video-section{max-width:none!important'));
+assert(css.includes('prefers-reduced-motion:reduce'));
+for(const x of ['href="/filter"','href="/pob"','href="/guides"','href="/about"','href="/contact"','href="/privacy/site"'])assert(page.includes(x),x);
+assert(page.includes('현재는 가격을 표시하지 않습니다.'));
+console.log('PASS V240: genuine local artwork, balanced functional tool links, responsive styles, full-width media, protected routes, no fake market values');

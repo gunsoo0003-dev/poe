@@ -1,0 +1,16 @@
+const fs=require('node:fs');const assert=require('node:assert/strict');
+const page=fs.readFileSync('src/app/page.tsx','utf8');
+const css=fs.readFileSync('src/app/globals.css','utf8');
+assert(page.includes('poe-v250-home')&&css.includes('.poe-v250-home .poe-v249-tool-grid'));
+assert(page.includes('poe-v249-brand-lockup')&&page.includes('poe2-official-logo.webp'));
+assert(page.includes('FAN-MADE TOOLS BY FIXLGS')&&page.includes('UNOFFICIAL TOOL PLATFORM'));
+assert(page.includes('<FireText label={item.label}')&&page.includes('href={item.href}'));
+assert(page.includes('poe-v250-tool-seal')&&page.includes('poe-v250-tool-eyebrow'));
+assert(page.includes('필터 만들기')&&page.includes('빌드 분석하기'));
+assert(page.includes('id="market"')&&page.includes('id="guides"')&&page.includes('id="official-video"'));
+assert(page.includes('<LatestVideoGallery videos={latestVideos} />'));
+assert(css.includes("v250-filter-art.webp")&&css.includes("v250-pob-art.webp"));
+assert(css.includes('prefers-reduced-motion:reduce')&&css.includes('max-width:760px'));
+for(const f of ['v250-filter-art.webp','v250-pob-art.webp','burning-castle-hero-v248.webp','poe2-official-logo.webp'])assert(fs.statSync('public/images/poe2/'+f).size>10000,f);
+assert(fs.existsSync('docs/handover/HISTORY_V001.md'));
+console.log('PASS V250 unified design, dual brand, unique symbols, full-card links, FireText, content, mobile, existing art');

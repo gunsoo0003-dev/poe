@@ -93,7 +93,7 @@ const physicalSlotKey = (slot: string, set: 1 | 2) =>
  * independently measured numbers for a matching skill in the selected set.
  * Never re-rank ninja main skills using PoB DPS.
  */
-export function buildMainSkillUi(snapshot: SetCalculation | undefined, importedSkills: ImportedSkill[], ninjaMainSkill?: string): UiSkill[] {
+function buildMainSkillUi(snapshot: SetCalculation | undefined, importedSkills: ImportedSkill[], ninjaMainSkill?: string): UiSkill[] {
   const normalize = (value: string) => value.trim().toLowerCase();
   const ordered = [...importedSkills].sort((a, b) => (b.dpsValue ?? -1) - (a.dpsValue ?? -1));
   const main = ninjaMainSkill?.trim();

@@ -45,3 +45,9 @@ next-env.d.ts
 
 # Local PoB2 runtime bootstrap cache
 /.pob2-runtime/
+
+# OpenNext/Cloudflare generated build outputs (keep configuration tracked)
+/.open-next/
+/.wrangler/
+/.dev.vars*
+/cloudflare-env.d.ts

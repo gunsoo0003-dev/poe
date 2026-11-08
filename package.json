@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --webpack",
     "build": "next build",
-    "build:cloudflare": "node scripts/prepare-cloudflare-assets.cjs && npm run build",
+    "build:cloudflare": "node scripts/build-cloudflare.cjs",
     "restore:cloudflare-assets": "node scripts/prepare-cloudflare-assets.cjs --restore",
     "start": "next start",
     "lint": "eslint",
@@ -20,10 +20,13 @@
     "pob2:native-wasm": "node scripts/test-v225-native-wasm.mjs",
     "pob2:comparison-guard": "node scripts/test-v225-comparison-guard.cjs",
     "pob:ring-slots-test": "node --experimental-strip-types scripts/test-v226-ring-slots.cjs",
-    "test:cloudflare-name": "node scripts/test-v234-worker-name.cjs"
+    "test:cloudflare-name": "node scripts/test-v234-worker-name.cjs",
+    "deploy:cloudflare": "opennextjs-cloudflare deploy",
+    "test:cloudflare-pipeline": "node scripts/test-v236-cloudflare-pipeline.cjs",
+    "build:cloudflare:adapter": "opennextjs-cloudflare build"
   },
   "dependencies": {
-    "next": "16.3.5",
+    "next": "16.4.5",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
@@ -33,8 +36,10 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.3.5",
+    "eslint-config-next": "16.4.5",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "@opennextjs/cloudflare": "1.20.16",
+    "wrangler": "4.157.0"
   }
 }

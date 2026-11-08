@@ -1,0 +1,16 @@
+const fs = require('node:fs');
+const assert = require('node:assert/strict');
+const source = fs.readFileSync('src/app/page.tsx', 'utf8');
+const between = (a,b) => source.slice(source.indexOf(a), source.indexOf(b));
+const positions = ['<header className=', '<div id="tools"', '<section className="poe-content-overview"', '<section id="official-video"', '<footer className='].map(x => source.indexOf(x));
+assert(positions.every((x,i) => x >= 0 && (i === 0 || x > positions[i-1])), 'Home order: nav -> tools -> guide -> video -> footer');
+assert.equal((source.match(/<LatestVideoGallery videos=\{latestVideos\}/g)||[]).length, 1);
+assert(source.includes('getLatestOfficialVideos(4)'));
+const links = between('const toolLinks = [', '];');
+assert(links.indexOf('"FILTER"') < links.indexOf('"POB"'), 'Filter must be first tool');
+const nav = between('<nav className="poe-v11-nav-links', '</nav>');
+const footer = between('<footer className=', '</footer>');
+assert(nav.indexOf('href="/filter"') < nav.indexOf('href="/pob"'));
+assert(footer.indexOf('href="/filter"') < footer.indexOf('href="/pob"'));
+assert(source.includes('href="#official-video"'));
+console.log('PASS V237: FILTER precedes POB in all home nav/tool areas; video gallery follows guides and precedes footer; 4-video source and anchor retained.');

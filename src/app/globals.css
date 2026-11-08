@@ -4782,7 +4782,7 @@ footer strong { color: #a99ab8; }
   padding: 0 5px !important;
 }
 
-/* B. KNIGHT/TOOLS SECTION: hero begins only AFTER the video section. */
+/* B. KNIGHT/TOOLS SECTION: hero is the first major home section; video gallery follows content. */
 .poe-v41-tools-wrap {
   position: relative;
   z-index: 1;
@@ -10983,4 +10983,713 @@ footer strong { color: #a99ab8; }
   font-size: 15px;
   font-weight: 800;
   pointer-events: none;
+}
+
+/* V238 homepage redesign – scoped to home, preserves FILTER / POB page styles. */
+.poe-v238-home{background:#080e16;color:#eee7db;font-family:Arial,Helvetica,sans-serif}
+.poe-v238-home .poe-v238-shell{display:block;overflow:visible;background:#080e16}
+.poe-v238-home .poe-v238-nav{position:relative!important;top:auto!important;left:auto!important;right:auto!important;z-index:20!important;display:flex!important;min-height:74px!important;height:auto!important;align-items:center!important;justify-content:space-between!important;padding:15px clamp(24px,6vw,112px)!important;background:#080c12!important;border-bottom:1px solid rgba(231,200,146,.2)!important;transform:none!important}
+.poe-v238-home .poe-v238-brand{font:700 clamp(23px,2vw,34px) Georgia,serif!important;color:#f2eee7!important;letter-spacing:.02em!important;text-decoration:none!important;white-space:nowrap}
+.poe-v238-brand span,.poe-v238-hero h1 span{color:#e4bb78}
+.poe-v238-home .poe-v238-nav-links{display:flex!important;align-items:center;flex-wrap:wrap;gap:clamp(14px,2.6vw,38px)!important}
+.poe-v238-home .poe-v238-nav-links a{padding:8px 0!important;font-size:12px!important;letter-spacing:.12em!important;color:#e8e1d5!important;text-decoration:none!important}
+.poe-v238-home .poe-v238-nav-links a::after{bottom:0!important;background:#dcb979}
+.poe-v238-hero-wrap{position:relative;background:#080e16}
+.poe-v238-hero{position:relative;isolation:isolate;display:flex;align-items:center;justify-content:center;min-height:min(860px,calc(100svh - 74px));overflow:hidden;padding:110px 26px 88px;background:#0b1320}
+.poe-v238-landscape{position:absolute;inset:0;z-index:-3;background:linear-gradient(180deg,rgba(5,10,17,.38) 0%,rgba(7,12,20,.15) 32%,rgba(7,12,20,.74) 72%,#080e16 100%),linear-gradient(90deg,rgba(3,7,13,.55),transparent 65%),url('/images/poe2/video-sky-bg.jpg') center 43%/cover no-repeat;filter:saturate(.66) contrast(1.12);transform:scale(1.04)}
+.poe-v238-hero::before{content:"";pointer-events:none;position:absolute;inset:0;z-index:-2;background:radial-gradient(ellipse at 78% 54%,rgba(221,108,39,.12),transparent 28%),radial-gradient(ellipse at 49% 28%,rgba(69,91,121,.18),transparent 47%),linear-gradient(180deg,rgba(3,8,15,.18),rgba(2,7,12,.35) 68%,#080e16)}
+.poe-v238-distant-fire{position:absolute;z-index:-1;right:17%;top:45%;width:10%;height:18%;pointer-events:none;background:radial-gradient(ellipse at center,rgba(244,129,56,.27),rgba(201,78,29,.10) 27%,transparent 69%);filter:blur(24px);animation:poeV238FireBreath 6s ease-in-out infinite alternate}
+@keyframes poeV238FireBreath{from{opacity:.42;transform:scale(.85)}to{opacity:.9;transform:scale(1.14)}}
+.poe-v238-embers{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:-1}
+.poe-v238-embers i{position:absolute;bottom:10%;left:var(--x);width:3px;height:3px;border-radius:50%;background:#f4a35f;opacity:0;box-shadow:0 0 9px 2px rgba(243,132,54,.28);animation:poeV238Ember var(--duration) linear infinite;animation-delay:var(--delay)}
+.poe-v238-embers i:nth-child(1){--x:11%;--duration:13s;--delay:-5s}.poe-v238-embers i:nth-child(2){--x:22%;--duration:17s;--delay:-9s}.poe-v238-embers i:nth-child(3){--x:32%;--duration:14s;--delay:-3s}.poe-v238-embers i:nth-child(4){--x:45%;--duration:19s;--delay:-12s}.poe-v238-embers i:nth-child(5){--x:60%;--duration:15s;--delay:-6s}.poe-v238-embers i:nth-child(6){--x:72%;--duration:18s;--delay:-15s}.poe-v238-embers i:nth-child(7){--x:83%;--duration:16s;--delay:-2s}.poe-v238-embers i:nth-child(8){--x:92%;--duration:20s;--delay:-11s}
+@keyframes poeV238Ember{0%{opacity:0;transform:translate3d(0,40px,0)}15%{opacity:.5}72%{opacity:.24}100%{opacity:0;transform:translate3d(18px,-340px,0)}}
+.poe-v238-hero-inner{width:min(1260px,100%);margin:0 auto;text-align:center}
+.poe-v238-eyebrow{color:#dbc18e;font-size:11px;font-weight:800;letter-spacing:.34em;line-height:1.7}
+.poe-v238-hero h1{margin:16px 0 12px!important;color:#f6f0e5;font:700 clamp(66px,9vw,138px)/1.04 Georgia,'Times New Roman',serif;letter-spacing:-.035em;text-shadow:0 7px 28px rgba(0,0,0,.6)}
+.poe-v238-hero-inner>p{margin:0 auto 44px;color:#dddce0;font-size:clamp(14px,1.5vw,20px);line-height:1.8;text-shadow:0 2px 12px #000}
+.poe-v238-tool-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;width:min(1170px,100%);margin:0 auto}
+.poe-v238-tool{position:relative;display:grid;grid-template-columns:90px minmax(0,1fr) 22px;align-items:center;gap:23px;min-height:178px;padding:28px 32px;border:1px solid rgba(221,186,124,.55);border-radius:8px;background:linear-gradient(110deg,rgba(32,29,26,.93),rgba(11,17,25,.91));box-shadow:0 18px 38px rgba(0,0,0,.37),inset 0 0 35px rgba(207,137,55,.08);color:#f2e5d0;text-align:left;text-decoration:none;transition:border-color .24s,box-shadow .24s,transform .24s}
+.poe-v238-tool:nth-child(2){border-color:rgba(166,191,218,.54);background:linear-gradient(110deg,rgba(23,32,45,.94),rgba(10,17,28,.92));box-shadow:0 18px 38px rgba(0,0,0,.36),inset 0 0 35px rgba(113,155,206,.08)}
+.poe-v238-tool:hover,.poe-v238-tool:focus-visible{transform:translateY(-4px);border-color:#f3c77f;box-shadow:0 12px 32px rgba(0,0,0,.46),0 0 24px rgba(223,151,68,.16);outline:none}
+.poe-v238-tool:nth-child(2):hover,.poe-v238-tool:nth-child(2):focus-visible{border-color:#c0d6f0;box-shadow:0 12px 32px rgba(0,0,0,.46),0 0 24px rgba(133,177,230,.15)}
+.poe-v238-tool-emblem{display:grid;place-items:center;font:700 68px/1 Georgia,serif;color:#e0bc7b;text-shadow:0 0 22px rgba(225,154,67,.23)}
+.poe-v238-tool:nth-child(2) .poe-v238-tool-emblem{color:#c5d4e4}
+.poe-v238-tool-copy{min-width:0;display:flex;flex-direction:column;gap:10px}
+.poe-v238-tool-copy strong{font:700 clamp(38px,4.2vw,62px)/1 Georgia,'Times New Roman',serif;letter-spacing:.015em;color:#f0d6a3}
+.poe-v238-tool:nth-child(2) .poe-v238-tool-copy strong{color:#e4eaf0}
+.poe-v238-tool-copy small{font-size:clamp(12px,1.1vw,15px);line-height:1.5;color:#c5c3c0}
+.poe-v238-tool-arrow{font-size:26px;color:#e9c084}
+.poe-v238-tool:nth-child(2) .poe-v238-tool-arrow{color:#b4cee7}
+.poe-v238-hero-bottom{display:flex;justify-content:center;gap:clamp(20px,6vw,80px);margin-top:60px;border-top:1px solid rgba(213,189,154,.22);padding-top:26px}
+.poe-v238-hero-bottom a{color:#d4c5ad;font-size:14px;letter-spacing:.02em;text-decoration:none}.poe-v238-hero-bottom a span{margin-left:8px;color:#d2aa70}.poe-v238-hero-bottom a:hover{color:#fff}
+.poe-v238-section{max-width:1330px;margin:0 auto;padding:100px clamp(26px,4.5vw,72px);scroll-margin-top:30px}
+.poe-v238-section-heading{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:28px}.poe-v238-kicker{color:#c8a670;font-size:11px;font-weight:800;letter-spacing:.24em}.poe-v238-section-heading h2{margin:8px 0 0;color:#f5ead7;font:500 clamp(29px,3.1vw,43px) Georgia,serif}.poe-v238-section-heading p{margin:0 0 5px;font-size:14px;line-height:1.6;color:#aeb8c4}.poe-v238-section-heading>a{color:#dbb981;font-size:14px;text-decoration:none}
+.poe-v238-market{border-bottom:1px solid rgba(215,181,123,.12)}
+.poe-v238-market-pending{display:flex;align-items:center;gap:26px;min-height:220px;padding:38px 48px;border:1px solid rgba(176,189,205,.2);border-radius:8px;background:linear-gradient(120deg,rgba(23,33,47,.8),rgba(11,18,29,.8));}
+.poe-v238-market-icon{font-size:64px;color:#d1ab76}.poe-v238-market-pending strong{display:block;color:#f0e4d0;font-size:22px;margin-bottom:12px}.poe-v238-market-pending p{max-width:680px;margin:0;color:#aeb8c3;line-height:1.8;font-size:15px}
+.poe-v238-guide-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}.poe-v238-guide-card{position:relative;display:flex;flex-direction:column;gap:15px;min-height:175px;padding:28px;border:1px solid rgba(198,166,117,.23);border-radius:8px;background:linear-gradient(140deg,#1b2532,#0d141f);text-decoration:none}.poe-v238-guide-card:hover{border-color:rgba(224,183,118,.75)}.poe-v238-guide-card span{color:#b89c73;font-size:12px}.poe-v238-guide-card strong{color:#eee2cf;font:500 26px Georgia,serif}.poe-v238-guide-card small{color:#b5beca;font-size:14px}.poe-v238-guide-card em{position:absolute;right:26px;top:28px;color:#c8a66c;font-size:20px;font-style:normal}
+.poe-v238-home .poe-content-overview{max-width:none;padding:70px 0 0;margin:0;color:#c9c0b3}.poe-v238-home .poe-content-overview h2{font-size:25px}
+.poe-v238-home .poe-v238-video-section{position:relative;max-width:1330px;margin:0 auto;padding:60px clamp(26px,4.5vw,72px) 95px;min-height:0!important;height:auto!important;scroll-margin-top:20px;background:transparent!important;border-top:1px solid rgba(215,181,123,.13)}
+.poe-v238-home .poe-v238-video-section::before,.poe-v238-home .poe-v238-video-section::after{display:none!important}.poe-v238-video-section .poe-v28-gallery-shell{position:relative!important;inset:auto!important;width:100%!important;height:auto!important}.poe-v238-video-section .poe-v26-video-row{position:relative!important;inset:auto!important;width:100%!important;min-height:0!important;height:auto!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.poe-v238-video-section .poe-v34-video-tile{width:100%!important;min-width:0!important;min-height:0!important;height:auto!important;aspect-ratio:16/9;border:1px solid rgba(187,185,187,.25)!important;border-radius:6px!important;overflow:hidden}.poe-v238-video-section .poe-v32-media-stage{position:absolute!important;inset:0!important;padding:0!important}.poe-v238-video-section .poe-v32-media-frame{width:100%!important;height:100%!important}.poe-v238-video-section .poe-v32-foreground-thumb{width:100%!important;height:100%!important;object-fit:cover!important}.poe-v238-video-section .poe-v26-player-host{width:100%!important;height:100%!important}.poe-v238-video-section .poe-v26-player-host iframe{width:100%!important;height:100%!important}
+.poe-v238-home .poe-v238-footer{display:flex;flex-wrap:wrap;min-height:105px;justify-content:space-between;gap:14px;padding:28px clamp(26px,6vw,112px)!important;background:#080b11}.poe-v238-footer nav{flex-wrap:wrap}.poe-v238-footer p{flex-basis:100%;text-align:left;font-size:11px}
+@media(max-width:900px){.poe-v238-home .poe-v238-nav{flex-wrap:wrap;justify-content:center;gap:15px}.poe-v238-hero{min-height:750px;padding:92px 20px 65px}.poe-v238-tool{grid-template-columns:50px 1fr 16px;gap:14px;min-height:150px;padding:23px 20px}.poe-v238-tool-emblem{font-size:50px}.poe-v238-tool-copy strong{font-size:40px}.poe-v238-section{padding:75px 25px}.poe-v238-video-section .poe-v26-video-row{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.poe-v238-home .poe-v238-shell{display:block!important}.poe-v238-home .poe-v238-nav{padding:17px 16px!important}.poe-v238-home .poe-v238-nav-links{justify-content:center;gap:12px!important}.poe-v238-home .poe-v238-nav-links a{font-size:10px!important}.poe-v238-hero{min-height:0;padding:88px 16px 55px}.poe-v238-eyebrow{font-size:9px;letter-spacing:.17em}.poe-v238-hero h1{font-size:clamp(58px,12vw,95px)}.poe-v238-hero-inner>p{margin-bottom:32px}.poe-v238-tool-grid{grid-template-columns:1fr;gap:14px}.poe-v238-tool{min-height:128px}.poe-v238-hero-bottom{gap:18px;flex-wrap:wrap;margin-top:45px}.poe-v238-hero-bottom a{font-size:12px}.poe-v238-section-heading{align-items:start;flex-direction:column;gap:12px}.poe-v238-market-pending{padding:22px;gap:18px}.poe-v238-market-icon{font-size:42px}.poe-v238-guide-grid{grid-template-columns:1fr}.poe-v238-home .poe-content-overview{display:block!important}.poe-v238-home .poe-v238-video-section{padding:45px 16px 65px}.poe-v238-video-section .poe-v26-video-row{gap:9px}.poe-v238-home .poe-v238-footer{display:flex!important;padding:24px!important}}
+@media(max-width:420px){.poe-v238-video-section .poe-v26-video-row{grid-template-columns:1fr}.poe-v238-tool-copy strong{font-size:36px}.poe-v238-tool-copy small{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.poe-v238-distant-fire,.poe-v238-embers i{animation:none!important}}
+
+/* V239 HOME REBUILD */
+.poe-v239-home{background:linear-gradient(180deg,#05070d 0%,#070b12 38%,#080c14 100%)}
+.poe-v239-home .poe-v239-shell{background:transparent;overflow:visible}
+.poe-v239-home .poe-v239-nav{padding:16px clamp(24px,5.4vw,76px)!important;background:linear-gradient(180deg,rgba(5,8,14,.98),rgba(6,10,18,.92))!important;border-bottom:1px solid rgba(199,167,104,.2)!important;box-shadow:0 6px 20px rgba(0,0,0,.22)}
+.poe-v239-home .poe-v238-brand{font-size:clamp(25px,2vw,34px)!important}
+.poe-v239-home .poe-v238-nav-links a{font-size:11px!important;letter-spacing:.16em!important;color:#eadfcf!important}
+.poe-v239-hero-wrap{background:linear-gradient(180deg,#070b12 0%,#08101c 100%)}
+.poe-v239-hero{min-height:900px;padding:120px 24px 120px;background:
+ linear-gradient(180deg,rgba(4,7,13,.30) 0%,rgba(4,7,13,.12) 32%,rgba(4,7,13,.56) 64%,#080d15 100%),
+ radial-gradient(circle at 67% 18%, rgba(215,228,255,.16) 0%, rgba(126,151,191,.08) 18%, transparent 44%),
+ radial-gradient(circle at 78% 66%, rgba(244,117,44,.13) 0%, transparent 22%),
+ linear-gradient(90deg,rgba(4,7,13,.86) 0%,rgba(5,9,16,.55) 26%,rgba(5,9,16,.28) 42%,rgba(5,9,16,.30) 64%,rgba(5,9,16,.88) 100%);
+ overflow:hidden;isolation:isolate}
+.poe-v239-bg{position:absolute;inset:auto;pointer-events:none;z-index:-2}
+.poe-v239-bg-left{left:-4%;bottom:0;width:46%;height:82%;background:
+ linear-gradient(180deg,transparent 0%,rgba(5,8,13,.2) 38%,rgba(3,6,10,.86) 100%),
+ radial-gradient(ellipse at 46% 18%, rgba(120,146,182,.17), transparent 42%),
+ linear-gradient(130deg,rgba(14,27,43,.9) 12%,rgba(6,13,22,.96) 44%,rgba(3,7,12,0) 71%);
+ clip-path:polygon(0% 100%,0% 42%,9% 28%,18% 20%,23% 8%,29% 24%,34% 18%,41% 0%,51% 25%,57% 14%,62% 31%,69% 18%,75% 37%,82% 30%,90% 49%,100% 42%,100% 100%);
+ filter:drop-shadow(0 0 24px rgba(40,69,105,.16))}
+.poe-v239-bg-right{right:-2%;bottom:3%;width:50%;height:84%;background:
+ linear-gradient(180deg,rgba(11,18,30,.15) 0%,rgba(9,14,23,.38) 52%,rgba(5,9,16,.92) 100%),
+ radial-gradient(circle at 60% 72%, rgba(255,118,43,.16), transparent 22%);
+ clip-path:polygon(10% 100%,6% 81%,12% 70%,12% 60%,18% 60%,17% 42%,23% 42%,22% 56%,28% 56%,28% 28%,34% 28%,34% 48%,40% 48%,40% 12%,47% 12%,47% 62%,54% 62%,54% 37%,59% 37%,59% 54%,66% 54%,66% 24%,73% 24%,73% 64%,79% 64%,79% 44%,85% 44%,85% 71%,93% 71%,95% 100%);
+ background-color:rgba(10,15,24,.95);opacity:.98;box-shadow:0 0 0 1px rgba(180,197,220,.06),-14px 0 40px rgba(0,0,0,.34)}
+.poe-v239-bg-right::before,.poe-v239-bg-right::after{content:"";position:absolute;bottom:0;background:rgba(10,15,24,.95);box-shadow:0 0 0 1px rgba(180,197,220,.05)}
+.poe-v239-bg-right::before{left:10%;width:7%;height:41%;clip-path:polygon(0 100%,0 10%,27% 10%,27% 0,73% 0,73% 10%,100% 10%,100% 100%)}
+.poe-v239-bg-right::after{left:31%;width:10%;height:58%;clip-path:polygon(0 100%,0 8%,22% 8%,22% 0,78% 0,78% 8%,100% 8%,100% 100%)}
+.poe-v239-moon{position:absolute;right:12%;top:5%;width:370px;height:370px;border-radius:50%;z-index:-3;background:radial-gradient(circle at 35% 35%, rgba(255,255,255,.20), rgba(202,218,246,.11) 34%, rgba(91,113,143,.04) 60%, transparent 70%);filter:blur(0.4px);opacity:.9}
+.poe-v239-fireglow{position:absolute;right:12%;bottom:20%;width:260px;height:130px;z-index:-1;background:radial-gradient(ellipse at center, rgba(255,130,48,.38) 0%, rgba(204,80,28,.16) 34%, transparent 66%);filter:blur(30px);animation:poeV238FireBreath 7s ease-in-out infinite alternate}
+.poe-v239-embers{opacity:.85}
+.poe-v239-hero-inner{width:min(1420px,100%);display:flex;flex-direction:column;align-items:center}
+.poe-v239-eyebrow{font-size:12px;letter-spacing:.38em}
+.poe-v239-home .poe-v238-hero h1{margin:18px 0 10px!important;font-size:clamp(74px,8vw,150px)!important;line-height:.96!important}
+.poe-v239-home .poe-v238-hero-inner>p{max-width:980px;margin:0 auto 56px!important;font-size:clamp(18px,1.7vw,24px)!important;line-height:1.8!important;color:#f1eee7!important}
+.poe-v239-tool-grid{width:min(1140px,100%);gap:26px;margin-bottom:58px}
+.poe-v239-tool{min-height:184px;padding:28px 34px;border-radius:12px;backdrop-filter:blur(3px)}
+.poe-v239-tool-gold{border-color:rgba(223,183,107,.62);background:linear-gradient(180deg,rgba(24,20,16,.94),rgba(16,14,13,.88));box-shadow:0 20px 44px rgba(0,0,0,.38), inset 0 0 46px rgba(198,124,36,.10), 0 0 0 1px rgba(223,183,107,.15)}
+.poe-v239-tool-blue{border-color:rgba(175,202,233,.56);background:linear-gradient(180deg,rgba(15,23,35,.94),rgba(12,18,28,.88));box-shadow:0 20px 44px rgba(0,0,0,.38), inset 0 0 46px rgba(97,133,191,.09), 0 0 0 1px rgba(175,202,233,.12)}
+.poe-v239-tool:hover,.poe-v239-tool:focus-visible{transform:translateY(-3px) scale(1.005)}
+.poe-v239-tool-emblem{font-size:72px}
+.poe-v239-tool-copy strong{font-size:clamp(48px,4.4vw,68px)!important;letter-spacing:.02em}
+.poe-v239-tool-copy small{font-size:17px!important;color:#d8d1c4}
+.poe-v239-tool-arrow{font-size:29px}
+.poe-v239-link-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;width:min(1180px,100%);padding:28px 0 0;border-top:1px solid rgba(210,184,136,.18)}
+.poe-v239-link-card{display:flex;align-items:center;justify-content:center;gap:18px;min-height:84px;padding:12px 22px;color:#e3d8c4;text-decoration:none;border-left:1px solid rgba(210,184,136,.12)}
+.poe-v239-link-card:first-child{border-left:none}
+.poe-v239-link-card:hover{background:rgba(255,255,255,.02)}
+.poe-v239-link-icon{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;border:1px solid rgba(210,184,136,.25);color:#dcb677;font-size:16px}
+.poe-v239-link-card strong{display:block;margin-bottom:4px;font-size:16px;font-weight:700;color:#f0e8d8}
+.poe-v239-link-card small{display:block;font-size:14px;color:#c9c5bc}
+.poe-v239-section{max-width:1440px;padding:110px clamp(24px,5vw,76px)}
+.poe-v239-section-heading h2{font-size:clamp(36px,3.6vw,54px)!important}
+.poe-v239-market-grid{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(320px,.88fr);gap:26px;align-items:stretch}
+.poe-v239-market-pending{min-height:290px;border-radius:14px;border-color:rgba(181,195,215,.18);background:linear-gradient(135deg,rgba(18,27,41,.92),rgba(8,13,21,.86));box-shadow:0 14px 36px rgba(0,0,0,.22)}
+.poe-v239-market-side{display:grid;grid-template-columns:1fr;gap:16px}
+.poe-v239-market-card{padding:24px 22px;border:1px solid rgba(208,177,121,.18);border-radius:12px;background:linear-gradient(180deg,rgba(16,21,31,.86),rgba(9,14,22,.92));box-shadow:0 10px 24px rgba(0,0,0,.16)}
+.poe-v239-market-card strong{display:block;margin-bottom:10px;color:#f2e6d1;font:600 20px/1.2 Georgia,serif}
+.poe-v239-market-card p{margin:0;color:#b5c0cc;font-size:14px;line-height:1.72}
+.poe-v239-guide-grid{gap:22px}
+.poe-v239-guide-card{min-height:190px;border-radius:12px}
+@media(max-width:1120px){.poe-v239-moon{right:6%;top:6%;width:280px;height:280px}.poe-v239-tool-grid{width:100%}.poe-v239-link-row{width:100%}.poe-v239-market-grid{grid-template-columns:1fr}}
+@media(max-width:900px){.poe-v239-hero{min-height:840px;padding:110px 20px 90px}.poe-v239-bg-left{width:54%}.poe-v239-bg-right{width:58%;height:72%}.poe-v239-moon{width:220px;height:220px}.poe-v239-link-row{grid-template-columns:1fr;gap:10px;padding-top:24px}.poe-v239-link-card{justify-content:flex-start;min-height:72px;border-left:none;border-top:1px solid rgba(210,184,136,.12)}.poe-v239-link-card:first-child{border-top:none}}
+@media(max-width:760px){.poe-v239-home .poe-v239-nav{padding:15px 16px!important}.poe-v239-hero{min-height:0;padding:90px 16px 62px}.poe-v239-bg-left{width:72%;height:75%;left:-14%}.poe-v239-bg-right{width:74%;height:58%;right:-12%;bottom:8%}.poe-v239-moon{right:2%;top:8%;width:150px;height:150px}.poe-v239-home .poe-v238-hero h1{font-size:clamp(60px,13vw,88px)!important}.poe-v239-home .poe-v238-hero-inner>p{font-size:16px!important;margin-bottom:32px!important}.poe-v239-tool-grid{gap:14px;margin-bottom:34px}.poe-v239-tool{min-height:138px;padding:22px 18px}.poe-v239-tool-copy strong{font-size:clamp(36px,9vw,48px)!important}.poe-v239-tool-copy small{font-size:13px!important}.poe-v239-market-pending{min-height:0;padding:24px}.poe-v239-section{padding:74px 16px}}
+
+/* V240 — cinematic homepage with actual generated art assets. Scoped to homepage only. */
+.poe-v240-home{background:#070a10;color:#f0e9df}
+.poe-v240-home .poe-v239-shell{width:100%;max-width:none;overflow:visible;background:#070a10}
+.poe-v240-home .poe-v239-nav{height:70px!important;min-height:70px!important;position:relative!important;z-index:8!important;padding:0 clamp(24px,5.2vw,106px)!important;background:rgba(5,9,15,.98)!important;border-bottom:1px solid rgba(217,175,95,.40)!important}
+.poe-v240-home .poe-v238-brand{font-size:clamp(28px,2.4vw,39px)!important;text-shadow:0 1px 0 #000,0 0 15px rgba(255,187,99,.12)}
+.poe-v240-home .poe-v238-nav-links a{font-size:12px!important;font-weight:800!important;letter-spacing:.16em!important}
+.poe-v240-home .poe-v239-hero-wrap{background:#060a12}
+.poe-v240-home .poe-v239-hero{min-height:880px;padding:112px 24px 92px;background:
+ linear-gradient(180deg,rgba(4,7,12,.12) 0%,rgba(4,7,12,.10) 38%,rgba(4,7,12,.52) 79%,#080c14 100%),
+ url('/images/poe2/cinematic-hero.webp') center 44% / cover no-repeat!important}
+.poe-v240-home .poe-v239-hero::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse 620px 480px at 50% 43%,rgba(3,6,12,.65) 0%,rgba(3,6,12,.48) 53%,transparent 98%)}
+.poe-v240-home .poe-v239-bg,.poe-v240-home .poe-v239-moon{display:none!important}
+.poe-v240-home .poe-v239-fireglow{right:4%;bottom:26%;width:24%;height:17%;background:radial-gradient(ellipse at center,rgba(255,104,27,.35),rgba(240,85,22,.1) 42%,transparent 68%);filter:blur(40px);animation:poeV238FireBreath 5s ease-in-out infinite alternate}
+.poe-v240-home .poe-v239-hero-inner{max-width:1500px;padding-top:4px}
+.poe-v240-home .poe-v239-eyebrow{font-size:13px!important;font-weight:700!important;letter-spacing:.43em!important;text-shadow:0 3px 12px #000}
+.poe-v240-home .poe-v239-hero h1{margin:10px 0 8px!important;font-size:clamp(84px,8vw,145px)!important;line-height:1.06!important;letter-spacing:-.03em!important;text-shadow:0 6px 15px #000,0 0 35px rgba(0,0,0,.76)}
+.poe-v240-home .poe-v239-hero h1 span{color:#edc888;text-shadow:0 6px 16px #000,0 0 17px rgba(230,164,77,.13)}
+.poe-v240-home .poe-v239-hero-inner>p{margin:0 auto 72px!important;max-width:1050px;font-size:clamp(18px,1.6vw,24px)!important;text-shadow:0 3px 12px #000,0 1px 4px #000}
+.poe-v240-home .poe-v239-tool-grid{width:min(1350px,100%)!important;gap:36px!important;margin-bottom:67px}
+.poe-v240-home .poe-v239-tool{isolation:isolate;position:relative;grid-template-columns:108px minmax(0,1fr) 34px;gap:18px;min-height:204px;padding:28px 38px!important;border:1px solid rgba(179,142,91,.82)!important;border-radius:14px!important;clip-path:polygon(18px 0,calc(100% - 18px) 0,100% 18px,100% calc(100% - 18px),calc(100% - 18px) 100%,18px 100%,0 calc(100% - 18px),0 18px);background:linear-gradient(160deg,rgba(255,225,172,.065) 0%,transparent 31%),linear-gradient(116deg,rgba(48,35,25,.94),rgba(24,22,21,.955) 52%,rgba(11,15,21,.96))!important;box-shadow:inset 0 1px 0 rgba(255,223,166,.19),inset 0 -1px 0 rgba(3,5,8,.82),inset 0 0 30px rgba(164,105,40,.045),0 15px 36px rgba(0,0,0,.37)!important;transition:transform .24s ease,border-color .24s ease,box-shadow .24s ease!important}
+.poe-v240-home .poe-v239-tool::before{content:"";position:absolute;inset:4px;z-index:-1;pointer-events:none;border:1px solid rgba(238,198,135,.14);border-radius:8px;clip-path:polygon(15px 0,calc(100% - 15px) 0,100% 15px,100% calc(100% - 15px),calc(100% - 15px) 100%,15px 100%,0 calc(100% - 15px),0 15px);transition:border-color .28s ease}
+.poe-v240-home .poe-v239-tool::after{content:"";position:absolute;inset:auto 20% -4px 20%;height:9px;border-radius:50%;background:#c29159;opacity:.19;filter:blur(12px);pointer-events:none;transition:opacity .28s ease}
+.poe-v240-home .poe-v239-tool-blue{border-color:rgba(134,165,196,.78)!important;background:linear-gradient(160deg,rgba(202,226,255,.065) 0%,transparent 31%),linear-gradient(116deg,rgba(26,39,55,.96),rgba(18,27,40,.955) 52%,rgba(9,15,27,.96))!important;box-shadow:inset 0 1px 0 rgba(208,231,255,.18),inset 0 -1px 0 rgba(3,7,14,.84),inset 0 0 30px rgba(72,120,179,.05),0 15px 36px rgba(0,0,0,.37)!important}
+.poe-v240-home .poe-v239-tool-blue::before{border-color:rgba(175,206,237,.15)}
+.poe-v240-home .poe-v239-tool-blue::after{background:#7eadd2}
+.poe-v240-home .poe-v239-tool:hover::after,.poe-v240-home .poe-v239-tool:focus-visible::after{opacity:.36}
+.poe-v240-home .poe-v239-tool-emblem{color:#f2cc8a!important;display:grid;place-items:center;text-shadow:0 0 16px rgba(255,167,66,.54)}
+.poe-v240-home .poe-v239-tool-blue .poe-v239-tool-emblem{color:#c3def8!important}
+.poe-v240-home .poe-v239-tool-emblem svg{width:76px;height:76px;filter:drop-shadow(0 0 9px currentColor)}
+.poe-v240-home .poe-v239-tool-copy strong{font-size:clamp(50px,4.4vw,72px)!important;line-height:1!important;color:#f5d7a1!important;text-shadow:0 3px 12px #000}
+.poe-v240-home .poe-v239-tool-blue .poe-v239-tool-copy strong{color:#e5efff!important}
+.poe-v240-home .poe-v239-tool-copy small{color:#eee5d9!important;font-size:16px!important;font-weight:500;text-shadow:0 2px 6px #000}
+.poe-v240-home .poe-v239-tool-arrow{color:#f3c986;font-size:33px}
+.poe-v240-home .poe-v239-tool-blue .poe-v239-tool-arrow{color:#c6ddf4}
+.poe-v240-home .poe-v239-link-row{width:min(1310px,100%);border-top:1px solid rgba(232,187,105,.43);padding:17px 0;border-bottom:1px solid rgba(232,187,105,.25);background:linear-gradient(90deg,transparent,rgba(8,12,18,.46) 15%,rgba(8,12,18,.46) 85%,transparent)}
+.poe-v240-home .poe-v239-link-card{min-height:82px}
+.poe-v240-home .poe-v239-link-icon{width:46px;height:46px;border-color:rgba(229,183,106,.48);box-shadow:inset 0 0 10px rgba(212,156,56,.12);font-size:21px}
+.poe-v240-home .poe-v239-link-card strong{font-size:20px}
+.poe-v240-home .poe-v239-link-card small{font-size:14px}
+.poe-v240-home .poe-v239-section{max-width:none;padding:125px max(4.5vw,24px);scroll-margin-top:25px}
+.poe-v240-home .poe-v239-section>*{width:min(1530px,100%);margin-left:auto;margin-right:auto}
+.poe-v240-home .poe-v238-market{background:radial-gradient(ellipse at 4% 70%,rgba(120,59,22,.15),transparent 36%),linear-gradient(180deg,#070b12,#101018 54%,#080b12);border-top:1px solid rgba(216,177,99,.21);border-bottom:1px solid rgba(216,177,99,.25)}
+.poe-v240-home .poe-v239-section-heading{margin-bottom:38px;border-bottom:1px solid rgba(214,172,91,.29);padding-bottom:22px}
+.poe-v240-home .poe-v239-section-heading h2{font-size:clamp(38px,3.3vw,56px)!important;color:#f5e2bc!important;text-shadow:0 3px 13px #000}
+.poe-v240-home .poe-v238-kicker{font-size:12px;color:#dcae6b;letter-spacing:.29em}
+.poe-v240-home .poe-v239-market-grid{grid-template-columns:minmax(0,1fr) minmax(380px,.85fr);gap:26px}
+.poe-v240-home .poe-v239-market-pending{min-height:365px;border:1px solid rgba(207,169,101,.53);border-radius:3px;background:linear-gradient(110deg,rgba(58,33,16,.32),rgba(13,18,28,.94));box-shadow:inset 0 0 40px rgba(132,71,23,.12),0 22px 40px rgba(0,0,0,.3)}
+.poe-v240-home .poe-v239-market-card{border-radius:3px;border-color:rgba(187,156,104,.36);background:linear-gradient(120deg,rgba(21,28,39,.96),rgba(9,12,18,.94))}
+.poe-v240-home .poe-v238-guides{background:linear-gradient(180deg,#090d16,#0f1823 54%,#070b13);border-bottom:1px solid rgba(216,177,99,.23)}
+.poe-v240-home .poe-v239-guide-card{min-height:225px;border-radius:3px;border-color:rgba(205,170,113,.43);background:radial-gradient(ellipse at 80% 20%,rgba(49,73,104,.2),transparent 60%),linear-gradient(150deg,#152030,#0a101a)}
+.poe-v240-home .poe-v239-guide-card strong{font-size:clamp(26px,2.2vw,34px)}
+.poe-v240-home .poe-v239-guide-card:hover{box-shadow:0 0 28px rgba(207,163,93,.14)}
+.poe-v240-home .poe-v238-video-section{max-width:none!important;padding:120px max(3.3vw,20px) 120px!important;background:linear-gradient(180deg,rgba(7,11,18,.48),rgba(7,8,14,.92)),url('/images/poe2/cinematic-media.webp') center center/cover no-repeat!important;border-top:1px solid rgba(228,169,96,.35)}
+.poe-v240-home .poe-v238-video-section>*{width:min(1700px,100%);margin-left:auto;margin-right:auto}
+.poe-v240-home .poe-v238-video-section .poe-v26-video-row{gap:20px!important}
+.poe-v240-home .poe-v238-video-section .poe-v34-video-tile{border:1px solid rgba(229,190,124,.48)!important;border-radius:5px!important;box-shadow:0 20px 36px rgba(0,0,0,.45),0 0 0 1px rgba(255,203,132,.14)}
+.poe-v240-home .poe-v238-video-section .poe-v34-video-tile:hover{border-color:#f0be7b!important}
+@media(max-width:1100px){.poe-v240-home .poe-v239-tool-grid{gap:18px!important}.poe-v240-home .poe-v239-tool{grid-template-columns:65px 1fr 26px;padding:22px!important;min-height:165px}.poe-v240-home .poe-v239-tool-copy strong{font-size:50px!important}.poe-v240-home .poe-v239-tool-emblem svg{width:55px;height:55px}.poe-v240-home .poe-v239-market-grid{grid-template-columns:1fr}}
+@media(max-width:760px){.poe-v240-home .poe-v239-nav{height:auto!important;min-height:74px!important;padding:14px!important}.poe-v240-home .poe-v239-hero{min-height:0;padding:95px 15px 70px;background-position:center;background-size:auto 100%}.poe-v240-home .poe-v239-hero::before{background:rgba(2,5,11,.46)}.poe-v240-home .poe-v239-eyebrow{font-size:9px!important;letter-spacing:.16em!important}.poe-v240-home .poe-v239-hero h1{font-size:clamp(60px,13vw,91px)!important}.poe-v240-home .poe-v239-hero-inner>p{font-size:16px!important;margin-bottom:40px!important}.poe-v240-home .poe-v239-tool-grid{gap:16px!important;margin-bottom:40px}.poe-v240-home .poe-v239-tool{min-height:146px;padding:16px!important;grid-template-columns:56px 1fr 18px;gap:10px}.poe-v240-home .poe-v239-tool-copy strong{font-size:44px!important}.poe-v240-home .poe-v239-tool-copy small{font-size:12px!important}.poe-v240-home .poe-v239-tool-emblem svg{width:48px;height:48px}.poe-v240-home .poe-v239-link-row{padding:0 10px}.poe-v240-home .poe-v239-section{padding:76px 16px}.poe-v240-home .poe-v238-video-section{padding:75px 16px!important}.poe-v240-home .poe-v238-video-section .poe-v26-video-row{gap:12px!important}}
+@media(prefers-reduced-motion:reduce){.poe-v240-home .poe-v239-fireglow{animation:none}}
+/* V240 mobile artwork correction: castle appears instead of centering on the dark seam. */
+@media(max-width:760px){.poe-v240-home .poe-v239-hero{background-position:75% center!important;background-size:auto 100%!important}}
+
+/* V241 — USER-SUPPLIED OFFICIAL POE2 ARTWORK, HOME ONLY.
+   Images remain separate assets. This layer supersedes V240 generated-art rules. */
+.poe-v241-home{background:#07090e}
+.poe-v241-home .poe-v239-hero-wrap{background:#080c13}
+.poe-v241-home .poe-v239-hero{
+  min-height:850px;
+  background-image:
+    linear-gradient(180deg,rgba(3,5,9,.16) 0%,rgba(3,5,9,.21) 29%,rgba(4,6,11,.33) 54%,rgba(4,6,11,.74) 83%,#080b12 100%),
+    url('/images/poe2/official-burning-village.webp')!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  padding:106px 24px 94px;
+}
+.poe-v241-home .poe-v239-hero::before{
+  background:radial-gradient(ellipse 38% 38% at 50% 39%,rgba(2,4,8,.69),rgba(2,4,8,.36) 58%,transparent 100%)!important
+}
+.poe-v241-home .poe-v239-hero-inner{
+  padding:0 16px;
+  width:min(1450px,100%);
+}
+.poe-v241-home .poe-v239-eyebrow{text-shadow:0 3px 10px #050507,0 0 14px #050507}
+.poe-v241-home .poe-v239-hero h1{font-size:clamp(75px,8.6vw,150px)!important;text-shadow:0 4px 13px #000,0 7px 28px #000!important}
+.poe-v241-home .poe-v239-hero-inner>p{margin-bottom:52px!important;text-shadow:0 3px 14px #000,0 2px 4px #000!important}
+.poe-v241-home .poe-v239-tool-grid{width:min(1350px,100%)!important;gap:24px!important}
+.poe-v241-home .poe-v239-tool{min-height:195px;border-width:1px!important}
+.poe-v241-home .poe-v239-tool-blue{border-width:1px!important}
+.poe-v241-home .poe-v239-tool::after{height:9px;opacity:.19}
+.poe-v241-home .poe-v239-fireglow{right:12%;bottom:19%;width:22%;height:13%;opacity:.4}
+.poe-v241-home .poe-v239-link-row{background:linear-gradient(90deg,rgba(4,6,10,.3),rgba(4,6,10,.82) 18%,rgba(4,6,10,.82) 82%,rgba(4,6,10,.3));backdrop-filter:blur(3px)}
+.poe-v241-home .poe-v238-market{
+  position:relative;
+  background-image:linear-gradient(90deg,rgba(6,9,15,.87),rgba(6,9,15,.80) 44%,rgba(6,9,15,.55)),url('/images/poe2/official-adura-caravan.webp')!important;
+  background-size:cover!important;background-position:center 43%!important;
+}
+.poe-v241-home .poe-v238-guides{
+  position:relative;
+  background-image:linear-gradient(90deg,rgba(6,10,17,.86),rgba(6,10,17,.65) 50%,rgba(6,10,17,.84)),url('/images/poe2/official-lightning-gameplay.webp')!important;
+  background-size:cover!important;background-position:center 54%!important;
+}
+.poe-v241-home .poe-v238-video-section{
+  background-image:linear-gradient(180deg,rgba(7,10,15,.56),rgba(7,9,14,.77)),url('/images/poe2/official-prisoner.webp')!important;
+  background-position:center 45%!important;background-size:cover!important;
+}
+.poe-v241-home .poe-v239-market-pending,
+.poe-v241-home .poe-v239-market-card,
+.poe-v241-home .poe-v239-guide-card{
+  backdrop-filter:blur(4px);
+}
+.poe-v241-home .poe-v238-market,.poe-v241-home .poe-v238-guides,.poe-v241-home .poe-v238-video-section{background-attachment:scroll!important}
+@media(max-width:760px){
+ .poe-v241-home .poe-v239-hero{min-height:0;padding:88px 12px 70px;background-position:42% center!important;background-size:cover!important}
+ .poe-v241-home .poe-v239-hero::before{background:rgba(2,5,9,.43)!important}
+ .poe-v241-home .poe-v239-hero-inner{padding:0 4px}
+ .poe-v241-home .poe-v239-hero h1{font-size:clamp(56px,12vw,80px)!important}
+ .poe-v241-home .poe-v239-tool-grid{gap:14px!important}
+ .poe-v241-home .poe-v239-tool{min-height:145px}
+ .poe-v241-home .poe-v238-market{background-position:55% center!important}
+ .poe-v241-home .poe-v238-guides{background-position:45% center!important}
+ .poe-v241-home .poe-v238-video-section{background-position:50% center!important}
+}
+
+
+/* V242: Restore the preserved Canvas FireText flames on both homepage tool labels. */
+.poe-v241-home .poe-v239-tool .poe-v53-fire-root{position:relative;display:inline-block;isolation:isolate;overflow:visible;vertical-align:baseline}
+.poe-v241-home .poe-v239-tool .poe-v53-fire-copy{position:relative;z-index:2;display:inline-block;font:inherit;line-height:1.06;letter-spacing:inherit}
+.poe-v241-home .poe-v239-tool .poe-v53-fire-canvas{position:absolute!important;z-index:1!important;pointer-events:none!important;max-width:none!important;overflow:visible!important}
+.poe-v241-home .poe-v239-tool .poe-v242-fire-warm .poe-v53-fire-copy{background:linear-gradient(180deg,#fffbee,#ffe5ad 28%,#e3b169 62%,#b87933 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.poe-v241-home .poe-v239-tool .poe-v242-fire-blue .poe-v53-fire-copy{background:linear-gradient(180deg,#fff,#e9f4ff 33%,#b9daf8 72%,#80b4e9);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;-webkit-text-stroke:.4px rgba(220,242,255,.28)}
+@media(prefers-reduced-motion:reduce){.poe-v241-home .poe-v239-tool .poe-v53-fire-canvas{display:none!important}}
+
+
+/* V243: User-supplied original POE2 mark replaces only the center hero headline. */
+.poe-v241-home .poe-v239-hero .poe-v243-logo-heading{
+  display:flex!important;align-items:center;justify-content:center;
+  width:100%;margin:4px auto 12px!important;padding:0!important;
+  line-height:0!important;font-size:0!important;
+}
+.poe-v243-accessible-title{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.poe-v241-home .poe-v243-official-logo{
+  display:block;width:min(600px,90vw)!important;height:auto!important;
+  max-width:100%;object-fit:contain;
+  filter:drop-shadow(0 6px 16px rgba(0,0,0,.58));
+}
+/* Keep the two tool buttons equally prominent without forcing the logo to shrink. */
+.poe-v241-home .poe-v239-hero:has(.poe-v243-official-logo){padding-top:56px;padding-bottom:74px}
+.poe-v241-home .poe-v239-hero:has(.poe-v243-official-logo) .poe-v239-hero-inner>p{margin-bottom:30px!important}
+@media(max-width:760px){
+  .poe-v241-home .poe-v243-official-logo{width:min(420px,94vw)!important}
+  .poe-v241-home .poe-v239-hero:has(.poe-v243-official-logo){padding-top:65px;padding-bottom:62px}
+  .poe-v241-home .poe-v239-hero:has(.poe-v243-official-logo) .poe-v239-hero-inner>p{margin-bottom:24px!important}
+}
+
+/* V245: Subtle cinematic environment motion for the homepage hero.
+   Goal: add premium-looking life to the official artwork without adding noisy UI.
+   Effects are limited to background-layer ember drift and localized firelight flicker. */
+.poe-v245-home .poe-v239-hero{overflow:hidden;isolation:isolate}
+.poe-v245-home .poe-v245-fire-flicker,
+.poe-v245-home .poe-v245-embers{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.poe-v245-home .poe-v245-fire-flicker{z-index:-1;mix-blend-mode:screen;opacity:.78}
+.poe-v245-home .poe-v245-fire-flicker::before{content:"";position:absolute;inset:auto;background:radial-gradient(ellipse at center,rgba(255,174,77,.28) 0%,rgba(255,126,36,.22) 22%,rgba(213,66,18,.12) 43%,transparent 72%);filter:blur(18px);animation:poeV245LocalizedFire 4.8s ease-in-out infinite alternate}
+.poe-v245-home .poe-v245-fire-flicker-left::before{left:-3%;bottom:-3%;width:31%;height:28%;transform:rotate(-10deg);animation-duration:4.6s}
+.poe-v245-home .poe-v245-fire-flicker-right::before{right:0%;bottom:4%;width:26%;height:22%;transform:rotate(8deg);animation-duration:5.4s;animation-delay:-1.3s}
+.poe-v245-home .poe-v245-embers{z-index:0;mix-blend-mode:screen;opacity:.95}
+.poe-v245-home .poe-v245-embers i{position:absolute;bottom:-4%;left:var(--x);width:var(--size);height:var(--size);border-radius:50%;background:radial-gradient(circle at 35% 35%,rgba(255,244,212,.95),rgba(255,176,74,.88) 42%,rgba(255,114,32,.72) 65%,rgba(255,114,32,0) 100%);box-shadow:0 0 calc(var(--size) * 3.2) rgba(255,129,45,.34);opacity:0;transform:translate3d(0,0,0) scale(.75);animation:poeV245EmberFloat var(--duration) linear infinite;animation-delay:var(--delay)}
+.poe-v245-home .poe-v245-embers-a i:nth-child(1){--x:4%;--size:5px;--duration:13s;--delay:-2s}
+.poe-v245-home .poe-v245-embers-a i:nth-child(2){--x:9%;--size:6px;--duration:16s;--delay:-9s}
+.poe-v245-home .poe-v245-embers-a i:nth-child(3){--x:14%;--size:4px;--duration:12s;--delay:-5s}
+.poe-v245-home .poe-v245-embers-a i:nth-child(4){--x:20%;--size:7px;--duration:17s;--delay:-13s}
+.poe-v245-home .poe-v245-embers-a i:nth-child(5){--x:26%;--size:4px;--duration:11s;--delay:-1s}
+.poe-v245-home .poe-v245-embers-a i:nth-child(6){--x:32%;--size:6px;--duration:18s;--delay:-7s}
+.poe-v245-home .poe-v245-embers-a i:nth-child(7){--x:38%;--size:4px;--duration:14s;--delay:-10s}
+.poe-v245-home .poe-v245-embers-a i:nth-child(8){--x:46%;--size:5px;--duration:15s;--delay:-4s}
+.poe-v245-home .poe-v245-embers-a i:nth-child(9){--x:53%;--size:3px;--duration:12s;--delay:-8s}
+.poe-v245-home .poe-v245-embers-a i:nth-child(10){--x:61%;--size:5px;--duration:16s;--delay:-12s}
+.poe-v245-home .poe-v245-embers-b i:nth-child(1){--x:68%;--size:3px;--duration:15s;--delay:-3s}
+.poe-v245-home .poe-v245-embers-b i:nth-child(2){--x:74%;--size:4px;--duration:18s;--delay:-11s}
+.poe-v245-home .poe-v245-embers-b i:nth-child(3){--x:79%;--size:5px;--duration:12s;--delay:-6s}
+.poe-v245-home .poe-v245-embers-b i:nth-child(4){--x:84%;--size:3px;--duration:14s;--delay:-14s}
+.poe-v245-home .poe-v245-embers-b i:nth-child(5){--x:88%;--size:5px;--duration:16s;--delay:-5s}
+.poe-v245-home .poe-v245-embers-b i:nth-child(6){--x:92%;--size:4px;--duration:13s;--delay:-9s}
+.poe-v245-home .poe-v245-embers-b i:nth-child(7){--x:95%;--size:6px;--duration:17s;--delay:-2s}
+.poe-v245-home .poe-v245-embers-b i:nth-child(8){--x:98%;--size:3px;--duration:10s;--delay:-7s}
+@keyframes poeV245LocalizedFire{0%{opacity:.38;filter:blur(19px);transform:scale(0.98)}18%{opacity:.52;filter:blur(16px);transform:scale(1.02)}46%{opacity:.42;filter:blur(18px);transform:scale(1)}71%{opacity:.63;filter:blur(14px);transform:scale(1.04)}100%{opacity:.47;filter:blur(18px);transform:scale(1.01)}}
+@keyframes poeV245EmberFloat{0%{opacity:0;transform:translate3d(0,16px,0) scale(.7)}8%{opacity:.95}38%{opacity:.78}65%{opacity:.52}100%{opacity:0;transform:translate3d(calc(var(--size) * 3.5),-410px,0) scale(1.08)}}
+@media(max-width:760px){.poe-v245-home .poe-v245-fire-flicker-left::before{left:-10%;bottom:-2%;width:52%;height:28%}.poe-v245-home .poe-v245-fire-flicker-right::before{right:-4%;bottom:6%;width:41%;height:22%}.poe-v245-home .poe-v245-embers{opacity:.78}.poe-v245-home .poe-v245-embers i{box-shadow:0 0 calc(var(--size) * 2.4) rgba(255,129,45,.28)}}
+@media(prefers-reduced-motion:reduce){.poe-v245-home .poe-v245-fire-flicker::before,.poe-v245-home .poe-v245-embers i{animation:none!important;opacity:.45}}
+
+/* V246 · Fine material and light interaction: no new ornament or animation engine. */
+.poe-v241-home .poe-v239-tool:hover,.poe-v241-home .poe-v239-tool:focus-visible{transform:translateY(-2px)!important;box-shadow:inset 0 1px 0 rgba(255,234,194,.24),inset 0 -1px 0 rgba(3,5,8,.82),inset 0 0 34px rgba(156,109,55,.07),0 18px 38px rgba(0,0,0,.42)!important;border-color:rgba(218,182,128,.95)!important}
+.poe-v241-home .poe-v239-tool-blue:hover,.poe-v241-home .poe-v239-tool-blue:focus-visible{box-shadow:inset 0 1px 0 rgba(225,240,255,.24),inset 0 -1px 0 rgba(3,7,14,.84),inset 0 0 34px rgba(100,150,202,.08),0 18px 38px rgba(0,0,0,.42)!important;border-color:rgba(166,202,233,.95)!important}
+.poe-v241-home .poe-v239-tool:hover::before,.poe-v241-home .poe-v239-tool:focus-visible::before{border-color:rgba(247,216,173,.23)}
+.poe-v241-home .poe-v239-tool-blue:hover::before,.poe-v241-home .poe-v239-tool-blue:focus-visible::before{border-color:rgba(190,219,249,.23)}
+@media(prefers-reduced-motion:reduce){.poe-v241-home .poe-v239-tool{transition:none!important}}
+
+
+/* V247: Mobile entry is never blocked. Keep the established desktop editor intact,
+   expose it in a contained horizontally scrollable viewport on small screens. */
+.filter-v247-mobile-intro{display:none}
+.filter-v247-scroll{display:contents}
+@media(max-width:980px){
+  .filter-v2-page{overflow-x:clip}
+  .filter-v2-page .filter-v2-topbar{display:flex;position:relative;height:auto;min-height:58px;padding:13px 16px;flex-wrap:wrap;gap:12px}
+  .filter-v2-page .filter-v2-topbar nav{flex-wrap:wrap;gap:12px}
+  .filter-v2-page .filter-v2-topbar nav a{font-size:11px}
+  .filter-v247-mobile-intro{display:block;padding:24px 18px 19px;border-bottom:1px solid rgba(208,177,121,.19);background:linear-gradient(145deg,rgba(42,30,19,.68),rgba(10,13,19,.9))}
+  .filter-v247-mobile-intro strong{font-size:13px;color:#e5c795;letter-spacing:.1em}
+  .filter-v247-mobile-intro p{margin:11px 0 17px;color:#d0c7b8;line-height:1.7;font-size:14px;max-width:680px}
+  .filter-v247-mobile-intro nav{display:flex;flex-wrap:wrap;gap:10px 18px}
+  .filter-v247-mobile-intro nav a{font-size:13px;color:#e6c88e;text-decoration:underline;text-underline-offset:4px}
+  .filter-v247-scroll{display:block;max-width:100vw;overflow-x:auto;overflow-y:visible;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-color:#977955 #11141a;scrollbar-width:thin}
+  .filter-v247-scroll .filter-v2-shell{display:grid;width:1180px;min-height:750px;margin:0;padding-top:0;grid-template-columns:200px minmax(710px,1fr) 270px;border-left:none;border-right:none}
+  .filter-v247-scroll .filter-v2-sidebar,.filter-v247-scroll .filter-v2-preview{min-height:700px}
+}
+
+
+/* V248 · Three-column FILTER | official logo | POB, with clean burning-castle art.
+   Preserve existing FireText Canvas animation, nav/content sections, and V245 ambient embers. */
+.poe-v248-home .poe-v239-hero{
+  min-height:780px;
+  background-image:linear-gradient(180deg,rgba(3,5,9,.13) 0%,rgba(3,5,9,.06) 38%,rgba(3,5,9,.48) 82%,#080b12 100%),url('/images/poe2/burning-castle-hero-v248.webp')!important;
+  background-position:center center!important;background-size:cover!important;
+  padding:72px clamp(16px,2.6vw,48px) 74px!important;
+}
+.poe-v248-home .poe-v239-hero::before{background:radial-gradient(ellipse 33% 42% at 50% 39%,rgba(2,3,7,.59),rgba(2,3,7,.28) 56%,transparent 100%)!important}
+.poe-v248-home .poe-v239-bg,.poe-v248-home .poe-v239-moon{display:none!important}
+.poe-v248-home .poe-v239-hero-inner{width:min(1650px,100%);max-width:none;padding:0!important}
+.poe-v248-home .poe-v239-eyebrow{margin:0 auto 18px;text-align:center}
+.poe-v248-home .poe-v248-triad{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.28fr) minmax(0,1fr);gap:clamp(12px,1.8vw,30px);align-items:center;width:min(1610px,100%);margin:0 auto 14px}
+.poe-v248-home .poe-v248-triad .poe-v243-logo-heading{margin:0!important;padding:0!important;min-width:0}
+.poe-v248-home .poe-v248-triad .poe-v243-official-logo{width:min(100%,550px)!important;max-width:100%!important;height:auto!important;filter:drop-shadow(0 8px 25px rgba(0,0,0,.62))}
+.poe-v248-home .poe-v248-triad .poe-v239-tool{min-width:0;min-height:175px;padding:24px 24px!important;grid-template-columns:56px minmax(0,1fr) 25px;gap:12px;align-self:center}
+.poe-v248-home .poe-v248-triad .poe-v239-tool-emblem svg{width:52px;height:52px}
+.poe-v248-home .poe-v248-triad .poe-v239-tool-copy strong{font-size:clamp(34px,3vw,56px)!important}
+.poe-v248-home .poe-v248-triad .poe-v239-tool-copy small{font-size:clamp(11px,.84vw,14px)!important}
+.poe-v248-home .poe-v239-hero-inner>p{margin:0 auto 30px!important;text-align:center;max-width:850px}
+.poe-v248-home .poe-v239-link-row{margin-top:18px}
+@media(max-width:1100px){
+  .poe-v248-home .poe-v248-triad{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr) minmax(0,1fr);gap:12px}
+  .poe-v248-home .poe-v248-triad .poe-v239-tool{grid-template-columns:1fr 20px;grid-template-rows:auto auto;min-height:155px;padding:18px 14px!important}
+  .poe-v248-home .poe-v248-triad .poe-v239-tool-emblem{display:none}
+  .poe-v248-home .poe-v248-triad .poe-v239-tool-copy strong{font-size:clamp(30px,3.4vw,44px)!important}
+  .poe-v248-home .poe-v248-triad .poe-v239-tool-copy small{font-size:11px!important}
+}
+@media(max-width:760px){
+  .poe-v248-home .poe-v239-hero{min-height:0!important;padding:50px 14px 64px!important;background-position:61% center!important}
+  .poe-v248-home .poe-v239-hero::before{background:rgba(3,5,10,.29)!important}
+  .poe-v248-home .poe-v239-eyebrow{font-size:9px!important;letter-spacing:.13em!important;margin-bottom:16px}
+  .poe-v248-home .poe-v248-triad{display:flex;flex-direction:column;gap:13px;margin-bottom:14px}
+  .poe-v248-home .poe-v248-triad .poe-v243-logo-heading{order:0;width:100%}
+  .poe-v248-home .poe-v248-triad .poe-v243-official-logo{width:min(380px,86vw)!important;margin:auto}
+  .poe-v248-home .poe-v248-triad .poe-v239-tool{order:1;width:100%;max-width:480px;min-height:132px;padding:17px!important;display:grid;grid-template-columns:42px minmax(0,1fr) 20px;gap:10px}
+  .poe-v248-home .poe-v248-triad .poe-v239-tool-emblem{display:block}
+  .poe-v248-home .poe-v248-triad .poe-v239-tool-emblem svg{width:39px;height:39px}
+  .poe-v248-home .poe-v248-triad .poe-v239-tool-copy strong{font-size:40px!important}
+  .poe-v248-home .poe-v248-triad .poe-v239-tool-copy small{font-size:11px!important}
+  .poe-v248-home .poe-v239-hero-inner>p{font-size:15px!important;margin-bottom:24px!important}
+}
+@media(prefers-reduced-motion:reduce){.poe-v248-home .poe-v239-hero{background-attachment:scroll}}
+
+
+/* V249: Clearly separated brand pair on one stage, followed by action-first tools.
+   Keep the original POE2 image, canvas FireText, background art and existing routes. */
+.poe-v249-home .poe-v239-hero{padding:42px clamp(18px,3.2vw,54px) 78px!important}
+.poe-v249-home .poe-v239-eyebrow{margin-bottom:4px!important}
+.poe-v249-home .poe-v249-brand-lockup{display:flex;align-items:center;justify-content:center;gap:clamp(24px,3.2vw,55px);width:min(100%,1040px);margin:0 auto 6px;position:relative}
+.poe-v249-home .poe-v249-game-logo{width:min(45%,450px)!important;flex:0 1 450px;min-width:0;display:flex;align-items:center;justify-content:center;margin:0!important;line-height:0}
+.poe-v249-home .poe-v249-game-logo .poe-v243-official-logo{display:block;width:100%!important;height:auto!important;max-width:440px!important;object-fit:contain;filter:drop-shadow(0 12px 24px rgba(0,0,0,.68))}
+.poe-v249-home .poe-v249-lockup-divider{flex:0 0 1px;align-self:center;height:115px;background:linear-gradient(180deg,transparent,rgba(208,171,115,.65) 24%,rgba(224,189,137,.47) 74%,transparent);box-shadow:0 0 12px rgba(228,154,68,.12)}
+.poe-v249-home .poe-v249-fix-logo{flex:0 1 385px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;min-width:0;text-align:left;text-shadow:0 4px 12px #000}
+.poe-v249-home .poe-v249-fix-logo-kicker{color:#d8b88b;font-size:11px;font-weight:700;letter-spacing:.24em}
+.poe-v249-home .poe-v249-fix-logo strong{display:flex;gap:15px;align-items:baseline;font-size:clamp(38px,4.6vw,68px);font-family:Georgia,'Times New Roman',serif;font-weight:700;letter-spacing:.025em;line-height:1.03;white-space:nowrap;color:#f5ead9}
+.poe-v249-home .poe-v249-fix-logo strong span:last-child{color:#d7aa6d;text-shadow:0 3px 13px rgba(0,0,0,.9),0 0 30px rgba(235,155,73,.18)}
+.poe-v249-home .poe-v249-fix-logo-sub{color:#c6c1bc;font-size:11px;letter-spacing:.23em;font-weight:600}
+.poe-v249-home .poe-v239-hero-inner>p{margin:6px auto 27px!important;font-size:clamp(16px,1.2vw,19px)!important}
+.poe-v249-home .poe-v249-tool-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:clamp(16px,2.2vw,32px);width:min(1250px,100%);margin:0 auto 34px}
+.poe-v249-home .poe-v249-tool-grid .poe-v239-tool{display:grid;grid-template-columns:76px minmax(0,1fr) 22px;gap:20px;min-width:0;min-height:214px;padding:24px clamp(20px,2.2vw,36px)!important;align-items:center;transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
+.poe-v249-home .poe-v249-tool-grid .poe-v239-tool-emblem{display:grid}
+.poe-v249-home .poe-v249-tool-grid .poe-v239-tool-emblem svg{width:65px;height:65px}
+.poe-v249-home .poe-v249-tool-grid .poe-v239-tool-copy{display:flex;flex-direction:column;align-items:flex-start;min-width:0;gap:8px}
+.poe-v249-home .poe-v249-tool-grid .poe-v239-tool-copy strong{font-size:clamp(48px,4.7vw,68px)!important;line-height:1.03}
+.poe-v249-home .poe-v249-tool-grid .poe-v239-tool-copy small{font-size:clamp(12px,1vw,15px)!important;color:#dcd5ca!important;line-height:1.45}
+.poe-v249-home .poe-v249-tool-action{align-self:flex-start;display:inline-flex;align-items:center;gap:24px;margin-top:6px;padding:9px 14px 9px 17px;border:1px solid rgba(229,183,113,.5);background:linear-gradient(110deg,rgba(162,109,44,.46),rgba(90,56,24,.42));border-radius:3px;color:#fff1d6;font-weight:700;letter-spacing:.035em;font-size:14px;box-shadow:inset 0 1px 0 rgba(255,229,172,.12);transition:background .2s ease,transform .2s ease,border-color .2s ease}
+.poe-v249-home .poe-v249-tool-action span{font-size:17px;line-height:1}
+.poe-v249-home .poe-v239-tool-blue .poe-v249-tool-action{border-color:rgba(142,195,234,.52);background:linear-gradient(110deg,rgba(54,107,163,.48),rgba(28,63,104,.46));color:#e4f4ff}
+.poe-v249-home .poe-v249-tool-grid .poe-v239-tool-arrow{align-self:center;opacity:.5;font-size:22px}
+.poe-v249-home .poe-v249-tool-grid .poe-v239-tool:hover .poe-v249-tool-action,.poe-v249-home .poe-v249-tool-grid .poe-v239-tool:focus-visible .poe-v249-tool-action{transform:translateX(3px);background:linear-gradient(110deg,rgba(187,121,47,.74),rgba(112,68,26,.64));border-color:rgba(249,207,145,.86)}
+.poe-v249-home .poe-v249-tool-grid .poe-v239-tool-blue:hover .poe-v249-tool-action,.poe-v249-home .poe-v249-tool-grid .poe-v239-tool-blue:focus-visible .poe-v249-tool-action{background:linear-gradient(110deg,rgba(65,128,191,.7),rgba(30,76,126,.62));border-color:rgba(176,218,252,.9)}
+.poe-v249-home .poe-v239-link-row{margin-top:0}
+@media(max-width:900px){
+  .poe-v249-home .poe-v249-brand-lockup{gap:18px}
+  .poe-v249-home .poe-v249-fix-logo strong{font-size:clamp(30px,4.7vw,45px);gap:9px}
+  .poe-v249-home .poe-v249-fix-logo-kicker,.poe-v249-home .poe-v249-fix-logo-sub{font-size:9px;letter-spacing:.13em}
+  .poe-v249-home .poe-v249-tool-grid .poe-v239-tool{grid-template-columns:50px minmax(0,1fr);gap:13px;min-height:195px;padding:18px!important}
+  .poe-v249-home .poe-v249-tool-grid .poe-v239-tool-emblem svg{width:47px;height:47px}
+  .poe-v249-home .poe-v249-tool-grid .poe-v239-tool-copy strong{font-size:clamp(38px,5vw,54px)!important}
+  .poe-v249-home .poe-v249-tool-grid .poe-v239-tool-arrow{display:none}
+}
+@media(max-width:760px){
+  .poe-v249-home .poe-v239-hero{padding:46px 13px 58px!important}
+  .poe-v249-home .poe-v249-brand-lockup{display:flex;flex-direction:column;gap:0;margin-bottom:8px;width:100%}
+  .poe-v249-home .poe-v249-game-logo{flex:none;width:min(310px,75vw)!important}
+  .poe-v249-home .poe-v249-game-logo .poe-v243-official-logo{width:100%!important}
+  .poe-v249-home .poe-v249-lockup-divider{flex:none;width:min(220px,62vw);height:1px;margin:-7px 0 13px;background:linear-gradient(90deg,transparent,rgba(220,186,129,.66),transparent)}
+  .poe-v249-home .poe-v249-fix-logo{flex:none;align-items:center;text-align:center;gap:4px}
+  .poe-v249-home .poe-v249-fix-logo strong{font-size:clamp(34px,9vw,47px)}
+  .poe-v249-home .poe-v249-fix-logo-kicker{font-size:9px}
+  .poe-v249-home .poe-v249-fix-logo-sub{font-size:9px}
+  .poe-v249-home .poe-v239-hero-inner>p{font-size:14px!important;margin:20px auto 22px!important}
+  .poe-v249-home .poe-v249-tool-grid{grid-template-columns:1fr;gap:13px;margin-bottom:29px}
+  .poe-v249-home .poe-v249-tool-grid .poe-v239-tool{width:100%;max-width:530px;justify-self:center;min-height:154px;grid-template-columns:48px minmax(0,1fr);padding:16px 18px!important}
+  .poe-v249-home .poe-v249-tool-grid .poe-v239-tool-copy{gap:6px}
+  .poe-v249-home .poe-v249-tool-grid .poe-v239-tool-copy strong{font-size:clamp(41px,11vw,58px)!important}
+  .poe-v249-home .poe-v249-tool-grid .poe-v239-tool-copy small{font-size:11px!important}
+  .poe-v249-home .poe-v249-tool-action{font-size:12px;gap:18px;padding:8px 12px;margin-top:3px}
+}
+@media(prefers-reduced-motion:reduce){.poe-v249-home .poe-v249-tool-action{transition:none!important}}
+
+/* V250: cohesive cinematic editorial redesign of the *homepage only*.
+   Existing FILTER/POB FireText Canvas, routes, original game logo, and item tools remain untouched. */
+.poe-v250-home{--v250-gold:#c8a477;--v250-ivory:#eee4d5;--v250-muted:#b7aa99;--v250-blue:#a4c8ee;background:#080a0f;color:var(--v250-ivory)}
+.poe-v250-home .poe-v239-nav{min-height:65px!important;padding:13px max(24px,4vw)!important;border-bottom:1px solid rgba(204,163,103,.26)!important;background:linear-gradient(180deg,#090b10 0%,rgba(9,11,16,.97) 100%)!important}
+.poe-v250-home .poe-v238-brand{font-family:Georgia,'Times New Roman',serif!important;font-weight:700;letter-spacing:.035em}
+.poe-v250-home .poe-v238-nav-links{gap:clamp(15px,2vw,33px)}
+.poe-v250-home .poe-v238-nav-links a{font-family:Arial,sans-serif;font-weight:650!important;font-size:11px!important;letter-spacing:.17em!important;transition:color .18s}
+.poe-v250-home .poe-v238-nav-links a:hover,.poe-v250-home .poe-v238-nav-links a:focus-visible{color:#e1b874!important}
+.poe-v250-home .poe-v239-hero{min-height:760px!important;padding:38px clamp(16px,3.2vw,52px) 74px!important;background-image:linear-gradient(180deg,rgba(6,6,10,.25) 0%,rgba(6,6,10,.09) 36%,rgba(7,9,14,.53) 73%,#090c12 100%),url('/images/poe2/burning-castle-hero-v248.webp')!important}
+.poe-v250-home .poe-v239-hero::before{background:radial-gradient(ellipse 45% 40% at 52% 33%,rgba(5,6,9,.65),rgba(5,6,9,.24) 60%,transparent 100%)!important}
+.poe-v250-home .poe-v239-hero-inner{width:min(1510px,100%);margin:auto!important}
+.poe-v250-home .poe-v239-eyebrow{font-family:Arial,sans-serif;font-size:10px!important;font-weight:600!important;letter-spacing:.32em!important;color:#e7c597!important;margin-bottom:11px!important}
+.poe-v250-home .poe-v249-brand-lockup{width:min(1040px,100%);gap:38px;margin-bottom:7px;filter:drop-shadow(0 14px 20px rgba(0,0,0,.28))}
+.poe-v250-home .poe-v249-game-logo{flex:0 1 470px;width:47%!important}
+.poe-v250-home .poe-v249-game-logo .poe-v243-official-logo{max-width:465px!important}
+.poe-v250-home .poe-v249-lockup-divider{height:96px;background:linear-gradient(180deg,transparent,rgba(214,177,120,.50) 42%,rgba(214,177,120,.28),transparent)}
+.poe-v250-home .poe-v249-fix-logo{flex:0 1 380px;gap:9px}
+.poe-v250-home .poe-v249-fix-logo-kicker{font-family:Arial,sans-serif;font-size:10px;letter-spacing:.21em;color:#e4bc84}
+.poe-v250-home .poe-v249-fix-logo strong{font-family:Georgia,'Times New Roman',serif;letter-spacing:-.035em;font-weight:700;font-size:clamp(44px,4.5vw,72px);gap:13px;color:#f1e3d0}
+.poe-v250-home .poe-v249-fix-logo strong span:last-child{color:#d4ae77;text-shadow:0 3px 18px rgba(0,0,0,.65)}
+.poe-v250-home .poe-v249-fix-logo-sub{font-size:10px;letter-spacing:.25em;color:#d5c8b7}
+/* Tool portals: strong artwork, cut-metal silhouette, calm typography, and full-card clickable area. */
+.poe-v250-home .poe-v249-tool-grid{width:min(1280px,100%);gap:24px;margin-bottom:40px;align-items:stretch}
+.poe-v250-home .poe-v249-tool-grid .poe-v239-tool{--v250-edge:rgba(219,167,97,.66);--v250-light:#e4b77a;position:relative;isolation:isolate;min-height:252px!important;display:grid;grid-template-columns:88px minmax(0,1fr) 17px;gap:22px;align-items:center;padding:29px 30px!important;overflow:hidden;border:0!important;border-radius:0!important;clip-path:polygon(17px 0,calc(100% - 17px) 0,100% 17px,100% calc(100% - 17px),calc(100% - 17px) 100%,17px 100%,0 calc(100% - 17px),0 17px);background:linear-gradient(100deg,rgba(24,17,13,.94) 0%,rgba(18,15,14,.87) 44%,rgba(13,12,13,.54) 100%),url('/images/poe2/v250-filter-art.webp') right center/cover no-repeat!important;box-shadow:none!important;transform:none;transition:filter .28s ease,transform .28s ease!important;text-decoration:none!important}
+.poe-v250-home .poe-v249-tool-grid .poe-v239-tool-blue{--v250-edge:rgba(139,191,232,.65);--v250-light:#9bd5ff;background:linear-gradient(100deg,rgba(10,20,35,.96) 0%,rgba(10,19,34,.88) 46%,rgba(9,16,28,.55) 100%),url('/images/poe2/v250-pob-art.webp') right center/cover no-repeat!important}
+.poe-v250-home .poe-v249-tool-grid .poe-v239-tool::before{content:'';z-index:0;position:absolute;inset:0;border-radius:0!important;clip-path:inherit;background:linear-gradient(155deg,rgba(245,202,133,.23),transparent 32%,rgba(0,0,0,.12) 70%,rgba(186,129,66,.1));border:0!important;box-shadow:inset 0 0 0 1px var(--v250-edge),inset 0 0 0 5px rgba(5,8,13,.40),inset 0 0 0 6px rgba(202,153,94,.22),inset 0 -16px 35px rgba(0,0,0,.28);pointer-events:none}
+.poe-v250-home .poe-v249-tool-grid .poe-v239-tool-blue::before{background:linear-gradient(155deg,rgba(146,200,255,.21),transparent 32%,rgba(0,0,0,.12) 70%,rgba(87,157,228,.08));box-shadow:inset 0 0 0 1px var(--v250-edge),inset 0 0 0 5px rgba(5,8,13,.46),inset 0 0 0 6px rgba(139,191,232,.20),inset 0 -16px 35px rgba(0,0,0,.27)}
+.poe-v250-home .poe-v249-tool-grid .poe-v239-tool::after{content:'';position:absolute;left:17px;right:17px;bottom:0;height:2px;inset:auto 17px 0 17px!important;width:auto;border-radius:0;background:linear-gradient(90deg,transparent,var(--v250-light),transparent)!important;box-shadow:0 0 14px var(--v250-light);opacity:.48;filter:none;pointer-events:none;transition:opacity .25s}
+.poe-v250-home .poe-v249-tool-grid .poe-v239-tool:hover,.poe-v250-home .poe-v249-tool-grid .poe-v239-tool:focus-visible{filter:brightness(1.13);transform:translateY(-5px)!important}
+.poe-v250-home .poe-v249-tool-grid .poe-v239-tool:hover::after,.poe-v250-home .poe-v249-tool-grid .poe-v239-tool:focus-visible::after{opacity:.9}
+.poe-v250-home .poe-v249-tool-grid .poe-v239-tool:focus-visible{outline:2px solid #f7cf97;outline-offset:4px}
+.poe-v250-home .poe-v250-tool-seal{position:relative;z-index:1;display:grid;place-items:center;width:82px;height:92px;color:#e0b87b;filter:drop-shadow(0 0 12px rgba(245,173,81,.17))}
+.poe-v250-home .poe-v250-tool-seal svg{width:76px;height:76px}
+.poe-v250-home .poe-v239-tool-blue .poe-v250-tool-seal{color:#b8dafa;filter:drop-shadow(0 0 12px rgba(109,183,247,.20))}
+.poe-v250-home .poe-v249-tool-grid .poe-v239-tool-copy{position:relative;z-index:2;align-items:flex-start;gap:8px}
+.poe-v250-home .poe-v250-tool-eyebrow{color:#d3a974;font-size:10px;font-family:Arial,sans-serif;font-weight:650;letter-spacing:.21em;line-height:1.4}
+.poe-v250-home .poe-v239-tool-blue .poe-v250-tool-eyebrow{color:#a9c9e5}
+.poe-v250-home .poe-v249-tool-grid .poe-v239-tool-copy strong{font-family:Georgia,'Times New Roman',serif;line-height:1!important;font-size:clamp(53px,4.2vw,68px)!important;letter-spacing:.025em;white-space:nowrap}
+.poe-v250-home .poe-v249-tool-grid .poe-v239-tool-copy small{font-family:Arial,'Malgun Gothic',sans-serif;font-size:14px!important;line-height:1.5;color:#f0e5d7!important;font-weight:400}
+.poe-v250-home .poe-v249-tool-grid .poe-v239-tool-blue .poe-v239-tool-copy small{color:#e0ecfa!important}
+.poe-v250-home .poe-v249-tool-action{display:inline-flex;align-items:center;justify-content:space-between;gap:24px;margin-top:12px;padding:8px 0 7px!important;background:transparent!important;border:0!important;border-radius:0;box-shadow:none!important;border-bottom:1px solid rgba(229,181,109,.55)!important;font-size:15px!important;font-family:Arial,'Malgun Gothic',sans-serif;letter-spacing:.045em;color:#f5d6a2!important;font-weight:650;transition:gap .2s ease,color .2s ease!important}
+.poe-v250-home .poe-v239-tool-blue .poe-v249-tool-action{border-bottom-color:rgba(151,204,245,.5)!important;color:#d0e8fa!important}
+.poe-v250-home .poe-v249-tool-grid .poe-v239-tool:hover .poe-v249-tool-action,.poe-v250-home .poe-v249-tool-grid .poe-v239-tool:focus-visible .poe-v249-tool-action{gap:35px;background:transparent!important;border-color:var(--v250-light)!important;transform:none!important}
+.poe-v250-home .poe-v250-corner-mark{position:relative;z-index:2;align-self:start;margin-top:4px;color:var(--v250-light);font-size:14px;opacity:.67}
+/* secondary links become precise editorial navigation instead of three decorative buttons */
+/* content: consistent editorial eyebrow, title, dividers, surfaces and hierarchy */
+.poe-v250-home .poe-v250-content-section{padding-top:105px!important;padding-bottom:111px!important}
+.poe-v250-home .poe-v239-section-heading{display:flex;align-items:flex-end;gap:24px;min-height:95px;padding-bottom:25px;margin-bottom:40px!important;border-bottom:1px solid rgba(210,172,110,.37)!important}
+.poe-v250-home .poe-v238-kicker{font-family:Arial,sans-serif;font-size:10px!important;letter-spacing:.3em!important;font-weight:700;color:#d6b17d!important}
+.poe-v250-home .poe-v239-section-heading h2{font-family:Georgia,'Times New Roman',serif;font-size:clamp(40px,4vw,62px)!important;line-height:1.08!important;letter-spacing:-.025em;color:#f2e4ce!important;margin-top:12px;text-shadow:0 3px 14px rgba(0,0,0,.66)}
+.poe-v250-home .poe-v239-section-heading p,.poe-v250-home .poe-v239-section-heading a{font-size:14px!important;color:#d5cbbb!important;line-height:1.65!important}
+.poe-v250-home .poe-v239-market-pending{border-radius:0!important;border:1px solid rgba(213,170,111,.33)!important;background:linear-gradient(120deg,rgba(24,23,25,.83),rgba(7,11,19,.76))!important;box-shadow:inset 0 1px 0 rgba(244,204,151,.1),0 18px 42px rgba(0,0,0,.31)!important}
+.poe-v250-home .poe-v239-market-card{border-radius:0!important;border:1px solid rgba(204,165,112,.23)!important;background:linear-gradient(120deg,rgba(19,23,31,.89),rgba(9,13,20,.83))!important;transition:border-color .2s,background .2s}
+.poe-v250-home .poe-v239-market-card:hover{border-color:rgba(214,175,113,.52)!important}
+.poe-v250-home .poe-v239-market-card strong,.poe-v250-home .poe-v239-market-pending strong{font-family:Georgia,'Malgun Gothic',serif;color:#f0dfc6!important;font-size:20px}
+.poe-v250-home .poe-v239-market-card p,.poe-v250-home .poe-v239-market-pending p{color:#d3c8bb!important;line-height:1.75}
+.poe-v250-home .poe-v239-guide-card{border-radius:0!important;border:1px solid rgba(212,171,118,.35)!important;background:linear-gradient(120deg,rgba(19,27,39,.84),rgba(10,15,23,.8))!important;min-height:205px;transition:transform .25s,border-color .25s}
+.poe-v250-home .poe-v239-guide-card:hover{transform:translateY(-4px);border-color:#d9b180!important}
+.poe-v250-home .poe-v239-guide-card strong{font-family:Georgia,'Times New Roman',serif;letter-spacing:.025em!important;font-size:clamp(23px,2.4vw,36px)!important}
+.poe-v250-home .poe-v239-guide-card small{font-size:14px!important;color:#d3ccbe}
+.poe-v250-home .poe-v238-video-section .poe-v34-video-tile{border-radius:0!important;border:1px solid rgba(218,175,112,.32)!important;transition:border-color .2s,transform .25s}
+.poe-v250-home .poe-v238-video-section .poe-v34-video-tile:hover{border-color:#e7bd7e!important;transform:translateY(-3px)}
+.poe-v250-home .poe-v238-footer{border-top:1px solid rgba(206,166,101,.27)!important;background:#090b10!important}
+@media(max-width:1100px){
+ .poe-v250-home .poe-v249-tool-grid{gap:16px}
+ .poe-v250-home .poe-v249-tool-grid .poe-v239-tool{grid-template-columns:64px minmax(0,1fr);gap:16px;min-height:245px!important;padding:24px 20px!important}
+ .poe-v250-home .poe-v250-tool-seal{width:60px;height:66px}
+ .poe-v250-home .poe-v250-tool-seal svg{width:58px;height:58px}
+ .poe-v250-home .poe-v250-corner-mark{display:none}
+ .poe-v250-home .poe-v249-tool-grid .poe-v239-tool-copy strong{font-size:clamp(44px,5vw,62px)!important}
+}
+@media(max-width:760px){
+ .poe-v250-home .poe-v239-nav{min-height:66px!important;padding:13px 14px!important}
+ .poe-v250-home .poe-v239-hero{padding:44px 14px 58px!important;background-position:63% center!important}
+ .poe-v250-home .poe-v239-eyebrow{font-size:9px!important;letter-spacing:.14em!important;max-width:92vw;line-height:1.7}
+ .poe-v250-home .poe-v249-brand-lockup{gap:0;margin-bottom:14px}
+ .poe-v250-home .poe-v249-game-logo{width:min(295px,75vw)!important;flex:none}
+ .poe-v250-home .poe-v249-lockup-divider{width:170px;height:1px;margin:-5px 0 14px}
+ .poe-v250-home .poe-v249-fix-logo{align-items:center;text-align:center;gap:5px}
+ .poe-v250-home .poe-v249-fix-logo strong{font-size:clamp(37px,10vw,48px)!important}
+ .poe-v250-home .poe-v249-tool-grid{grid-template-columns:1fr;gap:15px;margin-bottom:27px}
+ .poe-v250-home .poe-v249-tool-grid .poe-v239-tool{grid-template-columns:54px minmax(0,1fr);min-height:196px!important;width:100%;max-width:510px;padding:19px 17px!important;gap:13px}
+ .poe-v250-home .poe-v250-tool-seal{width:52px;height:60px}
+ .poe-v250-home .poe-v250-tool-seal svg{width:50px;height:50px}
+ .poe-v250-home .poe-v250-tool-eyebrow{font-size:9px;letter-spacing:.1em}
+ .poe-v250-home .poe-v249-tool-grid .poe-v239-tool-copy strong{font-size:clamp(42px,11vw,57px)!important}
+ .poe-v250-home .poe-v249-tool-grid .poe-v239-tool-copy small{font-size:12px!important}
+ .poe-v250-home .poe-v249-tool-action{margin-top:5px;font-size:13px!important}
+ .poe-v250-home .poe-v250-content-section{padding-top:75px!important;padding-bottom:80px!important}
+ .poe-v250-home .poe-v239-section-heading{display:block;min-height:0;margin-bottom:27px!important}
+ .poe-v250-home .poe-v239-section-heading h2{font-size:36px!important}
+}
+@media(prefers-reduced-motion:reduce){.poe-v250-home .poe-v249-tool-grid .poe-v239-tool,.poe-v250-home .poe-v239-guide-card,.poe-v250-home .poe-v238-video-section .poe-v34-video-tile{transition:none!important;transform:none!important}}
+/* V250 mobile correction: reset desktop lockup flex-basis; avoid an empty 380px brand block. */
+@media(max-width:760px){
+ .poe-v250-home .poe-v249-fix-logo{flex:none!important;width:auto!important;height:auto!important;min-height:0!important}
+ .poe-v250-home .poe-v249-game-logo{flex:none!important}
+}
+
+
+/* In-page guide anchor targets should remain readable after direct-link navigation. */
+#filter-install,#neversink-strictness,#character-import,#dps-criteria{scroll-margin-top:28px}
+
+
+
+
+/* V255–V256: Clickable guide-document previews, now Korean headings and low-glare
+   dark translucent document panels. No redundant tool CTAs or numbered steps. */
+.poe-v255-home #guides .poe-v239-section-heading h2{
+  font-size:clamp(28px,2.5vw,40px)!important;
+  line-height:1.28!important;
+}
+.poe-v255-home .poe-v253-guides-lead{
+  width:min(1530px,100%);margin:-6px auto 28px;
+  color:#ded5c8;font:400 15px/1.75 'Malgun Gothic',Arial,sans-serif;
+  word-break:keep-all;
+}
+.poe-v255-home .poe-v255-guide-columns{
+  width:min(1530px,100%);margin:0 auto;
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:34px;align-items:start;
+}
+.poe-v255-home .poe-v255-guide-column{min-width:0;display:flex;flex-direction:column;gap:18px}
+.poe-v255-home .poe-v255-guide-heading{
+  padding-bottom:16px;border-bottom:1px solid rgba(208,185,146,.2);
+}
+.poe-v255-home .poe-v255-guide-column-filter .poe-v255-guide-heading{border-bottom-color:rgba(216,179,116,.26)}
+.poe-v255-home .poe-v255-guide-column-pob .poe-v255-guide-heading{border-bottom-color:rgba(142,189,223,.28)}
+.poe-v255-home .poe-v255-guide-heading h3{
+  margin:0 0 10px;
+  font:700 clamp(25px,2.15vw,32px)/1.22 'Malgun Gothic',AppleGothic,Arial,sans-serif;
+  letter-spacing:-.025em;word-break:keep-all;
+}
+.poe-v255-home .poe-v255-guide-column-filter .poe-v255-guide-heading h3{color:#efc98e}
+.poe-v255-home .poe-v255-guide-column-pob .poe-v255-guide-heading h3{color:#b8daf3}
+.poe-v255-home .poe-v255-guide-heading p{
+  margin:0;max-width:46ch;color:#d8d1c8;
+  font:400 14px/1.75 'Malgun Gothic',Arial,sans-serif;word-break:keep-all;
+}
+.poe-v255-home .poe-v255-guide-list{display:grid;gap:16px}
+.poe-v255-home .poe-v255-guide-card{
+  position:relative;overflow:hidden;display:flex;flex-direction:column;gap:14px;
+  min-height:166px;padding:20px 20px 18px;text-decoration:none;color:inherit;
+  background:linear-gradient(180deg,rgba(17,20,27,.82),rgba(8,10,15,.95));
+  border:1px solid rgba(218,193,154,.2);border-radius:10px;
+  box-shadow:0 14px 30px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.03);
+  transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease,background-color .2s ease;
+}
+.poe-v255-home .poe-v255-guide-card::before{
+  content:"";position:absolute;inset:0 auto 0 0;width:3px;border-radius:10px 0 0 10px;
+  background:var(--guide-accent,#d9b179);opacity:.88;
+}
+.poe-v255-home .poe-v255-guide-card-gold{--guide-accent:#d9b179}
+.poe-v255-home .poe-v255-guide-card-blue{--guide-accent:#8dc1e8}
+.poe-v255-home .poe-v255-guide-card:hover,
+.poe-v255-home .poe-v255-guide-card:focus-visible{
+  transform:translateY(-3px);
+  border-color:color-mix(in srgb,var(--guide-accent) 62%, white 8%);
+  box-shadow:0 20px 36px rgba(0,0,0,.28),0 0 0 1px color-mix(in srgb,var(--guide-accent) 22%, transparent);
+}
+.poe-v255-home .poe-v255-guide-card:focus-visible{outline:2px solid var(--guide-accent);outline-offset:3px}
+.poe-v255-home .poe-v255-guide-copy{display:flex;flex-direction:column;gap:8px;min-width:0}
+.poe-v255-home .poe-v255-guide-title-row{display:flex;align-items:flex-start;gap:12px;justify-content:space-between}
+.poe-v255-home .poe-v255-guide-title-row strong{
+  font:650 clamp(18px,1.15vw,21px)/1.4 'Malgun Gothic',Arial,sans-serif;
+  color:#fff4e5;word-break:keep-all;
+}
+.poe-v255-home .poe-v255-guide-card-blue .poe-v255-guide-title-row strong{color:#eef7ff}
+.poe-v255-home .poe-v255-guide-copy small{
+  font:400 14px/1.55 'Malgun Gothic',Arial,sans-serif;
+  color:#d6d0c7;word-break:keep-all;
+}
+.poe-v255-home .poe-v255-guide-arrow{
+  flex:0 0 auto;margin-top:1px;color:var(--guide-accent);font:400 22px/1 Arial,sans-serif;
+  transition:transform .18s ease;
+}
+.poe-v255-home .poe-v255-guide-card:hover .poe-v255-guide-arrow,
+.poe-v255-home .poe-v255-guide-card:focus-visible .poe-v255-guide-arrow{transform:translate(2px,-2px)}
+.poe-v255-home .poe-v255-guide-sheet{
+  position:relative;display:flex;flex-direction:column;gap:7px;
+  margin-top:auto;padding:14px 14px 12px 16px;min-height:78px;
+  background:linear-gradient(145deg,rgba(35,31,29,.88),rgba(18,21,27,.94));
+  border:1px solid rgba(215,183,128,.23);border-radius:7px;
+  box-shadow:inset 0 1px 0 rgba(255,233,193,.035),0 8px 18px rgba(0,0,0,.1);
+  transform-origin:top center;transition:transform .2s ease,box-shadow .2s ease,background-color .2s ease;
+}
+/* FILTER preview is warm charcoal; PoB preview carries a restrained cool-blue tint. */
+.poe-v255-home .poe-v255-guide-card-blue .poe-v255-guide-sheet{
+  background:linear-gradient(145deg,rgba(24,34,45,.89),rgba(13,23,35,.94));
+  border-color:rgba(143,190,224,.27);
+}
+.poe-v255-home .poe-v255-guide-sheet::after{
+  content:"";position:absolute;inset:0 0 auto 0;height:1px;background:rgba(210,180,125,.06);
+  box-shadow:0 9px 0 rgba(210,180,125,.045),0 18px 0 rgba(210,180,125,.04),0 27px 0 rgba(210,180,125,.035);
+  pointer-events:none;
+}
+.poe-v255-home .poe-v255-guide-sheet span{
+  position:relative;z-index:1;
+  font:500 13px/1.5 'Malgun Gothic',Arial,sans-serif;
+  color:#ddd0ba;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.poe-v255-home .poe-v255-guide-card-blue .poe-v255-guide-sheet span{color:#cbdce9}
+.poe-v255-home .poe-v255-guide-card:hover .poe-v255-guide-sheet,
+.poe-v255-home .poe-v255-guide-card:focus-visible .poe-v255-guide-sheet{
+  transform:translateY(-2px) scale(1.01);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.055),0 12px 22px rgba(0,0,0,.25);
+}
+@media(max-width:960px){
+  .poe-v255-home .poe-v255-guide-columns{grid-template-columns:1fr;gap:26px}
+}
+@media(max-width:760px){
+  .poe-v255-home #guides .poe-v239-section-heading h2{font-size:30px!important;line-height:1.32!important}
+  .poe-v255-home .poe-v253-guides-lead{margin:-4px auto 22px;font-size:14px;line-height:1.7}
+  .poe-v255-home .poe-v255-guide-columns{gap:22px}
+  .poe-v255-home .poe-v255-guide-heading{padding-bottom:14px}
+  .poe-v255-home .poe-v255-guide-heading h3{font-size:28px}
+  .poe-v255-home .poe-v255-guide-heading p{font-size:13px}
+  .poe-v255-home .poe-v255-guide-list{gap:14px}
+  .poe-v255-home .poe-v255-guide-card{min-height:156px;padding:17px 16px 16px}
+  .poe-v255-home .poe-v255-guide-title-row strong{font-size:17px;line-height:1.42}
+  .poe-v255-home .poe-v255-guide-copy small{font-size:13px}
+  .poe-v255-home .poe-v255-guide-sheet{min-height:72px;padding:12px 12px 11px 14px}
+  .poe-v255-home .poe-v255-guide-sheet span{font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){
+  .poe-v255-home .poe-v255-guide-card,
+  .poe-v255-home .poe-v255-guide-sheet,
+  .poe-v255-home .poe-v255-guide-arrow{transition:none!important}
+  .poe-v255-home .poe-v255-guide-card:hover{transform:none!important}
+}
+/* V252: Remove duplicated hero intro/3 shortcut cards and replace with a compact,
+   factual differentiation strip. Text is HTML for search accessibility; not duplicate CTAs. */
+.poe-v252-home .poe-v249-brand-lockup{margin-bottom:24px}
+.poe-v252-home .poe-v249-tool-grid{margin-bottom:26px}
+.poe-v252-home .poe-v252-value-strip{
+  width:min(1230px,100%);margin:0 auto;
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  border-top:1px solid rgba(207,174,126,.35);
+  border-bottom:1px solid rgba(207,174,126,.17);
+  background:linear-gradient(90deg,transparent,rgba(6,9,15,.72) 11%,rgba(6,9,15,.72) 89%,transparent);
+}
+.poe-v252-home .poe-v252-value{
+  position:relative;min-width:0;padding:22px clamp(16px,2.2vw,34px) 23px;
+  display:flex;flex-direction:column;align-items:flex-start;gap:7px;
+  text-align:left;
+}
+.poe-v252-home .poe-v252-value+.poe-v252-value{border-left:1px solid rgba(207,174,126,.17)}
+.poe-v252-home .poe-v252-value-kicker{font:600 10px/1.45 Arial,sans-serif;letter-spacing:.2em;color:#cba36c}
+.poe-v252-home .poe-v252-value-blue .poe-v252-value-kicker{color:#a2c7e7}
+.poe-v252-home .poe-v252-value strong{
+  font-family:'Malgun Gothic',AppleGothic,Arial,sans-serif;
+  font-size:clamp(16px,1.2vw,19px);font-weight:650;letter-spacing:-.025em;
+  line-height:1.4;color:#eee0cb;word-break:keep-all;
+}
+.poe-v252-home .poe-v252-value-blue strong{color:#d9e8f6}
+.poe-v252-home .poe-v252-value p{
+  margin:0!important;max-width:100%;font-family:'Malgun Gothic',AppleGothic,Arial,sans-serif;
+  font-size:13px;line-height:1.6;font-weight:400;letter-spacing:-.015em;
+  color:#bcb7ae;word-break:keep-all;text-shadow:none;
+}
+@media(max-width:760px){
+  .poe-v252-home .poe-v249-brand-lockup{margin-bottom:22px}
+  .poe-v252-home .poe-v249-tool-grid{margin-bottom:22px}
+  .poe-v252-home .poe-v252-value-strip{grid-template-columns:1fr}
+  .poe-v252-home .poe-v252-value{padding:15px 10px 16px;gap:5px}
+  .poe-v252-home .poe-v252-value+.poe-v252-value{border-left:0;border-top:1px solid rgba(207,174,126,.17)}
+  .poe-v252-home .poe-v252-value strong{font-size:16px}
+  .poe-v252-home .poe-v252-value p{font-size:12px}
+  .poe-v252-home .poe-v252-value-kicker{font-size:9px;letter-spacing:.16em}
 }

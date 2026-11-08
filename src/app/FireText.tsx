@@ -36,7 +36,7 @@ const BLUE: Palette = {
   glow: "rgba(44,120,255,0.26)",
 };
 
-export default function FireText({ label }: { label: string }) {
+export default function FireText({ label, tone = "warm" }: { label: string; tone?: "warm" | "blue" }) {
   const rootRef = useRef<HTMLSpanElement | null>(null);
   const textRef = useRef<HTMLSpanElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -64,6 +64,7 @@ export default function FireText({ label }: { label: string }) {
     let spawnCarry = 0;
     let last = performance.now();
 
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const hostLink = root.closest("a");
     const onEnter = () => { hovered = true; };
     const onLeave = () => { hovered = false; };
@@ -241,7 +242,7 @@ export default function FireText({ label }: { label: string }) {
       const cssH = height + padTop + padBottom;
       ctx.clearRect(0, 0, cssW, cssH);
 
-      const palette = hovered ? BLUE : WARM;
+      const palette = tone === "blue" ? (hovered ? WARM : BLUE) : (hovered ? BLUE : WARM);
       drawGlow(palette, now);
 
       const rate = Math.max(34, width * 0.46);
@@ -269,7 +270,7 @@ export default function FireText({ label }: { label: string }) {
       frame = requestAnimationFrame(tick);
     };
 
-    frame = requestAnimationFrame(tick);
+    if (!reduceMotion) frame = requestAnimationFrame(tick);
 
     return () => {
       cancelled = true;
@@ -278,10 +279,10 @@ export default function FireText({ label }: { label: string }) {
       hostLink?.removeEventListener("mouseenter", onEnter);
       hostLink?.removeEventListener("mouseleave", onLeave);
     };
-  }, [label]);
+  }, [label, tone]);
 
   return (
-    <span className="poe-v53-fire-root" ref={rootRef}>
+    <span className={`poe-v53-fire-root poe-v242-fire-${tone}`} ref={rootRef}>
       <canvas className="poe-v53-fire-canvas" ref={canvasRef} aria-hidden="true" />
       <span className="poe-v53-fire-copy" ref={textRef}>{label}</span>
     </span>

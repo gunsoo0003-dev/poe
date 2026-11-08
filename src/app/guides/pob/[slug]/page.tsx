@@ -27,7 +27,7 @@ export default async function PobGuideDetail({ params }: Props) {
       <h1>{guide.title}</h1>
       <p className="fix-content-lead">{guide.lead}</p>
       {guide.sections.map((section) => (
-        <section key={section.heading} className="fix-content-section">
+        <section key={section.heading} id={section.id} className="fix-content-section">
           <h2>{section.heading}</h2>
           {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
           {section.points && <ul>{section.points.map((point) => <li key={point}>{point}</li>)}</ul>}

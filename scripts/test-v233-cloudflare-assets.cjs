@@ -17,7 +17,11 @@ assert(worker.includes('fetch("/data/pob-lua.json.gz")'), 'New Cloudflare gzip p
 assert(worker.includes('new DecompressionStream("gzip")'), 'Browser worker gzip decode');
 assert(worker.includes('fetch("/data/pob-lua.json")'), 'Legacy/Vercel original path kept');
 assert(pkg.scripts.build === 'next build', 'Vercel build script unchanged');
-assert(pkg.scripts['build:cloudflare'].includes('prepare-cloudflare-assets.cjs'), 'Cloudflare separate build');
+const cfBuild = pkg.scripts['build:cloudflare'] || '';
+const wrapper = path.join(root, 'scripts/build-cloudflare.cjs');
+assert(cfBuild.includes('prepare-cloudflare-assets.cjs') ||
+  (cfBuild === 'node scripts/build-cloudflare.cjs' && fs.readFileSync(wrapper, 'utf8').includes('prepare-cloudflare-assets.cjs')),
+  'Cloudflare separate staging/build');
 // Test the exact browser-side streaming decode that is used inside the calc Web Worker.
 (async () => {
   const decoded = await new Response(new Blob([compressed]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
