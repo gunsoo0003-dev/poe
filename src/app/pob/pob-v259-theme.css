@@ -1,0 +1,371 @@
+/* FIXLGS POE2 V259 — PoB appearance only.
+   Scoped to /pob; deliberately no change to positions, data, logic or equipment coordinates.
+   Homepage palette source: V019 charcoal / weathered bronze / deep crimson. */
+.pob-v259-root {
+  --pob-v259-brass: #c3a47f;
+  --pob-v259-edge: rgba(195, 158, 118, .28);
+  --pob-v259-red: #a6362a;
+  --pob-v259-ink: #0e0b0a;
+  --pob-v259-paper: #ded2bf;
+  --purple-bright: #c8a780;
+  --purple: #92513f;
+  --gold: #d2b285;
+  --line: var(--pob-v259-edge);
+  color: var(--pob-v259-paper);
+  font-family: "Malgun Gothic", "Apple SD Gothic Neo", Arial, sans-serif;
+}
+.pob-v259-root.site-shell {
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 90% 12%, rgba(116, 42, 29, .17), transparent 50%),
+    repeating-linear-gradient(95deg, transparent 0 5px, rgba(211, 165, 116, .009) 6px 7px, transparent 8px 21px),
+    linear-gradient(135deg, #090807 3%, #211a16 51%, #0a0808 100%);
+  border-inline: 1px solid rgba(178, 133, 89, .15);
+}
+.pob-v259-root .top-strip {
+  border-bottom: 1px solid rgba(201, 152, 113, .26);
+  box-shadow: 0 16px 35px rgba(0, 0, 0, .38);
+}
+.pob-v259-root .brand-panel {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 28% 60%, rgba(112, 36, 26, .25), transparent 58%),
+    repeating-linear-gradient(110deg, transparent 0 8px, rgba(229, 193, 149, .012) 9px 10px, transparent 11px 27px),
+    linear-gradient(110deg, #1b1210, #0c0a09 89%);
+}
+.pob-v259-root .brand-panel::before {
+  content: ""; position: absolute; inset: 10px;
+  border: 1px solid rgba(188, 147, 113, .08);
+  pointer-events: none;
+}
+.pob-v259-root .eyebrow,
+.pob-v259-root .panel-kicker,
+.pob-v259-root .guide-heading span,
+.pob-v259-root .start-tool-kicker { color: #c5a17f; }
+.pob-v259-root .brand-panel h1 {
+  color: #e6d8c5;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, .75);
+}
+.pob-v259-root .brand-panel h1 span { color: #bd4739; }
+.pob-v259-root .brand-copy { color: #cbbbad; }
+.pob-v259-root .trust-line {
+  color: #dbb994;
+  border-color: rgba(185, 139, 102, .34);
+  background: rgba(30, 16, 12, .6);
+}
+.pob-v259-root .season-header { background: #0b0908; }
+.pob-v259-root .season-header img { filter: saturate(.76) contrast(1.13) brightness(.72) sepia(.12); }
+.pob-v259-root .season-header::after {
+  box-shadow: inset 0 0 90px rgba(0, 0, 0, .75);
+  background: linear-gradient(90deg, rgba(31, 14, 10, .35), transparent 48%, rgba(16, 9, 8, .25));
+}
+.pob-v259-root .season-label {
+  color: #e1c8a5;
+  border-color: rgba(200, 153, 105, .44);
+  background: rgba(14, 10, 9, .83);
+  letter-spacing: .11em;
+}
+.pob-v259-root .hero-stage {
+  background:
+    radial-gradient(ellipse at 56% 30%, rgba(83, 35, 26, .12), transparent 49%),
+    repeating-linear-gradient(92deg, transparent 0 7px, rgba(215, 174, 134, .01) 8px 9px, transparent 10px 22px),
+    linear-gradient(120deg, #0e0b0a, #211a15 56%, #0a0908);
+}
+.pob-v259-root .tree-column { border-right-color: var(--pob-v259-edge); }
+.pob-v259-root .tree-art {
+  background-image:
+    linear-gradient(to bottom, rgba(12, 9, 9, .08) 12%, rgba(12, 9, 9, .25) 49%, rgba(14, 10, 9, .91) 90%),
+    linear-gradient(to right, rgba(18, 11, 9, .04), rgba(18, 11, 9, .63) 95%),
+    url('/poe-home/assets/poe2-character-combat.webp');
+  background-size: cover;
+  background-position: 51% center;
+  filter: saturate(.75) contrast(1.08) brightness(.98) sepia(.10);
+}
+.pob-v259-root .tree-column::after {
+  content: "";
+  position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(94deg, transparent 0 14px, rgba(229, 182, 134, .011) 15px 16px, transparent 17px 29px);
+}
+.pob-v259-root .guide-panel {
+  border-color: rgba(204, 167, 129, .35);
+  background: linear-gradient(145deg, rgba(35, 24, 19, .94), rgba(10, 9, 8, .92));
+  box-shadow: 0 20px 48px rgba(0, 0, 0, .62), inset 0 1px rgba(239, 205, 168, .06);
+}
+.pob-v259-root .guide-heading strong { color: #f0e0cc; }
+.pob-v259-root .guide-links a {
+  color: #d9c5ad;
+  border-color: rgba(185, 148, 112, .2);
+  background: rgba(151, 93, 64, .06);
+}
+.pob-v259-root .guide-links a:hover,
+.pob-v259-root .guide-links a:focus-visible {
+  color: #fff0d9; border-color: rgba(213, 167, 109, .64);
+  background: rgba(137, 60, 42, .18);
+}
+.pob-v259-root .character-panel,
+.pob-v259-root .video-panel {
+  border-color: var(--pob-v259-edge);
+  background:
+    linear-gradient(115deg, rgba(221, 182, 140, .035) 0 1px, transparent 1px 11px),
+    radial-gradient(ellipse at top right, rgba(104, 40, 27, .18), transparent 57%),
+    linear-gradient(140deg, rgba(37, 27, 21, .96), rgba(14, 12, 11, .98));
+  box-shadow: 0 22px 55px rgba(0, 0, 0, .48), inset 0 1px rgba(244, 204, 154, .06);
+}
+.pob-v259-root .character-copy h2,
+.pob-v259-root .video-head h2 { color: #f1e2cf; }
+.pob-v259-root .character-copy p:not(.panel-kicker) { color: #c3b1a1; }
+.pob-v259-root .character-actions label { color: #d3b797; }
+.pob-v259-root .ninja-import-row input {
+  color: #f1e4d4;
+  border-color: rgba(187, 152, 112, .39);
+  background: rgba(8, 8, 8, .73);
+}
+.pob-v259-root .ninja-import-row input:focus-visible { outline: 2px solid #c18d5b; outline-offset: 1px; }
+.pob-v259-root .ninja-import-row button {
+  color: #f3e4d3;
+  border: 1px solid #b65a44;
+  background: linear-gradient(#ad3b2e, #75241e);
+  box-shadow: inset 0 1px rgba(255, 222, 179, .13);
+}
+.pob-v259-root .ninja-import-row button:hover { background: linear-gradient(#bf4b3a, #882920); }
+.pob-v259-root .character-actions small,
+.pob-v259-root .video-head span { color: #a99785; }
+.pob-v259-root .start-tools { border-top-color: rgba(191, 144, 111, .25); }
+.pob-v259-root .start-tool-card {
+  border-color: rgba(195, 151, 113, .3);
+  background: linear-gradient(110deg, rgba(75, 41, 27, .18), rgba(13, 11, 10, .45));
+}
+.pob-v259-root .start-tool-card:hover { border-color: rgba(213, 159, 112, .68); background: rgba(112, 46, 32, .17); }
+.pob-v259-root .start-tool-card strong { color: #eddfca; }
+.pob-v259-root .start-tool-card > b,
+.pob-v259-root .start-tool-card > .extension-download { color: #e6c6a0; }
+.pob-v259-root .start-tool-card > .extension-download {
+  border-color: rgba(200, 145, 108, .48); background: rgba(96, 39, 30, .27);
+}
+.pob-v259-root .start-tool-card > .extension-download:hover { background: rgba(141, 49, 36, .4); }
+.pob-v259-root .video-frame { border-color: rgba(190, 150, 111, .3); }
+.pob-v259-root footer {
+  color: #9f9082;
+  border-top-color: rgba(199, 159, 119, .23);
+  background: #0c0908;
+}
+.pob-v259-root footer strong { color: #cfb59a; }
+
+/* Loaded character: preserve inventory coordinates and all game-state semantics. */
+.pob-v259-root.game-shell {
+  background:
+    radial-gradient(ellipse at 52% 0, rgba(98, 42, 29, .24), transparent 55%),
+    repeating-linear-gradient(94deg, transparent 0 5px, rgba(203, 159, 116, .008) 6px 7px, transparent 8px 22px),
+    linear-gradient(125deg, #090807, #1c1511 46%, #0b0908);
+}
+.pob-v259-root .game-main {
+  background: linear-gradient(90deg, #120e0c, #1a1511 48%, #110d0b);
+  border-inline: 1px solid rgba(192, 142, 100, .16);
+}
+.pob-v259-root .ad-placeholder {
+  color: #b39b82;
+  border: 1px dashed rgba(185, 140, 95, .35);
+  background: linear-gradient(145deg, rgba(50, 32, 25, .42), rgba(12, 10, 9, .8));
+}
+.pob-v259-root .character-header {
+  border-bottom-color: rgba(194, 149, 107, .38);
+  background:
+    radial-gradient(ellipse at 15% 10%, rgba(106, 38, 28, .23), transparent 60%),
+    linear-gradient(90deg, rgba(33, 23, 19, .98), rgba(13, 11, 10, .98));
+}
+.pob-v259-root .portrait {
+  color: #e6c699;
+  border-color: #9d7b53;
+  background: radial-gradient(circle, #76513a, #211712 67%);
+}
+.pob-v259-root .character-title span { color: #d36e59; }
+.pob-v259-root .character-title h1 { color: #f0e2d2; }
+.pob-v259-root .character-title p { color: #c4b19d; }
+.pob-v259-root .head-button {
+  color: #e1c9aa;
+  border-color: rgba(184, 139, 102, .47);
+  background: linear-gradient(#31221d, #1a1310);
+}
+.pob-v259-root .head-button:hover { border-color: #cf9e6b; background: #3a2821; }
+.pob-v259-root .head-button.accent {
+  color: #f6e6d7; border-color: #bd5946;
+  background: linear-gradient(#a6382d, #6d211c);
+}
+.pob-v259-root .sync-state { border-left-color: rgba(197, 155, 113, .25); }
+.pob-v259-root .sync-state small { color: #a48c75; }
+.pob-v259-root .sync-state b { color: #e2cfb5; }
+.pob-v259-root .import-source-note {
+  color: #c3b4a4;
+  border-bottom-color: rgba(181, 142, 109, .25);
+  background: rgba(27, 21, 17, .9);
+}
+.pob-v259-root .import-source-note b { color: #ead6b8; }
+.pob-v259-root .build-half {
+  background:
+    repeating-linear-gradient(92deg, rgba(212, 164, 117, .009) 0 1px, transparent 1px 21px),
+    radial-gradient(ellipse at 50% 24%, rgba(95, 39, 27, .11), transparent 60%),
+    #16100e;
+}
+.pob-v259-root .build-half-label {
+  border-color: rgba(177, 138, 100, .26);
+  background: linear-gradient(95deg, #322019, #1b1511 66%, #181210);
+}
+.pob-v259-root .build-half-label strong { color: #edddc6; }
+.pob-v259-root .build-half-label small,
+.pob-v259-root .build-half-label > span { color: #c29e7a; }
+.pob-v259-root .panel-card {
+  border-color: rgba(180, 139, 101, .34);
+  background:
+    radial-gradient(ellipse at 50% 0, rgba(121, 59, 35, .095), transparent 70%),
+    repeating-linear-gradient(95deg, transparent 0 13px, rgba(218, 175, 129, .011) 14px 15px, transparent 16px 29px),
+    #201914;
+  box-shadow: inset 0 1px rgba(233, 195, 151, .06), 0 12px 32px rgba(0, 0, 0, .16);
+}
+.pob-v259-root .panel-title {
+  color: #dfc5a4;
+  border-bottom-color: rgba(179, 137, 99, .34);
+  background: linear-gradient(105deg, #35241c, #221a15);
+}
+.pob-v259-root .equipment-slot-inner {
+  color: #d4c5a7;
+  border-color: #877355;
+  background: linear-gradient(125deg, rgba(122, 99, 69, .3), rgba(39, 33, 28, .86));
+}
+.pob-v259-root .equipment-slot-inner:hover { border-color: #ceaa72; }
+.pob-v259-root .equipment-slot-inner.editing { border-color: #6cd8b1; }
+.pob-v259-root .equipment-slot-inner.trade-linked { border-color: #55bd92; background: linear-gradient(145deg, #204c3d, #172a25); }
+.pob-v259-root .jewel-wrap { border-top-color: rgba(173, 134, 95, .24); }
+.pob-v259-root .stat-group-label,
+.pob-v259-root .sub-title { color: #ae9477; }
+.pob-v259-root .stat-row { color: #f0e1c9; }
+.pob-v259-root .stat-row span { color: #cbbcac; }
+.pob-v259-root .main-skills-block { border-top-color: rgba(184, 143, 98, .25); }
+.pob-v259-root .main-skill strong { color: #eee1d2; }
+.pob-v259-root .main-skill b { color: #e9d6bc; background: #18120f; border-bottom-color: #b89b57; }
+.pob-v259-root .set-overview { border-color: rgba(184, 139, 99, .36); background: #201711; }
+.pob-v259-root .set-overview-label { color: #ddbc96; }
+.pob-v259-root .set-overview-option { color: #dccab1; border-color: rgba(165, 128, 92, .42); background: #16110e; }
+.pob-v259-root .set-overview-option.selected {
+  border-color: #c29365; background: #39251b; box-shadow: inset 0 0 0 1px rgba(201, 144, 96, .39);
+}
+.pob-v259-root .set-overview-option span { color: #f2d9ac; }
+.pob-v259-root .set-overview-option small,
+.pob-v259-root .set-overview-option .set-weapon-label { color: #c3ac96; }
+.pob-v259-root .simulation-divider {
+  background: radial-gradient(ellipse at 50% 50%, rgba(104, 42, 31, .22), transparent 60%), #140f0c;
+  border-color: #754132;
+}
+.pob-v259-root .simulation-divider-line { background: linear-gradient(90deg, transparent, #996348); }
+.pob-v259-root .simulation-divider-line:last-child { background: linear-gradient(90deg, #996348, transparent); }
+.pob-v259-root .simulation-divider-copy small { color: #c89170; }
+.pob-v259-root .simulation-divider-copy strong { color: #f0d6bd; }
+.pob-v259-root .simulation-divider-copy span { color: #baa794; }
+.pob-v259-root .simulation-build {
+  background:
+    repeating-linear-gradient(92deg, transparent 0 10px, rgba(212, 164, 117, .011) 11px 12px, transparent 13px 29px),
+    radial-gradient(ellipse at 50% 20%, rgba(128, 50, 34, .12), transparent 65%),
+    #15100e;
+}
+.pob-v259-root .simulation-label { border-color: #684033; background: linear-gradient(95deg, #35211b, #1c1510); }
+.pob-v259-root .simulation-label small,
+.pob-v259-root .simulation-label > span { color: #d59b7c; }
+.pob-v259-root .simulation-equipment,
+.pob-v259-root .simulation-skills { border-color: rgba(167, 106, 78, .5); }
+.pob-v259-root .simulation-equipment .panel-title,
+.pob-v259-root .simulation-skills .panel-title { color: #e9c6a6; border-color: rgba(164, 103, 77, .38); background: #35231b; }
+.pob-v259-root .skill-row { border-bottom-color: rgba(170, 127, 94, .23); background: #231913; }
+.pob-v259-root .skill-row:nth-child(even) { background: #1b1511; }
+.pob-v259-root .comparison-section {
+  border-top: 1px solid rgba(179, 131, 88, .22);
+  background: radial-gradient(ellipse at top, rgba(124, 50, 30, .1), transparent 50%), #110d0a;
+}
+.pob-v259-root .simulation-link-editor { border-color: #ac7453; background: #17100d; }
+.pob-v259-root .simulation-link-editor textarea { border-color: #73543d; background: #0e0b09; }
+.pob-v259-root .simulation-link-actions button { color: #f6e2ce; border-color: #b45b45; background: linear-gradient(#a13c30, #6d261f); }
+.pob-v259-root .gear-delta-panel { border-color: #8e5a43; background: #211712; color: #e4d5c6; }
+.pob-v259-root .gear-delta-panel > strong { color: #ecc19a; }
+.pob-v259-root .gear-delta-panel p { color: #c3b09f; }
+.pob-v259-root .gear-delta-row { border-color: #624436; background: #2b1c15; }
+.pob-v259-root .gear-delta-row b { color: #d5edc2; }
+.pob-v259-root .gear-delta-row small { color: #b9a38e; }
+.pob-v259-root :where(a, button, input, textarea):focus-visible { outline: 2px solid #d4a06d; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .pob-v259-root :where(a, button) { transition-duration: .01ms; }
+}
+/* Keep existing cards and order; allow room for the already-existing guide/extension row. */
+.pob-v259-root .content-column { grid-template-rows: minmax(350px, auto) minmax(430px, 1fr); }
+.pob-v259-root .character-copy h2 { font-size: clamp(28px, 2.5vw, 38px); word-break: keep-all; }
+@media (max-width: 700px) {
+  /* Existing equipment slots keep their fixed coordinates; centre the scaled stage in its viewport. */
+  .pob-v259-root .equipment-stage { left: calc(50% - 227.7px); margin: 0; transform-origin: top left; transform: translateX(-280px) scale(.46); }
+  .pob-v259-root .import-source-note { flex-wrap: wrap; }
+  .pob-v259-root .import-source-note > span { flex: 1 1 190px; min-width: 0; overflow-wrap: anywhere; }
+  .pob-v259-root .import-source-note > button { flex: 0 0 auto; }
+}
+
+
+/* V260 — desktop-only full-viewport POE2 artwork and wider working canvas.
+   Do not affect the homepage, FILTER, mobile, calculated data, slot coordinates,
+   or the existing character/simulation panel order. */
+@media (min-width: 1051px) {
+  /* Body is the actual viewport: a max-width main element cannot paint the side gutters. */
+  body:has(.pob-v259-root) {
+    background-color: #080706;
+    background-image:
+      linear-gradient(90deg, rgba(6, 5, 5, .69) 0%, rgba(8, 6, 6, .48) 26%, rgba(7, 5, 5, .60) 70%, rgba(5, 4, 4, .79) 100%),
+      linear-gradient(180deg, rgba(15, 8, 6, .30), rgba(8, 5, 5, .62)),
+      url('/images/poe2/official-burning-village.webp');
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+
+  .pob-v259-root.site-shell {
+    width: min(100%, 2100px);
+    max-width: none;
+    background:
+      radial-gradient(ellipse at 48% 5%, rgba(117, 56, 30, .16), transparent 53%),
+      linear-gradient(90deg, rgba(13, 10, 9, .43), rgba(16, 10, 9, .34) 48%, rgba(11, 9, 8, .52));
+    border-inline: 1px solid rgba(188, 142, 102, .20);
+  }
+  .pob-v259-root .top-strip {
+    background: rgba(12, 9, 8, .88);
+  }
+  .pob-v259-root .hero-stage {
+    grid-template-columns: minmax(310px, .72fr) minmax(650px, 2.28fr);
+    background: linear-gradient(90deg,
+      rgba(16, 11, 10, .38) 0%,
+      rgba(17, 12, 10, .66) 30%,
+      rgba(14, 10, 9, .77) 100%);
+  }
+  .pob-v259-root .content-column {
+    padding-left: clamp(30px, 2.2vw, 52px);
+    padding-right: clamp(30px, 2.2vw, 52px);
+  }
+  .pob-v259-root .tree-column {
+    background: linear-gradient(180deg, rgba(13, 10, 9, .22), rgba(9, 7, 7, .43));
+  }
+
+  /* The loaded character state uses the same wallpaper, but protects stat readability. */
+  .pob-v259-root.game-shell {
+    width: 100%;
+    max-width: none;
+    background: linear-gradient(90deg,
+      rgba(9, 7, 7, .28), rgba(20, 13, 11, .40) 50%, rgba(9, 7, 7, .28));
+  }
+  .pob-v259-root .game-main {
+    background: linear-gradient(90deg,
+      rgba(17, 13, 12, .93), rgba(25, 18, 15, .91) 50%, rgba(17, 13, 12, .93));
+    border-inline: 1px solid rgba(189, 145, 103, .28);
+    box-shadow: 0 0 52px rgba(0, 0, 0, .37);
+  }
+}
+@media (min-width: 1501px) {
+  .pob-v259-root .game-frame {
+    width: min(100%, 2100px);
+    grid-template-columns: minmax(110px, 140px) minmax(0, 1fr) minmax(110px, 140px);
+    gap: clamp(10px, .85vw, 16px);
+  }
+}

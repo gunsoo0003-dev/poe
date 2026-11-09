@@ -1,5 +1,15 @@
 # 기존 작업 보고서 색인 — 원문 보존
 
+- **2026-11-09 V262 FILTER 반응형 선명 배경 (현재)**: `HANDOVER.md` V262·하단 신규 이력, `src/app/globals.css` FILTER 배경/셸, 기존 `public/images/poe2/official-lightning-gameplay.webp`, `scripts/test-v262-filter-adaptive-wallpaper.cjs`. 단일 전투 이미지, 실제 중앙 셸 너비에 연동된 선명한 좌우 빈 공간, 모바일 V261 보존, 필터 원본 변경 없음. **재열람:** FILTER 배경 교체, 980/981px 경계·1440/1920/2560px 여백·스크롤/가독성 이상, 엔진/홈 회귀 시. 정적 Chromium 9폭 검증, Next 실빌드 미검증.
+- **2026-11-09 HISTORY_V007 확정 보관**: `docs/handover/HISTORY_V007.md`, V261 FILTER 행 밀도·버튼/토글 확대와 중간폭 오버플로 해결·검증 원문 보존. **재열람:** 레어/매직 단계, 선택/중요도 토글, 981~1350px 가로 넘침·조작 회귀 시. 분리 당시 원문 바이트 대조 후 보존. 향후 수정·재정제 금지.
+- **2026-11-09 V261 FILTER 밀도·풀영역 배경 (현재)**: `HANDOVER.md` 상단·하단 V261, `src/app/globals.css`(FILTER 선택자), 기존 `public/images/poe2/cinematic-hero.webp`, `scripts/test-v261-filter-theme.cjs`. 콘텐츠 폭·27개 항목·NeverSink 변경 없이 레어/매직/일반 중요도 조작 행 압축, 버튼·토글 가독성/크기 확장. **재열람:** FILTER 목록 밀도·버튼 오버플로·981~1350px 반응형·V247 모바일·필터 조작 회귀 시. 8폭 Chromium 정적/계약 확인, Next 실빌드 미검증.
+- **2026-11-09 HISTORY_V006 확정 보관**: `docs/handover/HISTORY_V006.md`, V260 POB PC 시네마틱 배경·폭 개선 원문 보존. **재열람:** POB 1051/1501px 경계, 원본 이미지 배경, 모바일/엔진 영향, V260 잠금파일 제외·실검증 한계 검토 시. 원문 바이트 대조 검증; 덮어쓰기·재정제 금지.
+
+
+- **2026-11-09 V260 POB PC 전체 배경·폭 확장 (현재)**: `HANDOVER.md` 상단 및 신규 V260 이력, `src/app/pob/pob-v259-theme.css`, 기존 시즌중립 자산 `public/images/poe2/official-burning-village.webp`, `scripts/test-v260-pob-wide-backdrop.cjs`. PC 전체 배경 고정, 본문 최대 2100px, 게임 분석 화면 폭 확대, 모바일/홈/엔진 보호. **재열람:** POB 데스크톱 배경·폭·오버레이, 모바일 경계, 디자인/실앱 차이, stale lockfile 덮어쓰기 문제 재발 시. 정적 Chromium 10폭 테스트만 완료, V260 Next/Cloudflare 미검증.
+- **2026-11-09 HISTORY_V005 확정 보관**: `docs/handover/HISTORY_V005.md`, 2026-11-08~09 V258~V259, Next 16 임의 page export/robots·sitemap 미제공 기준, 시즌중립 POB 질감·이미지 교체, 카드 겹침·CSS import/테스트 재발과 정적 검증 한계. **재열람:** Next 빌드 타입 오류·검색파일 재생성·POB 배너/가이드 카드/모바일 슬롯 CSS 오류 재발 시. 본문 두 건 원문 대조 보존; 재정제/수정 금지.
+- **2026-11-09 V259 POB 외형 1차 통일 (현재)**: `HANDOVER.md` V259, `src/app/pob/page.tsx`, 기존 `src/app/pob/layout.tsx`(메타데이터 보존), `src/app/pob/pob-v259-theme.css`, `scripts/test-v259-pob-theme.cjs`. 메인 V019의 어두운 적갈·청동 질감 이식, 시즌 이미지 2곳을 기존 범용 POE2 전투 아트로 교체, PC 카드 높이/모바일 슬롯 화면 보정. POB 시작 화면·실제 캐릭터 비교 화면/모바일 UI를 다시 손볼 때 읽는다. 계산·장비 슬롯 고정 좌표·FILTER·홈·기존 HISTORY 원본 보호, 실제 Next 앱·영상 미검증. 사용자 PC V258 빌드와 GitHub 푸시 성공(`4f7aab7`)은 확인, Cloudflare 프로덕션 반영은 미확인.
+
 - **2026-11-08 V258 타입 오류·검색 파일 제거 (최신 기준)**: `HANDOVER.md` V258 현재 기준·신규 이력, `src/app/pob/page.tsx`, `scripts/test-v229-weapon-skill.cjs`, `scripts/test-v258-build-readiness.cjs`, `scripts/test-v235-poe2-domain.cjs`. Next 16 page 임의 named export 문제·Cloudflare 빌드 실패 재발, robots/sitemap 현 정책, 사용자 로컬 ZIP 덮어쓰기 누락 검토 시 다시 읽는다. `src/app/robots.ts`, `src/app/sitemap.ts`는 이번 작업에서 제거되었으며, 과거 V235의 사이트맵 포함 원칙은 현재 무효. PoB 계산 함수 본체는 보존. 전체 프로덕션 빌드는 미검증.
 - **2026-11-08 HISTORY_V004 확정 보관**: `docs/handover/HISTORY_V004.md`, 2026-11-08 V254~V257, 가이드 2개씩 표시/종이 시트/사용법 제목·다크 프리뷰와 V019 홈페이지 통합, 과거 정적 검증 한계. 가이드 UI·V019 통합·브라우저 렌더 및 배포 회귀 시 다시 읽는다. 분리 시 원문 보존 대조 완료; 이후 정제·덮어쓰기 금지.
 

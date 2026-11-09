@@ -288,7 +288,7 @@ export default function Home() {
   if (screen === "game") {
     const changedCount = Object.keys(simulationItems).length;
     return (
-      <main className="game-shell">
+      <main className="game-shell pob-v259-root">
         <div className="game-frame">
           <aside className="ad-rail left" aria-label="좌측 광고 영역">
             <div className="ad-placeholder"><small>ADSENSE</small><strong>좌측 광고 자리</strong></div>
@@ -444,7 +444,7 @@ export default function Home() {
   }
 
   return (
-    <main className="site-shell">
+    <main className="site-shell pob-v259-root">
       <section className="top-strip">
         <div className="brand-panel">
           <div>
@@ -457,9 +457,9 @@ export default function Home() {
           <div className="trust-line">PoB2 Community 계산 로직 기반</div>
         </div>
 
-        <div className="season-header" aria-label="현재 시즌 비주얼">
-          <img src="/season-header.jpg" alt="Path of Exile 2 시즌 이미지" />
-          <div className="season-label">CURRENT SEASON</div>
+        <div className="season-header" aria-label="POE2 전투 장면">
+          <img src="/poe-home/assets/poe2-character-boss.webp" alt="Path of Exile 2 보스와 대치하는 전투 장면" />
+          <div className="season-label">POE2 · BUILD ANALYSIS</div>
         </div>
       </section>
 

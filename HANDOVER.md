@@ -14,7 +14,29 @@
 - `extension/fixlgs-poe2-item-export/`: V0.4.6 확장프로그램 코드·manifest. Chrome 웹스토어에 공개된 등록본을 별도 소스 수정 없이 사용.
 - `public/data/pob-lua.json`, `public/wasm/lua.wasm`: 기존 PoB Lua 데이터·WASM 런타임.
 
-## 3. 현재 구현·배포 상태 (2026-11-08 · 운영 V235 / 최신 V258 로컬, 빌드 재검증 대기)
+## 3. 현재 구현·배포 상태 (2026-11-09 · V262 FILTER 반응형 단일 배경 로컬 / V258 PC 빌드·GitHub 푸시 확인)
+### V262 · FILTER 단일 전투 배경·좌우 자동폭 (2026-11-09 · 미배포)
+- **확정:** 임시 이미지 한 장을 전체에 깔고, 실제 콘텐츠 밖 양옆 여백만 선명하게 표시. 화면 폭 변화에 따라 경계 자동 추종. 가운데는 어두운 패널, 모바일 기존 디자인 보호. 이미지 추후 재선정.
+- **코드:** `src/app/globals.css` FILTER 전용, 기존 `official-lightning-gameplay.webp` 재사용. `.filter-v2-shell`의 기존 폭/중앙정렬로 어둠 마스크 구현. 콘텐츠 폭·카테고리·엔진/메인/POB 불변.
+- **검증:** Chromium 정적 9폭(320~2560px) 가로 넘침·JS 오류 없음, 1440/1920/2560px 좌우 각 50/70/390px 대칭 및 토글 클릭 통과. 여백이 좁은 화면은 이미지 노출도 적음(의도된 보존). Next/OpenNext 빌드·실기기·실데이터 미검증, 미배포. ZIP에 구 잠금 파일 미포함.
+
+### V261 · FILTER 화면 질감·밀도·조작성 개선 (2026-11-09 · 미배포)
+- **사용자 확정:** POB와 달리 FILTER 콘텐츠 폭은 유지. 메인과 같은 풀영역 시즌중립 배경, 행 밀도 강화, 중요도 버튼·토글 확대. 27개 분류·선택/저장·NeverSink·DPS/메인/POB 엔진과 모바일 가로스크롤 보존.
+- **코드:** `src/app/globals.css`의 FILTER 전용 CSS만 직접 변경. 기존 `cinematic-hero.webp` 재사용; 레어·매직 행 92→70px, 공통 행 76→68px, 버튼 32→40px·7→10px, 토글 36×20→44×26px. 981~1350px 중간 폭은 줄바꿈으로 버튼 침범·수평 넘침 방지. 검사 `scripts/test-v261-filter-theme.cjs` 추가.
+- **검증:** 정적 Chromium 320~1920px 8폭 가로 넘침·JS 오류 없음, 토글 표면 클릭 가능. 필터 회귀·V257/258/259/260·CSS 파싱 성공. **미검증:** Next/OpenNext 실빌드·라이브 다운로드/저장·실기기. 기존 PC 잠금파일 보존을 위해 ZIP에 `package-lock.json` 미포함.
+
+### V260 · POB PC 풀영역 배경과 콘텐츠 확대 (2026-11-09 · 소스 수정, 미배포)
+- **사용자 확정:** PC 전체 배경에 POE2 범용 이미지를 깔고 POB 본문 폭을 넓힌다. 어두운 오버레이로 가독성 확보. **보호:** 메인·FILTER·모바일, PoB/poe.ninja 원본 계산·장비 좌표·데이터·기능.
+- **구현:** 기존 `official-burning-village.webp` 재사용. `src/app/pob/pob-v259-theme.css`에서 PC ≥1051px에만 `body:has(.pob-v259-root)` 배경을 고정하고 콘텐츠 최대 2100px로 확장. 캐릭터 로딩 후 영역도 PC ≥1501px에서 확대. **JSX·엔진 불변.**
+- **검증:** Chromium 동일 CSS 정적 모의 320~2560px 10폭 가로 넘침·JS 예외 없음, PC 이미지 적용·모바일 배경 불변. V259/V258/V257/PoB·FILTER 회귀 PASS. **미검증:** V260 Next/OpenNext 실빌드·실데이터·배포.
+- **설치 보호:** 이전 ZIP의 오래된 Next 16.3.5 `package-lock.json`은 V260 ZIP에서 제외. 기존 PC의 갱신된 잠금파일을 덮어쓰지 않는다. 새 환경에는 잠금파일 별도 생성 필요. `.git`, 비밀 설정은 기존 PC 유지.
+
+### V259 · POB 메인 디자인 언어 1차 통일 (2026-11-09 · 소스 수정, 미배포)
+- **사용자 확정:** V019 메인 디자인을 보호하며 `/pob` 시작·캐릭터/비교 화면만 검정·적갈·청동 질감으로 통일. 시즌 표현 이미지 2곳은 기존 POE2 범용 전투 자산으로 교체. 캐릭터/무기 슬롯 좌표·poe.ninja 원본·PoB 엔진·FILTER·메인·공식 영상 재생 방식은 보존하고, 화면 확인 뒤 재수정한다.
+- **코드:** `src/app/pob/page.tsx`의 루트 클래스 2곳·배너 경로/대체텍스트/라벨, 기존 `src/app/pob/layout.tsx`의 기존 메타데이터를 유지한 POB CSS 로드, 새 `pob-v259-theme.css`만 변경. 기존 카드 간 겹침 방지용 최소 행 높이 및 700px 이하 장비 슬롯 축소 화면의 가로 중앙 배치 보정. 새 검사 `scripts/test-v259-pob-theme.cjs`.
+- **검증:** TSX·CSS 파싱 및 V258/V257/V229/V226/V225/V232/필터 회귀 통과. Chromium 정적 모의 320~1920px 6폭 가로 넘침·JS 예외 없음. `V236 --lock`은 기존 ZIP Next 16.3.5 잠금 파일 불일치로 실패. **미검증:** V259 Next/OpenNext 전체 빌드·실데이터 계산·실기기·영상 재생.
+- **배포 근거 갱신:** 사용자 제공 2026-11-08 로그에서 V258 Windows Next 16.4.5/OpenNext 1.20.16 Cloudflare 번들 빌드 성공, PoB 원본 복원 및 GitHub `cloudflare-poe2-assetfix-v233`에 `4f7aab7` 푸시 확인. Cloudflare 실제 새 버전 활성화·실기능은 **미확인**. V258 ZIP의 `package-lock.json`은 구버전이므로 사용자 PC에서 갱신한 잠금 파일은 덮어쓰지 말 것.
+
 ### V258 · 로컬 Next 16 빌드 타입 오류 시정 · robots/sitemap 미제공 (2026-11-08 · 미배포)
 - **사용자 최신 확정:** 애드센스 관련 현재 운영 선택에 따라 POE2 서브도메인의 사용자 정의 `robots.txt`·`sitemap.xml`을 만들지 않는다. 과거 V235의 생성/검사 방침은 폐기된 기준이다. 이는 검색 차단 `noindex` 요청이 아니며, 애드센스 결과와의 직접 인과관계는 미확인.
 - **사용자 로그로 확인:** Windows D:\WebProjects\fix-pob, Next 16.4.5/OpenNext 1.20.16에서 컴파일은 통과했지만 `src/app/pob/page.tsx`의 비허용 이름 내보내기 `buildMainSkillUi` 때문에 TS2344 타입 단계 실패. `lua.mjs`의 URL 분석과 `headless.ts`의 자식 프로세스 트레이싱은 별도 경고이며 실제 Cloudflare 번들 결과는 미확인. `UND_ERR_HEADERS_OVERFLOW`는 다른 네트워크 요청 실패로 아직 원인 미확인.
@@ -249,14 +271,8 @@
 - 설치 버튼: `src/app/pob/page.tsx`.
 - 사용 가이드 데이터: `src/lib/pobGuides.ts`.
 - 새 가이드 라우트: `src/app/guides/pob/[slug]/page.tsx`.
-- 이번 회귀 검사: `scripts/test-v232-extension-guide.cjs`.
-- 이전 구현 보고서: 루트의 `V225_POB_NATIVE_INTEGRITY_REPORT.md`, `V226_RING_SLOT_FIX_REPORT.txt` ~ `V231_PATCH_NOTES.txt`와 이전 `V*.txt` 파일.
-- 새 보관본: `docs/handover/HISTORY_V003.md` — V242~V253(2026-11-05~11-08), 이전 홈페이지 FireText/공식 로고/JSX 구문/모바일 개방. 관련 화면 회귀나 오래된 테스트 오류 재발 시 원문 열람, 확정본 재정제 금지.
-- 확정 보관 이력: `docs/handover/HISTORY_V001.md`(V232~V238, 2026-10-14~11-05), `docs/handover/HISTORY_V002.md`(V239~V241, 2026-11-05). 현행 HISTORY_V001~V004 실재 파일을 색인에 등록했다. 원문 재정제/변경 금지. 별도 감사 보고서는 색인에 보존.
 
 ## 8. 누적 작업 이력
-### 2026-11-08 · V258 · POB Next 빌드 타입 오류 및 robots/sitemap 제거
-- **근거:** 사용자 실제 OpenNext 빌드에서 `Next.js 16.4.5 Compiled successfully` 이후 `src/app/pob/page.tsx: buildMainSkillUi` TS2344로 실패. 해당 함수 export는 V229 테스트용으로 남아 있었으나 Next App Router 페이지 규약에 맞지 않음. Lua.mjs URL/Native `spawn` 트레이싱은 같은 로그의 경고이며 다른 원인으로 분리.
-- **전후/영향:** 페이지 `export function buildMainSkillUi` → 내부 `function` (내용·호출·스킬 계산 그대로). `scripts/test-v229-weapon-skill.cjs`는 메모리 테스트 코드에만 export를 주입, 기존 DPS 그룹 식별 테스트를 계속 수행. 사용자 최신 결정에 따라 `robots.ts`/`sitemap.ts`는 삭제, `scripts/test-v235-poe2-domain.cjs`는 현재 도메인·메타데이터·사이트 정책을 검사하도록 수정, `scripts/test-v258-build-readiness.cjs` 추가. 과거 V235의 생성 결정은 당시 이력으로 보존, 현 정책 아님.
-- **실행·검증:** TS AST 13개 페이지에서 불허 named export 0개, V258 새 검사, V229·V228·V226·V225 및 FILTER/홈/Cloudflare 정적 회귀 통과. V256 대비 V257 원본 엔진·디자인·배포 설정 변경 없음. 전체 `npm ci`/Next/OpenNext 프로덕션 빌드, 실제 Worker 재배포, live WASM·유튜브/네트워크 확인은 이 환경에서 미실행. 두 Turbopack 경고/headers overflow는 해결되지 않은 별도 항목으로 남김.
-- **재발 방지:** `app/**/page.tsx`에 임의 named export를 재추가하지 않는다. 아카이브 ZIP을 기존 폴더에 덮어쓸 경우 오래된 `robots.ts`·`sitemap.ts`가 남으므로 배포 전 삭제하고 검사를 돌린다. 사용자 PC의 새 lockfile은 미제공이므로 ZIP의 이전 lockfile을 최신인 것처럼 보고하지 않는다.
+### 2026-11-09 · V262 · FILTER 반응형 전투 배경
+- **전후:** V261 풍경 이미지+강한 전체 어둠 → 임시 번개 전투 이미지 한 장, 중앙 셸 자체가 어두운 마스크, 좌우 남은 여백은 선명하게 노출. 3분할 고정폭을 쓰지 않아 반응형 경계 정확. 모바일 이전 배경·스크롤 보존.
+- **검증·한계:** 정적 Chromium 9폭 좌우 대칭·오버플로·토글 검사 통과, V261 필터 회귀/메인/POB 계약 통과. 기존 콘텐츠 폭 때문에 1440/1920px은 좁은 여백만 보임. 실 Next/Cloudflare 빌드·다운로드 미실행. 원본 데이터/기능 불변.

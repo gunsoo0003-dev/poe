@@ -1,0 +1,28 @@
+#!/usr/bin/env node
+"use strict";
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const theme=fs.readFileSync(path.join(root,'src/app/pob/pob-v259-theme.css'),'utf8');
+const page=fs.readFileSync(path.join(root,'src/app/pob/page.tsx'),'utf8');
+const layout=fs.readFileSync(path.join(root,'src/app/pob/layout.tsx'),'utf8');
+const home=fs.readFileSync(path.join(root,'src/app/page.tsx'),'utf8');
+assert(fs.existsSync(path.join(root,'public/images/poe2/official-burning-village.webp')),'Existing neutral artwork missing');
+assert.match(theme,/\/\* V260 — desktop-only full-viewport POE2 artwork/);
+assert.match(theme,/@media\s*\(min-width:\s*1051px\)/);
+assert.match(theme,/body:has\(\.pob-v259-root\)/);
+assert.match(theme,/background-attachment:\s*fixed/);
+assert.match(theme,/url\('\/images\/poe2\/official-burning-village\.webp'\)/);
+assert.match(theme,/\.pob-v259-root\.site-shell\s*\{\s*width:\s*min\(100%,\s*2100px\)/);
+assert.match(theme,/\.pob-v259-root\s+\.hero-stage\s*\{\s*grid-template-columns:\s*minmax\(310px/);
+assert.match(theme,/\.pob-v259-root\s+\.content-column\s*\{/);
+assert.match(theme,/\.pob-v259-root\.game-shell/);
+assert.match(theme,/@media\s*\(min-width:\s*1501px\)/);
+assert.match(theme,/\.pob-v259-root\s+\.game-frame/);
+assert.match(page,/site-shell pob-v259-root/);
+assert.match(page,/game-shell pob-v259-root/);
+assert.match(layout,/metadata:Metadata/);
+assert(!home.includes('pob-v259-root'),'Do not touch main homepage');
+assert(!fs.existsSync(path.join(root,'src/app/robots.ts')) && !fs.existsSync(path.join(root,'src/app/sitemap.ts')));
+console.log('PASS V260 POB full-viewport wallpaper and wider desktop content, scoped to POB (17 assertions).');
