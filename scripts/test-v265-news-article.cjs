@@ -1,0 +1,30 @@
+'use strict';
+const fs=require('node:fs');const path=require('node:path');const assert=require('node:assert/strict');
+const ts=require('typescript');
+const root=path.resolve(__dirname,'..');
+const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const page=read('src/app/news/poe2-1-0-full-release/page.tsx');
+const index=read('src/app/news/page.tsx');
+const home=read('src/app/home-v019-markup.ts');
+const css=read('src/app/news/news.module.css');
+const homeCss=read('src/app/home-v019.css');
+const sitemap=read('src/app/sitemap.ts');
+const assetDir=path.join(root,'public/news/poe2-1-0');
+for(const file of ['src/app/news/page.tsx','src/app/news/poe2-1-0-full-release/page.tsx','src/app/page.tsx']) {
+ const src=read(file);const source=ts.createSourceFile(file,src,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
+ assert.equal(source.parseDiagnostics.length,0,file+' TSX parse error');
+}
+assert(page.includes('prcdn.freetls.fastly.net') && index.includes('prcdn.freetls.fastly.net'),'GGG official images linked');
+assert.equal((page.match(/<table\b/g)||[]).length,3,'expected three comparison tables');
+assert.equal((page.match(/<Figure /g)||[]).length,2,'expected two official inline figures');
+assert(page.includes('dateCreated: \'2026-11-14\''),'creation date');
+assert(!page.includes('datePublished:') && !page.includes('publishedTime:'),'do not invent first public date');
+assert(page.includes('© Grinding Gear Games') && !page.includes('<img className={styles.hero} src="/news/poe2-1-0/siege-concept.webp"'), 'official-image credit');
+assert(/poe2-1-0-full-release/.test(home),'home link');
+assert(/href=\\"\/news\\"/.test(home),'home news index link');
+assert(home.includes('>새소식<'),'renamed section');
+assert(!home.includes('시세 분석 예시'),'sample articles should be gone');
+assert(sitemap.includes('"/news"') && sitemap.includes('"/news/poe2-1-0-full-release"'),'sitemap paths');
+assert(!read('src/app/layout.tsx').includes('G-SSC964HMHS'),'old GA4 must be absent');
+const postcss=require('postcss');postcss.parse(css);postcss.parse(homeCss);
+console.log('PASS V265: TSX source parsing, news routes, official press art, 3 tables, source disclosures, homepage, sitemap, GA4, CSS.');

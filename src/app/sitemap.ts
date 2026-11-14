@@ -17,6 +17,8 @@ const publicPages = [
   "/privacy",
   "/privacy/site",
   "/terms",
+  "/news",
+  "/news/poe2-1-0-full-release",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

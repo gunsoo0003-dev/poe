@@ -256,3 +256,8 @@
 .poe-v019-root .footer nav{gap:17px}}
 @media (prefers-reduced-motion:reduce){.poe-v019-root, .poe-v019-root *,.poe-v019-root *::before,.poe-v019-root *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 @media (max-width:780px){.poe-v019-root .platform .platform-actions .btn{width:100%}}
+
+/* V265: existing news visual geometry is preserved; only real article and neutral placeholders. */
+.poe-v019-root .news-release .news-image{background-image:url("https://prcdn.freetls.fastly.net/release_image/188965/3/188965-3-cc747a5763161383fc42404b06738c7d-1430x804.png"),url("/images/poe2/official-burning-village.webp");background-position:center 48%;background-size:cover}
+.poe-v019-root .news-row-placeholder{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding:20px 8px;color:#9f9489}
+@media(max-width:780px){.poe-v019-root .news-row-placeholder{padding:16px 6px}}

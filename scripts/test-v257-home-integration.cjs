@@ -33,9 +33,12 @@ check('working filter/PoB entry buttons and guides are real routes',()=>{
 check('footer uses existing legal and contact pages',()=>{
  for (const url of ['/terms','/privacy/site','/contact'])assert.ok(markup.includes('href="'+url+'"'),url);
 });
-check('the only six market posts remain honest placeholders',()=>{
- assert.equal((markup.match(/href="#news"/g)||[]).length,8); // navigation + 6 stories + more link
- assert.match(markup,/시세 분석 예시/);
+check('real news article replaces sample and pending slots are honest',()=>{
+ assert.match(markup,/href="\/news\/poe2-1-0-full-release"/);
+ assert.match(markup,/href="\/news"/);
+ assert.match(markup,/<h2>새소식<\/h2>/);
+ assert.doesNotMatch(markup,/시세 분석 예시|더미 기사/);
+ assert.equal((markup.match(/news-row-placeholder/g)||[]).length,4);
 });
 check('8 filter tabs and 2 PoB tabs remain',()=>{
  assert.equal((markup.match(/data-class="/g)||[]).length,8);
