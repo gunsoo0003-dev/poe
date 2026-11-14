@@ -14,7 +14,18 @@
 - `extension/fixlgs-poe2-item-export/`: V0.4.6 확장프로그램 코드·manifest. Chrome 웹스토어에 공개된 등록본을 별도 소스 수정 없이 사용.
 - `public/data/pob-lua.json`, `public/wasm/lua.wasm`: 기존 PoB Lua 데이터·WASM 런타임.
 
-## 3. 현재 구현·배포 상태 (2026-11-09 · V262 FILTER 반응형 단일 배경 로컬 / V258 PC 빌드·GitHub 푸시 확인)
+## 3. 현재 구현·배포 상태 (2026-11-14 · V264 SEO 파일 소스 반영 / 실배포 미검증)
+### V264 · POE2 robots.txt / sitemap.xml 복원 (미배포)
+- **사용자 최신 확정(2026-11-14):** V258 당시 robots/sitemap 미제공 결정은 폐기하고 POE2 독립 서브도메인에 검색엔진 탐색 파일을 복원한다. 루트 WHAT IS!의 설정은 변경하지 않는다.
+- **실제 코드:** Next MetadataRoute `src/app/robots.ts` → `/robots.txt`, `src/app/sitemap.ts` → `/sitemap.xml`. 기준 도메인 `https://poe2.fixlgs.com`. 홈·FILTER·PoB·안내/가이드·회사·연락·개인정보·약관 등 **실재 공개 페이지 11개 + `pobGuides` 소스의 현재 8개 가이드 = 총 19 URL**. PoB 가이드 증감은 같은 데이터 배열에서 자동 반영. **API `/api/` 및 진단 `/pob/engine-lab` 크롤링 제한·사이트맵 제외.** 업데이트 일자를 알 수 없어 `lastModified`를 임의 표시하지 않음.
+- **보호/교훈:** V235 기존 도메인 오류를 피하도록 새 도메인만 사용. V258 이후의 검색파일 부재를 기대하던 과거 테스트 6개는 **검색 정책 관련 조건만** 최신 기준으로 변경하고 PoB export·필터·디자인 회귀 검사는 보존. V263 GA4 Main `G-EPCCGBTPH9` 및 기존 엔진·디자인·Worker 설정 무변경. `public/robots.txt`/`public/sitemap.xml` 중복 생성 없음.
+- **실제 검증:** Node 독립 V264 계약(19 URL, 8개 실제 가이드 slug, 메타데이터 함수 평가), V235/V258/V259/V260/V261/V262/V263/V257 정적 회귀 통과. 파일 목록/원본 SHA 및 전체 ZIP 무결성 검증은 배포본 생성 단계에서 별도 확인. **미실행:** Next/OpenNext 실제 빌드(원본 ZIP lockfile·의존성 없음), Cloudflare 실제 `/robots.txt`·`/sitemap.xml` HTTP 수신, Search Console 사이트맵 제출 및 색인. 색인·순위 상승 보장 없음.
+
+
+### V263 · GA4 Main 통합 (미배포)
+- **현재 기준/구현:** POE2를 Main `G-EPCCGBTPH9`로 통합(`src/app/layout.tsx`의 두 곳). 도메인·기능·디자인 불변.
+- **검증/한계:** ID·중복 및 기존 기능 12개 검사 PASS. V234 검사는 원본 ZIP에 `package-lock.json`이 없어 실패. 빌드·배포·실시간 수집 미검증. 구 속성 보존, 과거 통계 이전 불가.
+
 ### V262 · FILTER 단일 전투 배경·좌우 자동폭 (2026-11-09 · 미배포)
 - **확정:** 임시 이미지 한 장을 전체에 깔고, 실제 콘텐츠 밖 양옆 여백만 선명하게 표시. 화면 폭 변화에 따라 경계 자동 추종. 가운데는 어두운 패널, 모바일 기존 디자인 보호. 이미지 추후 재선정.
 - **코드:** `src/app/globals.css` FILTER 전용, 기존 `official-lightning-gameplay.webp` 재사용. `.filter-v2-shell`의 기존 폭/중앙정렬로 어둠 마스크 구현. 콘텐츠 폭·카테고리·엔진/메인/POB 불변.
@@ -37,8 +48,8 @@
 - **검증:** TSX·CSS 파싱 및 V258/V257/V229/V226/V225/V232/필터 회귀 통과. Chromium 정적 모의 320~1920px 6폭 가로 넘침·JS 예외 없음. `V236 --lock`은 기존 ZIP Next 16.3.5 잠금 파일 불일치로 실패. **미검증:** V259 Next/OpenNext 전체 빌드·실데이터 계산·실기기·영상 재생.
 - **배포 근거 갱신:** 사용자 제공 2026-11-08 로그에서 V258 Windows Next 16.4.5/OpenNext 1.20.16 Cloudflare 번들 빌드 성공, PoB 원본 복원 및 GitHub `cloudflare-poe2-assetfix-v233`에 `4f7aab7` 푸시 확인. Cloudflare 실제 새 버전 활성화·실기능은 **미확인**. V258 ZIP의 `package-lock.json`은 구버전이므로 사용자 PC에서 갱신한 잠금 파일은 덮어쓰지 말 것.
 
-### V258 · 로컬 Next 16 빌드 타입 오류 시정 · robots/sitemap 미제공 (2026-11-08 · 미배포)
-- **사용자 최신 확정:** 애드센스 관련 현재 운영 선택에 따라 POE2 서브도메인의 사용자 정의 `robots.txt`·`sitemap.xml`을 만들지 않는다. 과거 V235의 생성/검사 방침은 폐기된 기준이다. 이는 검색 차단 `noindex` 요청이 아니며, 애드센스 결과와의 직접 인과관계는 미확인.
+### V258 · 로컬 Next 16 빌드 타입 오류 시정 · 당시 robots/sitemap 미제공 (2026-11-08 · 과거 기준)
+- **2026-11-08 당시 사용자 결정(현재 V264에서 변경됨):** 애드센스 운영 선택으로 robots/sitemap을 제공하지 않았으며 그때도 `noindex` 차단이 목적은 아니었다. 2026-11-14 V264에서 두 파일 재설치가 새 유효 기준으로 확정됨.
 - **사용자 로그로 확인:** Windows D:\WebProjects\fix-pob, Next 16.4.5/OpenNext 1.20.16에서 컴파일은 통과했지만 `src/app/pob/page.tsx`의 비허용 이름 내보내기 `buildMainSkillUi` 때문에 TS2344 타입 단계 실패. `lua.mjs`의 URL 분석과 `headless.ts`의 자식 프로세스 트레이싱은 별도 경고이며 실제 Cloudflare 번들 결과는 미확인. `UND_ERR_HEADERS_OVERFLOW`는 다른 네트워크 요청 실패로 아직 원인 미확인.
 - **수정:** `buildMainSkillUi` 함수 본체/호출/계산은 그대로 두고 `export`만 제거. V229 회귀 테스트에서만 임시 export를 주입해 원래 알고리즘을 검사한다. `src/app/robots.ts`, `src/app/sitemap.ts` 제거, V235 테스트의 과거 기대값을 최신 정책으로 교체, V258 검사 추가. FILTER/POB 엔진·WASM·NeverSink·V019 디자인·Cloudflare 설정·이전 HISTORY 원문 불변.
 - **실제 검증:** 13개 Next 페이지의 추가 named export가 0개인지 TS AST로 검사, V229 원본 스킬·그룹 검사, V228 After Change, V226 반지 슬롯, V225 비교 가드, 필터 회귀 및 V232/233/234/236/257 검사 성공. **로컬 npm 의존성 미설치이므로 V258 전체 Next/OpenNext 빌드·실브라우저·Worker 배포는 미실행.** 사용자 PC에서 `npm install --package-lock-only`로 갱신했던 잠금 파일은 업로드받지 못해 ZIP은 V257 잠금 파일을 보존; 덮어쓴 뒤 재갱신 필요. 기존 폴더에 압축 덮어쓰기 시 삭제한 두 파일은 자동 삭제되지 않으므로 명시 제거 필요.
@@ -182,12 +193,7 @@
 
 ### 이전 시점 기록
 ### 2026-10-26 당시 최신 구현 상태 (V234 배포 전 기록, 현재 운영 상태 아님)
-### V234 최신 운영 상태 및 결정
-- **실제 배포 로그 / 2026-10-26 두 번째 실패**: Cloudflare 빌드 `npm run build:cloudflare`에서 PoB 원본(45,082,029바이트)이 gzip(4,858,503바이트)으로 성공 변환. Next.js와 OpenNext Worker 빌드 완료, 정적 자산 84개 업로드 성공. Worker 최종 게시 시 `WORKER_SELF_REFERENCE`가 없는 `fix-pob` Worker를 바라봐 Cloudflare API 오류 `10143` 발생. 따라서 현재도 Cloudflare 온라인 배포는 실패 상태임.
-- **원인과 재발 방지**: Cloudflare 실제 Worker 프로젝트는 `fixlgs-poe2`인데 OpenNext 자동 설정의 자기 자신 service binding은 `fix-pob`로 생성되었다. 서버 리디렉션이나 PoB 계산 로직 문제가 아님. 자동 마이그레이션이 패키지명을 기준으로 설정할 가능성이 높다고 판단하여 **시험 브랜치에서만** `package.json`과 `package-lock.json`의 루트 패키지명을 `fixlgs-poe2`로 일치시킴. 실제 자동 생성 결과/실배포 성공 여부는 재시험 필수. 공식 권장 조건은 `wrangler.jsonc`의 name과 `WORKER_SELF_REFERENCE.service`를 같게 두는 것(https://opennext.js.org/cloudflare/get-started).
-- **보호 기준**: `main`은 건드리지 않고 `cloudflare-poe2-assetfix-v233` 시험 브랜치에서 V234 추가 커밋. 브라우저 WASM/PoB Lua 원본/필터/Chrome 확장/계산방어 로직 변경 없음. Cloudflare `빌드 명령 = npm run build:cloudflare`, `배포 명령 = npx wrangler deploy`, production branch는 위 시험 브랜치를 유지.
-- **우선 검증**: 다음 Cloudflare 로그에서 `WORKER_SELF_REFERENCE`의 서비스가 `fixlgs-poe2`인지 확인하고 API 10143 해소 여부 판별. 실패 시 자동 마이그레이션 의존을 중단하고 명시적 Wrangler/OpenNext 설정을 버전·Next.js peer compatibility와 함께 재검증. 성공해도 `workers.dev`에서 `/pob`, `/filter`, 다운로드, 계산/WASM, ninja API, 모바일 확인 전 도메인 연결 금지.
-- **이번 검증 구분**: 새 패키지명/lockfile 루트 일치와 회귀 테스트는 로컬에서 검사. GitHub 푸시·Cloudflare 재배포·브라우저 기능 확인은 이 수정본 작성 시점에 미실시.
+### 과거 V234 운영·배포 실패 상세 원문은 `docs/handover/HISTORY_V009.md`로 보관. 이후 V234 성공 이력 및 V263/264 현행이 우선.
 
 ### Cloudflare 이전의 현재 기준
 - **사용자 확정**: 기존 `gunsoo0003-dev/poe`의 웹사이트를 Cloudflare Workers 시험 배포한 후 `poe2.fixlgs.com`으로 연결한다. Vercel의 별도 `fixlgs-poe2` 프로젝트/도메인은 정상 검증 전까지 건드리지 않는다. 현재 Cloudflare 배포는 **실패 상태이며 아직 성공하지 않았다**.
@@ -198,20 +204,7 @@
 - 신규 코드 경로: `scripts/prepare-cloudflare-assets.cjs`, `scripts/test-v233-cloudflare-assets.cjs`. 기존 계산·필터·확장프로그램 규칙/원본 엔진 및 데이터 바이트는 변경하지 않았다.
 - 보관 자료/과거 보고서 색인: `docs/handover/INDEX.md` (기존 보고서 145개 색인, 루트 143개 및 엔진 내부 2개). 현재 확정 보관 이력은 `docs/handover/HISTORY_V001.md`(V232~V238)이며 최신 운영 기준은 본 문서 상단을 따른다.
 
-### 이전 V232 상태 (2026-10-14)
-### 실제 파일로 확인한 사실
-- 프로젝트 루트 `fix-pob/`; Next.js 16.3.5 + React 19.2.8, `npm run dev` / `npm run build` 스크립트가 존재한다.
-- `/pob` 시작 화면에 `poe.ninja` Builds 링크 입력 UI와 거래소 확장프로그램 설치 버튼이 있다.
-- **이번 변경**: 확장프로그램 버튼의 기존 존재하지 않는 `/downloads/FIXLGS_POE2_ITEM_EXPORT_V004_6.zip` 경로를 공개 Chrome 웹스토어 링크로 교체. 새 창으로 열며 `noopener noreferrer` 적용. ZIP `download` 속성 제거.
-- **이번 변경**: `src/lib/pobGuides.ts` 첫 번째 이용안내에 웹스토어 설치, 기존 거래소 탭 새로고침, FIXLGS EXPORT 복사, SIMULATION 붙여넣기, Chrome 자동 업데이트를 설명하고 공식 링크를 연결했다.
-- **이번 변경**: 기존 압축본에 누락되어 있던 `/guides/pob/[slug]` 라우트 추가. 이미 존재하던 `pobGuides` 전체 문서를 `generateStaticParams` 기반으로 표시하며 해당 설명·참고 링크·주의 문구를 렌더링한다.
-- 공식 등록 페이지(웹 검색으로 2026-10-14 확인): `https://chromewebstore.google.com/detail/fixlgs-poe2-item-export/cdhhjobcolejcdiianepndmkmmkgbeea`; 등록 버전 V0.4.6. `extension/fixlgs-poe2-item-export/manifest.json`의 버전도 0.4.6.
-- 초기 압축본에는 `HANDOVER.md`, `README_HANDOVER.md` 또는 별도 주 인수인계 문서가 존재하지 않았다. 이 문서를 신규 작성했다. 원래의 `V*.txt`/`V*.md` 작업 보고서는 원문 그대로 보존했다.
-- 제공된 `README.md`에는 초기 목업 설명이 남아 있어 현재 전체 구현 상태를 반영하지 않는다. V225~V231의 세부 작업은 같은 루트의 `V225_POB_NATIVE_INTEGRITY_REPORT.md` 및 `V226`~`V231` 보고서를 참고한다.
-
-### 배포 상태 구분
-- Chrome 웹스토어 등록 페이지는 검색으로 확인했다. 이 프로젝트 소스의 실제 Vercel 최신 배포 여부 및 PoB 실사이트 반영 여부는 이번 작업에서 검증하지 못했다.
-- 본 ZIP에는 `.git` 메타데이터가 없다. GitHub 연동·배포 수행 사실을 이 ZIP만으로 확정하지 않는다.
+### 이전 V232(2026-10-14) 상세 원문은 `docs/handover/HISTORY_V009.md`로 보관(최신 원칙은 상단).
 
 ## 4. 검증 결과와 미검증 항목
 ### 실행·통과
@@ -225,6 +218,11 @@
 - 다른 브라우저·모바일에서 웹스토어 노출은 Chrome 정책/환경에 따라 달라질 수 있음. PC Chrome에서 확인 권장.
 
 ## 5. 다음 작업과 우선순위
+**V264 출시 후 검색 탐색 확인(새 현행 우선순위)**
+1. 사용자 기존 Git 작업 브랜치에 V264 전체 소스를 반영하되 `.git`, 로컬 환경변수, 최신 `package-lock.json`은 보존한다. 원격 배포 명령과 잠금파일 상태를 다시 확인한 뒤 Cloudflare 배포 성공 여부를 확인한다.
+2. `https://poe2.fixlgs.com/robots.txt`의 허용/제외 규칙과 사이트맵 경로, `https://poe2.fixlgs.com/sitemap.xml`의 19 URL·HTTP 200·유효 XML을 실제 배포 후 확인한다. FILTER·PoB 페이지 접근 및 GA4 Main 집계도 재검증한다.
+3. Google Search Console의 `poe2.fixlgs.com` 속성에 해당 사이트맵 제출. 색인 수·노출은 시간이 지나 실제 콘솔에서 확인하며 성공을 미리 단정하지 않는다.
+
 **V257 통합본 후속 필수 검증(사용자 우선 기준)**
 1. 정상 네트워크에서 **현재 package.json 기준** `package-lock.json`을 npm으로 재생성하고 `npm ci`, `npm run build` 및 `npm run build:cloudflare`(검증용, 외부 배포 금지)를 실행. 기존 V236 `Cloudflare` 스크립트의 Lua 데이터 백업/복원을 확인한다. lockfile을 임의 텍스트 치환하거나 구 버전 Next로 무단 다운그레이드하지 않는다.
 2. 실제 Next 홈에서 FILTER/POB/사용법/푸터 링크 접근, 데이터·다운로드·프리셋 저장/복원, PoB 원본 스킬·반지 두 슬롯·거래소 장비 DPS 계산 검증. 원본 계산·NeverSink 파일 임의 변경 금지.
@@ -250,6 +248,8 @@
 3. 사용자가 별도로 요청하기 전에는 이번 작업 범위 밖의 PoB 계산 로직·NeverSink 필터·기존 확장프로그램 V0.4.6 소스를 변경하지 않음.
 
 ## 6. 실행 및 확인 방법
+- **V264 정적 계약 확인(프로젝트 루트):** `node scripts/test-v264-search-discovery.cjs`, `node scripts/test-v235-poe2-domain.cjs`, `node scripts/test-v258-build-readiness.cjs`; V259~V263 회귀 검사에서 오래된 robots/sitemap 부재 기대값은 최신 기준으로 갱신됨.
+- **배포 후 확인:** `https://poe2.fixlgs.com/robots.txt`, `https://poe2.fixlgs.com/sitemap.xml`; 실제 HTTP 성공과 XML 구조는 로컬 소스 검사와 구분한다.
 - **V257 코드 계약:** 프로젝트 루트 `fix-pob/`에서 `node scripts/test-v257-home-integration.cjs`. Next 전체 빌드가 아닌 파일/경로 검사.
 - **정상 네트워크에서 설치·테스트할 경우:** `npm install --package-lock-only`로 현재 package.json에 맞게 잠금파일 재생성 후 `npm ci` → `npm run build` → `npm run build:cloudflare`. 이번에는 외부 접속 차단으로 미실행.
 - **V019 레이아웃 보호:** `docs/design-reference/V019/index.html` 및 WebP/CSS/HANDOVER는 원문 보관. 변경 대상은 `src/app/home-v019-markup.ts`, `home-v019.css`와 관련 코드이며 `src/app/globals.css` 기존 도구 스타일은 그대로 둔다. 실제 Next 브라우저 확인 전 CSS 충돌이 없다고 보장하지 말 것.
@@ -273,6 +273,12 @@
 - 새 가이드 라우트: `src/app/guides/pob/[slug]/page.tsx`.
 
 ## 8. 누적 작업 이력
-### 2026-11-09 · V262 · FILTER 반응형 전투 배경
-- **전후:** V261 풍경 이미지+강한 전체 어둠 → 임시 번개 전투 이미지 한 장, 중앙 셸 자체가 어두운 마스크, 좌우 남은 여백은 선명하게 노출. 3분할 고정폭을 쓰지 않아 반응형 경계 정확. 모바일 이전 배경·스크롤 보존.
-- **검증·한계:** 정적 Chromium 9폭 좌우 대칭·오버플로·토글 검사 통과, V261 필터 회귀/메인/POB 계약 통과. 기존 콘텐츠 폭 때문에 1440/1920px은 좁은 여백만 보임. 실 Next/Cloudflare 빌드·다운로드 미실행. 원본 데이터/기능 불변.
+### 2026-11-14 · V263 · Main GA4 통합
+- **전후:** 기존 `G-SSC964HMHS` → Main 측정 ID 교체, 사이트 주소·홈·필터·PoB·법적 고지 보호.
+- **교훈:** V167~V169 태그·V235 도메인 기록 반영. 실수집 확인 전 구 속성 삭제 금지.
+
+### 2026-11-14 · V264 · SEO 탐색 메타데이터 복원
+- **전후/이유:** V258 당시 robots/sitemap 비제공 → 사용자 요청으로 다시 제공; 운영 메인·도구·가이드 원본 및 GA4 그대로. `robots.ts`는 크롤링 공개/진단 제외와 사이트맵 위치, `sitemap.ts`는 19개 실재 공개 URL과 자동 가이드 반영.
+- **수정 파일:** 검색 메타데이터 2개 신규, V235/V258/V259/V260/V261/V262 검사 갱신, V264 독립 검사 신규, 본 문서 및 `docs/handover/INDEX.md`. 구 규칙이 남아 테스트만 실패하는 회귀를 예방하며 Next 16 임의 page export를 재발시키지 않음.
+- **검증:** 9개 Node 메타데이터/정적 회귀 통과; 실빌드·실배포·Search Console 미실시. 과거 확정 HISTORY 변경 금지.
+

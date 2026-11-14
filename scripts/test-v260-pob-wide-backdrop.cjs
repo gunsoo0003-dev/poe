@@ -24,5 +24,5 @@ assert.match(page,/site-shell pob-v259-root/);
 assert.match(page,/game-shell pob-v259-root/);
 assert.match(layout,/metadata:Metadata/);
 assert(!home.includes('pob-v259-root'),'Do not touch main homepage');
-assert(!fs.existsSync(path.join(root,'src/app/robots.ts')) && !fs.existsSync(path.join(root,'src/app/sitemap.ts')));
+assert(fs.existsSync(path.join(root,'src/app/robots.ts')) && fs.existsSync(path.join(root,'src/app/sitemap.ts')), 'V264 SEO files must coexist with POB wallpaper');
 console.log('PASS V260 POB full-viewport wallpaper and wider desktop content, scoped to POB (17 assertions).');

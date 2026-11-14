@@ -23,7 +23,7 @@ const checks = [
   ['NeverSink item original toggle preserved', () => assert.match(filter, /onImportance\(option\.value\)/)],
   ['rare options untouched', () => assert.match(data, /RARE_GEAR_IMPORTANCE_OPTIONS:[\s\S]*?label: "NS"[\s\S]*?label: "S"/)],
   ['filters and guides route preserved', () => assert.match(page, /<FilterCustomizer \/>/)],
-  ['no generated robots and sitemap', () => {assert.ok(!fs.existsSync(path.join(root,'src/app/robots.ts')));assert.ok(!fs.existsSync(path.join(root,'src/app/sitemap.ts')))}],
+  ['V264 robots and sitemap present', () => {assert.ok(fs.existsSync(path.join(root,'src/app/robots.ts')));assert.ok(fs.existsSync(path.join(root,'src/app/sitemap.ts')))}],
 ];
 for (const [name, fn] of checks) { fn(); console.log('PASS', name); }
 console.log(`PASS V261 FILTER visual-only contract (${checks.length} groups)`);

@@ -1,7 +1,4 @@
-/**
- * V258: current user decision supersedes V235 SEO files.
- * Preserve correct primary domain without publishing a robots or sitemap route.
- */
+/** V264: current user decision supersedes the V258 SEO-file removal. */
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -16,14 +13,15 @@ for (const relative of files) {
   assert(!content.includes('poe.fixlgs.com'), `${relative}: legacy domain remains`);
 }
 for (const route of ['robots', 'sitemap']) {
-  for (const extension of ['ts', 'tsx', 'js', 'jsx']) {
-    assert(!fs.existsSync(path.join(root, `src/app/${route}.${extension}`)),
-      `Current policy disallows src/app/${route}.${extension}`);
-  }
+  assert(fs.existsSync(path.join(root, `src/app/${route}.ts`)), `${route}.ts must exist`);
 }
 for (const filename of ['robots.txt', 'sitemap.xml']) {
-  assert(!fs.existsSync(path.join(root, 'public', filename)), `Public ${filename} must be absent`);
+  assert(!fs.existsSync(path.join(root, 'public', filename)), `Avoid duplicate static ${filename}`);
 }
+const robots = fs.readFileSync(path.join(root, 'src/app/robots.ts'), 'utf8');
+const sitemap = fs.readFileSync(path.join(root, 'src/app/sitemap.ts'), 'utf8');
+assert(robots.includes('https://poe2.fixlgs.com/sitemap.xml'));
+assert(sitemap.includes('https://poe2.fixlgs.com'));
 const policy = fs.readFileSync(path.join(root, 'src/app/privacy/site/page.tsx'), 'utf8');
 assert(policy.includes('Cloudflare 등의 호스팅 서비스'));
-console.log('PASS V258: primary domain, no user-defined robots/sitemap, privacy hosting notice.');
+console.log('PASS V264: primary domain, robots/sitemap restored, privacy hosting notice.');

@@ -25,5 +25,5 @@ for (const name of [".brand-panel",".hero-stage",".guide-panel",".character-pane
   assert(css.includes(`.pob-v259-root ${name}`) || css.includes(`.pob-v259-root${name}`),`Missing scoped region ${name}`);
 }
 assert(!rootHome.includes('pob-v259-root'),"Homepage must remain outside the theme");
-assert(!fs.existsSync(path.join(root,"src/app/robots.ts")) && !fs.existsSync(path.join(root,"src/app/sitemap.ts")));
+assert(fs.existsSync(path.join(root,"src/app/robots.ts")) && fs.existsSync(path.join(root,"src/app/sitemap.ts")), "V264 SEO metadata should remain intact");
 console.log("PASS V259 PoB theme: assets, isolation, landing/game styles, no season content, SEO-file policy (24 checks)");
