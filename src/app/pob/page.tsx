@@ -126,6 +126,8 @@ function buildMainSkillUi(snapshot: SetCalculation | undefined, importedSkills: 
 export default function Home() {
   const [screen, setScreen] = useState<"landing" | "game">("landing");
   const [ninjaUrl, setNinjaUrl] = useState("");
+  const [manualExportCode, setManualExportCode] = useState("");
+  const [pendingCharacter, setPendingCharacter] = useState<ImportedCharacter | null>(null);
   const [importedCharacter, setImportedCharacter] = useState<ImportedCharacter | null>(null);
   const [importError, setImportError] = useState("");
   const [importing, setImporting] = useState(false);
@@ -214,38 +216,106 @@ export default function Home() {
     setExportCheck(null);
 
     try {
-      const response = await fetch("/api/pob/import-ninja", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ url: ninjaUrl }),
-      });
-      const payload = await response.json();
-      if (!response.ok || !payload?.ok) {
-        throw new Error(payload?.error || "캐릭터 링크를 불러오지 못했습니다.");
+      let baseCharacter = pendingCharacter;
+      if (!baseCharacter) {
+        const response = await fetch("/api/pob/import-ninja", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ url: ninjaUrl, skipInternalDetails: Boolean(manualExportCode.trim()) }),
+        });
+        const payload = await response.json();
+        if (!response.ok || !payload?.ok) {
+          throw new Error(payload?.error || "캐릭터 링크를 불러오지 못했습니다.");
+        }
+        baseCharacter = payload.character as ImportedCharacter;
       }
-      const character = payload.character as ImportedCharacter;
-      setImportedCharacter(character);
-      if (character.pathOfBuildingExport) {
-        setExportCheck({ stage: "CHECKING", message: "PoB 캐릭터 데이터를 웹에서 확인 중..." });
-        void fetch("/api/pob/prepare-export", {
-          method: "POST", headers: { "content-type": "application/json" },
-          body: JSON.stringify({ exportCode: character.pathOfBuildingExport }),
-        }).then(async (result) => {
-          const data = await result.json();
-          if (!result.ok || !data.ok) throw new Error(data.error || "Export 검사 실패");
-          setExportCheck({ stage: "VALIDATED", message: `PoB Export 확인 완료 · 장비 ${data.metadata.itemCount}개 · 스킬 ${data.metadata.skillCount}개 · 계산 연결 전` });
-        }).catch((error) => setExportCheck({ stage: "ERROR", message: error instanceof Error ? error.message : "Export 검사 실패" }));
-      } else {
-        setExportCheck({ stage: "MISSING", message: "poe.ninja에서 PoB Export가 제공되지 않았습니다. 현재 정보만 표시합니다." });
+
+      // Prefer a user-supplied export when poe.ninja's undocumented detail API
+      // is blocked. If poe.ninja did include an export, parse it through the
+      // same validated path so missing display fields can be recovered from XML.
+      const exportCode = manualExportCode.trim() || baseCharacter.pathOfBuildingExport || "";
+      if (exportCode) {
+        setExportCheck({ stage: "CHECKING", message: "PoB Export XML에서 장비·주얼·스킬 데이터를 확인 중..." });
+        const result = await fetch("/api/pob/prepare-export", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ exportCode }),
+        });
+        const data = await result.json();
+        if (!result.ok || !data?.ok || typeof data.xml !== "string" || !data.characterData) {
+          throw new Error(data?.error || "PoB Export를 읽지 못했습니다.");
+        }
+
+        const fromExport = data.characterData as {
+          level?: number;
+          characterClass?: string;
+          mainSkill?: string;
+          ascendancy?: string;
+          items?: ImportedItem[];
+          jewels?: ImportedItem[];
+          skills?: ImportedSkill[];
+          stats?: ImportedCharacterStat[];
+        };
+        const imported: ImportedCharacter = {
+          ...baseCharacter,
+          level: fromExport.level ?? baseCharacter.level,
+          characterClass: fromExport.characterClass ?? baseCharacter.characterClass,
+          ascendancy: fromExport.ascendancy ?? baseCharacter.ascendancy,
+          mainSkill: baseCharacter.mainSkill ?? fromExport.mainSkill,
+          // Keep poe.ninja's item/skill records when they were actually received;
+          // otherwise use the corresponding source data from the user's PoB XML.
+          items: baseCharacter.items?.length ? baseCharacter.items : (fromExport.items ?? []),
+          jewels: baseCharacter.jewels?.length ? baseCharacter.jewels : (fromExport.jewels ?? []),
+          skills: baseCharacter.skills?.length ? baseCharacter.skills : (fromExport.skills ?? []),
+          stats: baseCharacter.stats?.length ? baseCharacter.stats : (fromExport.stats ?? []),
+          pathOfBuildingExport: exportCode,
+          detailSource: "path-of-building-export",
+          detailMessage: `PoB Export 직접 확인 완료: 장비 ${(fromExport.items ?? []).length}개 · 주얼 ${(fromExport.jewels ?? []).length}개 · 스킬 ${(fromExport.skills ?? []).length}개. 계산은 기존 PoB2 엔진에서 수행합니다.`,
+        };
+        setImportedCharacter(imported);
+        setPendingCharacter(null);
+        setManualExportCode("");
+        setExportCheck({
+          stage: "VALIDATED",
+          message: `PoB Export 해독 완료 · 장비 ${data.metadata.itemCount}개 · 주얼 ${data.metadata.jewelCount}개 · 스킬 ${data.metadata.skillCount}개. PoB2 원본 계산을 시작합니다.`,
+        });
+        setWeaponSet(1);
+        setSimulationWeaponSet(1);
+        setSimulationItems({});
+        setSimulationSlot(null);
+        setSimulationDraft("");
+        setScreen("game");
+        return;
       }
+
+      const hasCharacterDetails = Boolean(
+        baseCharacter.items?.length || baseCharacter.jewels?.length ||
+        baseCharacter.skills?.length || baseCharacter.stats?.length
+      );
+      if (!hasCharacterDetails) {
+        setPendingCharacter(baseCharacter);
+        const detailFailure = baseCharacter.detailMessage ?? "상세 캐릭터 데이터를 받지 못했습니다.";
+        setImportError(
+          `캐릭터 페이지는 확인했지만 장비·스킬 상세 데이터는 가져오지 못했습니다. ${detailFailure} poe.ninja 캐릭터 페이지에서 PoB Export 코드를 복사해 아래에 붙여넣어 주세요.`
+        );
+        return;
+      }
+
+      setImportedCharacter(baseCharacter);
+      setPendingCharacter(null);
       setWeaponSet(1);
       setSimulationWeaponSet(1);
       setSimulationItems({});
       setSimulationSlot(null);
       setSimulationDraft("");
       setScreen("game");
+      if (baseCharacter.pathOfBuildingExport) {
+        setExportCheck({ stage: "VALIDATED", message: "poe.ninja에서 PoB Export를 수신했습니다. PoB2 원본 계산을 시작합니다." });
+      } else {
+        setExportCheck({ stage: "MISSING", message: "장비 정보는 가져왔지만 PoB Export가 없습니다. 원본 PoB2 계산은 수행할 수 없습니다." });
+      }
     } catch (error) {
-      setImportError(error instanceof Error ? error.message : "캐릭터 링크를 불러오지 못했습니다.");
+      setImportError(error instanceof Error ? error.message : "캐릭터 데이터를 불러오지 못했습니다.");
     } finally {
       setImporting(false);
     }
@@ -341,7 +411,7 @@ export default function Home() {
             <section className="build-half current-build">
               <div className="build-half-label">
                 <div><small>ORIGINAL BUILD</small><strong>CURRENT CHARACTER</strong></div>
-                <span>poe.ninja imported state · read only</span>
+                <span>{importedCharacter?.detailSource === "path-of-building-export" ? "PoB Export XML · read only" : "poe.ninja imported state · read only"}</span>
               </div>
               <WeaponSetSummary data={pobState?.original} chosen={weaponSet} onChoose={setWeaponSet} title="CURRENT · 원본 두 무기 세트" character={importedCharacter} />
               <div className="character-grid">
@@ -497,15 +567,27 @@ export default function Home() {
                   id="ninja-character-url"
                   type="url"
                   inputMode="url"
-                  placeholder="https://poe.ninja/poe2/builds/.../character/.../..."
+                  placeholder="https://poe.ninja/ko/poe2/builds/.../character/.../..."
                   value={ninjaUrl}
-                  onChange={(event) => setNinjaUrl(event.target.value)}
+                  onChange={(event) => { setNinjaUrl(event.target.value); setPendingCharacter(null); }}
                   disabled={importing}
                   required
                 />
-                <button type="submit" disabled={importing}>{importing ? "확인 중..." : "확인"}</button>
+                <button type="submit" disabled={importing}>{importing ? "가져오는 중..." : manualExportCode.trim() ? "PoB Export로 가져오기" : "캐릭터 확인"}</button>
               </div>
-              <small>poe.ninja Builds에 실제 등록된 캐릭터 링크만 지원합니다. Eligible은 반영 전일 수 있습니다.</small>
+              <label htmlFor="pob-export-code">PoB Export 코드 <small>(상세 데이터 자동 수신이 안 될 때)</small></label>
+              <textarea
+                id="pob-export-code"
+                className="pob-export-fallback-input"
+                rows={4}
+                value={manualExportCode}
+                onChange={(event) => setManualExportCode(event.target.value)}
+                disabled={importing}
+                placeholder="poe.ninja 캐릭터 페이지의 PoB Export 코드 붙여넣기"
+                spellCheck={false}
+              />
+              <small>poe.ninja 캐릭터 페이지에서 Path of Building 내보내기 코드를 복사해 붙여넣으면 장비·주얼·스킬을 복원하고 기존 PoB2 엔진으로 계산합니다. 내부 상세 API가 HTTP 403으로 차단되면 이 방법을 사용하세요.</small>
+              {pendingCharacter && <p className="ninja-import-hint">캐릭터 링크는 확인됐습니다. PoB Export 코드를 붙여넣고 위 버튼을 다시 누르면 이어서 가져옵니다.</p>}
               {importError && <p className="ninja-import-error" role="alert">{importError}</p>}
             </form>
 

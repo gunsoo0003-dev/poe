@@ -2328,12 +2328,19 @@ function pobWebEquipItem(jsonArg)
   -- Verify Rune vs ordinary explicit classification using the upstream
   -- Item object. Bonded effects may be conditionally inactive without error.
   local runeCount, runeUnparsed, bondedUnknown, runeParsedLines = 0, {}, {}, {}
+  local runeLineDetails = {}
   for _, modLine in ipairs(item.runeModLines or {}) do
     runeCount = runeCount + 1
     local label = tostring(modLine.line or "")
     runeParsedLines[#runeParsedLines + 1] = label
     local isBonded = modLine.bonded or label:find("^Bonded:") ~= nil
     local hasNoCalcMod = not modLine.modList or #modLine.modList == 0
+    runeLineDetails[#runeLineDetails + 1] = {
+      line = label,
+      modifierCount = modLine.modList and #modLine.modList or 0,
+      parserExtra = tostring(modLine.extra or ""),
+      bonded = isBonded and true or false,
+    }
     -- Some lines (e.g. +1 Suffix Modifier allowed) alter item structure
     -- without a numeric modifier. Never classify those as unknown.
     local structural = label:find("[Ss]uffix [Mm]odifier allowed") or
@@ -2362,6 +2369,7 @@ function pobWebEquipItem(jsonArg)
   local diagnostic = {
     runeLineCount = runeCount,
     runeParsedLines = runeParsedLines,
+    runeLineDetails = runeLineDetails,
     runeUnknownLines = runeUnparsed,
     bondedUnknownLines = bondedUnknown,
     bondedEnabled = bondedEnabled,

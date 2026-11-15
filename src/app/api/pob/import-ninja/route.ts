@@ -726,6 +726,7 @@ async function fetchJson(url: string, referer?: string) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+    const skipInternalDetails = body?.skipInternalDetails === true;
     const ref = parseNinjaCharacterUrl(String(body?.url ?? ""));
 
     let verified = false;
@@ -773,9 +774,14 @@ export async function POST(request: NextRequest) {
       detailMessage = "공개 페이지 연결은 실패했지만 링크 정보로 계속 시도합니다.";
     }
 
-    // poe.ninja builds/character 상세 경로를 로컬/운영 모두에서 사용합니다.
-    // 비공식 내부 API이므로 향후 poe.ninja 변경 시 실패할 수 있으며, 실패 시 공개 페이지 정보로 폴백합니다.
-    {
+    // poe.ninja's build-detail endpoints are undocumented/internal and may return 403.
+    // A user-provided PoB Export is already the authoritative build source, so do not
+    // make an unnecessary request to those internal endpoints when the user supplies it.
+    if (skipInternalDetails) {
+      detailMessage = verified
+        ? "공개 캐릭터 페이지 확인 완료. 비공개 상세 API는 호출하지 않고 사용자가 제공한 PoB Export를 사용합니다."
+        : "캐릭터 URL은 확인했습니다. 비공개 상세 API는 호출하지 않고 사용자가 제공한 PoB Export를 사용합니다.";
+    } else {
       try {
         const indexState = await fetchJson("https://poe.ninja/poe2/api/data/index-state", ref.originalUrl);
         const snapshot = findSnapshot(indexState, ref.leagueSlug);

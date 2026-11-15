@@ -53,6 +53,7 @@ export type ImportedCharacter = NinjaCharacterRef & {
   verified: boolean;
   pageTitle?: string;
   level?: number;
+  characterClass?: string;
   ascendancy?: string;
   portraitUrl?: string;
   mainSkill?: string;
@@ -60,7 +61,7 @@ export type ImportedCharacter = NinjaCharacterRef & {
   life?: string;
   energyShield?: string;
   fetchedAt: string;
-  detailSource: "poe-ninja-character-json" | "public-page" | "url-only";
+  detailSource: "poe-ninja-character-json" | "public-page" | "url-only" | "path-of-building-export";
   detailMessage?: string;
   snapshotVersion?: string;
   snapshotName?: string;
@@ -91,22 +92,45 @@ export function parseNinjaCharacterUrl(input: string): NinjaCharacterRef {
   }
 
   const parts = url.pathname.split("/").filter(Boolean);
-  const poe2Index = parts.indexOf("poe2");
-  const buildsIndex = parts.indexOf("builds");
-  const characterIndex = parts.indexOf("character");
+  const poe2Index = parts.findIndex((part) => part.toLowerCase() === "poe2");
+  if (poe2Index < 0) throw new Error("POE2 캐릭터 링크가 아닙니다.");
 
-  if (
-    poe2Index < 0 ||
-    buildsIndex < 0 ||
-    characterIndex < 0 ||
-    characterIndex + 2 >= parts.length
-  ) {
-    throw new Error("POE2 poe.ninja 캐릭터 상세 링크를 입력해 주세요.");
+  // poe.ninja has used both public route shapes. Locale prefixes such as /ko/
+  // are intentionally ignored; account and character path segments are decoded
+  // exactly once so Korean/Japanese/Chinese names remain intact.
+  let leagueRaw = "";
+  let accountRaw = "";
+  let characterRaw = "";
+  const routeType = (parts[poe2Index + 1] ?? "").toLowerCase();
+
+  if (routeType === "builds") {
+    leagueRaw = parts[poe2Index + 2] ?? "";
+    if ((parts[poe2Index + 3] ?? "").toLowerCase() !== "character") {
+      throw new Error("POE2 Builds 캐릭터 상세 링크를 입력해 주세요.");
+    }
+    accountRaw = parts[poe2Index + 4] ?? "";
+    characterRaw = parts[poe2Index + 5] ?? "";
+  } else if (routeType === "profile") {
+    accountRaw = parts[poe2Index + 2] ?? "";
+    leagueRaw = parts[poe2Index + 3] ?? "";
+    if ((parts[poe2Index + 4] ?? "").toLowerCase() !== "character") {
+      throw new Error("POE2 Profile 캐릭터 상세 링크를 입력해 주세요.");
+    }
+    characterRaw = parts[poe2Index + 5] ?? "";
+  } else {
+    throw new Error("POE2 poe.ninja Builds 또는 Profile 캐릭터 링크를 입력해 주세요.");
   }
 
-  const leagueSlug = decodeURIComponent(parts[buildsIndex + 1] ?? "");
-  const account = decodeURIComponent(parts[characterIndex + 1] ?? "");
-  const character = decodeURIComponent(parts[characterIndex + 2] ?? "");
+  let leagueSlug: string;
+  let account: string;
+  let character: string;
+  try {
+    leagueSlug = decodeURIComponent(leagueRaw);
+    account = decodeURIComponent(accountRaw);
+    character = decodeURIComponent(characterRaw);
+  } catch {
+    throw new Error("링크의 리그·계정·캐릭터 이름 인코딩을 해석할 수 없습니다.");
+  }
 
   if (!leagueSlug || !account || !character) {
     throw new Error("링크에서 리그·계정·캐릭터 정보를 확인할 수 없습니다.");

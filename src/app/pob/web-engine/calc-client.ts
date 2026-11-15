@@ -258,7 +258,7 @@ export class CalcClient {
     throw new Error("Unexpected PoB slot response");
   }
 
-  async equipItem(itemId: number, slotName: string): Promise<{ items: EquippedItem[]; error?: string; equippedItemId?: number; equippedSlot?: string; diagnostic?: Record<string, number | boolean | string[]> & { runeParsedLines?: string[]; runeUnknownLines?: string[]; runeNamesUnknown?: string[]; bondedUnknownLines?: string[] } }> {
+  async equipItem(itemId: number, slotName: string): Promise<{ items: EquippedItem[]; error?: string; equippedItemId?: number; equippedSlot?: string; diagnostic?: Record<string, number | boolean | string[] | {line:string;modifierCount:number;parserExtra:string;bonded:boolean}[]> & { runeLineDetails?: {line:string;modifierCount:number;parserExtra:string;bonded:boolean}[]; runeParsedLines?: string[]; runeUnknownLines?: string[]; runeNamesUnknown?: string[]; bondedUnknownLines?: string[] } }> {
     const res = await this.send({ type: "equipItem", itemId, slotName });
     if (res.type === "equipItem") {
       if (res.error) throw new Error(res.error);

@@ -1,3 +1,12 @@
+- **2026-11-15 HISTORY_V015 확정 보관**: `docs/handover/HISTORY_V015.md`, V266(2026-11-14) 공식 이미지·SEO/독립 HTML 미리보기·외부 CDN 의존 및 실제 배포 미검증 작업 이력 원문. **재열람:** POE2 새소식 기사 SEO/공식 이미지/미리보기·외부 이미지 접근 실패 시. 원문 재정제·수정 금지.
+- **2026-11-15 V271 추가 스킬 그룹 12개 고정 제한 복구 (현재)**: `src/app/pob/pobCompare.ts`, `scripts/test-v271-secondary-group-continuation.cjs`, `HANDOVER.md`. 14개 후보 중 2개가 빠지는 FIXLGS 자체 상한 원인, 12개 묶음 연속 계산·무기 세트 복원·24개 보호 상한, 모의 엔진 PASS/실캐릭터 미검증. **재열람:** 추가 스킬 미검증 경고, 그룹 중복·세트 혼용·계산 시간 초과 시.
+- **2026-11-15 HISTORY_V014 확정 보관**: `docs/handover/HISTORY_V014.md`, V263~V264(2026-11-14) GA4 메인 통합·robots/sitemap 복원 작업 이력 원문. **재열람:** GA4 측정 ID 교체, SEO 크롤링/사이트맵, 과거 검색 파일 삭제 재발 시. 확정 원문 재정제·수정 금지.
+- **2026-11-15 V270:** `public/data/pob-lua.json`, `scripts/pob2-engine-fingerprint.json`, `scripts/test-v270-runic-life-conversion.mjs`. Runic Ward 복합 옵션 파서 수정·WASM 검사 PASS; 실제 사용자 AFTER 미검증. **재열람:** 룬 계산 오류 시.
+- **2026-11-15 HISTORY_V013:** `docs/handover/HISTORY_V013.md` (2026-11-14 V265 새소식 제작·검증·미검증 원문). **재열람:** 뉴스·SEO·이미지 오류 시. 확정 원문 보존.
+- **2026-11-15 V269 PoB 원본 룬 진단 보강 (최신)**: `src/app/pob/web-engine/calc-worker.ts`, `calc-client.ts`, `src/app/pob/pobCompare.ts`, `scripts/test-v269-rune-native-diagnostics.cjs`, `V269_POB_RUNE_NATIVE_DIAGNOSTICS_REPORT.md`. V227 PoB native 룬 원칙 재검토, 실패한 룬 이름·효과와 PoB 원본 modifier/extra/bonded 출력. 계산 안전장치 불변. **재열람:** 실제 Runeseeker 캐릭터 룬 재구성 실패/오인식·미지원 옵션 차단 시. 실제 사용자 AFTER 계산은 미검증.
+- **2026-11-15 V268 PoB2 Runic Ward 원본 파서 수정 (최신)**: `public/data/pob-lua.json` 안의 공식 PoB2 `ModParser.lua` Runic Ward 별칭 2개 및 `ModCache.lua` 구형 부분 파싱 캐시 6개 수정, `scripts/pob2-engine-fingerprint.json` 갱신, `scripts/test-v268-runic-ward-native-parser.mjs`, `V268_RUNIC_WARD_NATIVE_PARSER_REPORT.md`. **재열람:** `maximum Runic Ward`/Runic Ward 관련 옵션에서 PoB 원본 인식 실패, 교체 계산 차단 또는 Lua 파서/fingerprint 변경 시. 실제 WASM 파서 + strict integrity guard PASS, 실제 캐릭터 최종 DPS·Next/Cloudflare 빌드/배포 미검증; V225 안전장치 유지.
+- **2026-11-15 V267 PoB poe.ninja 상세 403 대응 및 Export 입력 복구 (최신)**: `src/app/pob/ninjaImport.ts`, 신규 `src/app/pob/pobExport.ts`, `src/app/api/pob/import-ninja/route.ts`, `src/app/api/pob/prepare-export/route.ts`, `src/app/pob/page.tsx`, `src/app/pob/pob-v259-theme.css`, `scripts/test-v267-pob-export-recovery.cjs`, `V267_POB_NINJA_EXPORT_RECOVERY_AUDIT.md`. Builds/Profile URL·UTF-8 파싱 복원, 403을 성공처럼 표시하지 않도록 분리, 사용자 직접 PoB Export(Base64/zlib/XML) 입력으로 활성 ItemSet 장비/주얼/스킬/주스킬을 복원하고 기존 PoB2 엔진에 원본 XML 전달; 수동 입력 경로에서는 poe.ninja 내부 상세 API 생략. **재열람:** Ninja HTTP 403, URL/profile 경로, 실제 Export 데이터 수신/해독, 장비·스킬·주얼·주스킬 누락, PoB2 계산 연동 오류 시. fixture 및 코드/회귀 검사는 PASS, 실제 사용자 Export·실제 WASM·Next/Cloudflare 빌드/배포는 미검증; 403 우회 금지.
+- **2026-11-15 HISTORY_V012 신규 확정 보관**: `docs/handover/HISTORY_V012.md`에 구형 V236/V235 Cloudflare 이전·도메인 작업 상세 원문을 그대로 분리하고 V266 기준 원문과 문자 단위 대조 완료. **재열람:** Cloudflare/OpenNext 빌드·도메인·Worker 구성 및 V235 lockfile 정합성 문제 재발 시. 원본 재정제·덮어쓰기 금지.
 - **2026-11-14 V266 새소식 001 SEO/공식 이미지 (최신)**: `src/app/news/poe2-1-0-full-release/page.tsx`, `src/app/news/OfficialArtwork.tsx`, `src/app/news/page.tsx`, `src/app/news/news.module.css`, `src/app/home-v019-markup.ts`, `src/app/home-v019.css`, `scripts/test-v265-news-article.cjs`, `scripts/test-v266-news-seo-official-images.cjs`, `preview/news-001/index.html`, `preview/news-001/styles.css`, `HANDOVER.md`. 제목·메타/캐노니컬/OG/NewsArticle/3표·내부 링크 개선, GGG 1.0/신규 리그 공식 보도자료 원격 이미지 3개+로컬 공식 이미지 폴백, 생성 이미지 기사 참조 해제, 독립 로컬 기사 HTML 확인용. 원격 CDN 실제 수신·전체 빌드/배포 미검증. **재열람:** 공식 이미지 로딩/이용 조건·공개일 구조화 데이터·SEO/OG 카드·홈 뉴스 카드·로컬 미리보기와 운영 Next 차이·검색 색인 문제.
 - **2026-11-14 HISTORY_V011 신규 확정 보관**: `docs/handover/HISTORY_V011.md`에 2026-11-06 V243(홈 공식 로고)·V242(홈 FireText 불꽃 재현) 과거 작업 원문을 보존했다. 구형 시안/현재 V019 디자인 구별, 불꽃 구현·화면 오류 재발 검토 시 재열람. 이후 수정/재정제 금지.
 # 기존 작업 보고서 색인 — 원문 보존
@@ -55,6 +64,10 @@
 - **2026-11-08 V248 메인 3열·불타는 성 배경**: `HANDOVER.md` V248, `src/app/page.tsx`, `src/app/globals.css`, `public/images/poe2/burning-castle-hero-v248.webp`, `scripts/test-v248-triad-castle.cjs`. 메인 배치/배경·불꽃 재작업 시 필독; V242/V243/V245/V246 보호 원칙과 함께 확인.
 
 - **2026-11-08 V249 공식+FIX 브랜드 결합 및 CTA**: `HANDOVER.md` 상단 V249 및 하단 이력, `src/app/page.tsx`, `src/app/globals.css`, `scripts/test-v249-dual-brand-cta.cjs`; 로고·FILTER/POB 버튼 레이아웃 재변경, 클릭 유도, 불꽃 효과 회귀 시 필독. V248 3열은 과거 배치이고 현 유효 기준은 V249.
+
+## 현재 작업 보고서·검사
+- `V268_RUNIC_WARD_NATIVE_PARSER_REPORT.md`: 공식 PoB2 ModParser 별칭 누락과 구형 ModCache 6개 부분 파싱 캐시 제거, 실제 WASM/strict integrity 검사 및 미검증 범위. **Runic Ward 계산 오류 재발 시 필독.**
+- `scripts/test-v268-runic-ward-native-parser.mjs`: 실제 번들 PoB2 WASM에서 +40/+50/+100/+300 Runic Ward와 associated rune/skill options 검사, 미지원 modifier 차단 유지. PoB Lua parser 변경 시 실행.
 
 ## 실재하는 기존 보고서 목록
 

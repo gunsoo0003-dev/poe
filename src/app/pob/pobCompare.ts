@@ -112,12 +112,20 @@ export async function calculateComparison(
       }
     }
   }
-  // Avoid unbounded Lua group switching for characters with many socket groups.
-  // A skipped group must not be treated as zero DPS or assigned another group's value.
-  const MAX_SECONDARY_GROUPS = 12;
+  // V271: The old 12-group ceiling silently left two of this character's
+  // 14 candidates unmeasured. This was a FIXLGS workload cap, not a PoB
+  // parsing failure. Continue in bounded 12-group batches, retaining the
+  // existing 45-second per-call timeout and native state restoration checks.
+  // Never turn an unmeasured group into a zero DPS estimate.
+  const SECONDARY_BATCH_SIZE = 12;
+  const MAX_SECONDARY_GROUPS = 24;
   const secondaryGroups = candidateIndexes.slice(0, MAX_SECONDARY_GROUPS);
   if (candidateIndexes.length > MAX_SECONDARY_GROUPS) {
-    warnings.push(`추가 스킬 그룹 ${candidateIndexes.length - MAX_SECONDARY_GROUPS}개는 계산 안전 한도로 인해 DPS 미검증`);
+    const skipped = candidateIndexes.slice(MAX_SECONDARY_GROUPS).map(index => {
+      const group = enabledGroups.find(entry => entry.index === index);
+      return `${index}:${group?.activeSkillNames.join("/") || "unknown"}`;
+    });
+    warnings.push(`추가 스킬 그룹 ${skipped.length}개 미검증 (보호 상한 ${MAX_SECONDARY_GROUPS}개): ${skipped.join(", ")}`);
   }
   const equipmentTrace: string[] = [];
   for (const name of new Set(preferredNames.map(normalize))) {
@@ -131,16 +139,22 @@ export async function calculateComparison(
     const snapshots: SetSnapshots = {};
     const secondaryDps: Record<number, number> = {};
     await engine.setWeaponSet(originalWeaponSet);
-    for (const index of secondaryGroups) {
-      try {
-        const result = await engine.getGroupDps(index, originalWeaponSet);
-        if (result.restoredGroup !== mainGroup || result.restoredWeaponSet !== originalWeaponSet ||
-            result.weaponSet !== originalWeaponSet || result.groupIndex !== index || !Number.isFinite(result.dps))
-          throw new Error("원본 스킬 상태/계산 출처 불일치");
-        secondaryDps[index] = result.dps;
-      } catch (error) {
-        warnings.push(`스킬 그룹 ${index} 독립 계산 실패: ${error instanceof Error ? error.message : String(error)}`);
+    for (let offset = 0; offset < secondaryGroups.length; offset += SECONDARY_BATCH_SIZE) {
+      const batch = secondaryGroups.slice(offset, offset + SECONDARY_BATCH_SIZE);
+      for (const index of batch) {
+        try {
+          const result = await engine.getGroupDps(index, originalWeaponSet);
+          if (result.restoredGroup !== mainGroup || result.restoredWeaponSet !== originalWeaponSet ||
+              result.weaponSet !== originalWeaponSet || result.groupIndex !== index || !Number.isFinite(result.dps))
+            throw new Error("원본 스킬 상태/계산 출처 불일치");
+          secondaryDps[index] = result.dps;
+        } catch (error) {
+          warnings.push(`스킬 그룹 ${index} 독립 계산 실패: ${error instanceof Error ? error.message : String(error)}`);
+        }
       }
+      // Each PoB query must restore its original group/set; reassert the
+      // weapon set at batch boundaries rather than assuming mutable state.
+      await engine.setWeaponSet(originalWeaponSet);
     }
     for (const set of [1, 2] as const) {
       await engine.setWeaponSet(set);
@@ -247,8 +261,18 @@ export async function calculateComparison(
           expected.length !== actual.length || expected.some((line, index) => line !== actual[index]))
         return blocked(slot, ["룬 원본 데이터와 PoB 계산용 룬 데이터 불일치"]);
     }
-    if (trace.runeUnknownLines?.length || trace.runeNamesUnknown?.length)
-      return blocked(slot, ["PoB가 룬 효과 또는 장착 룬 이름을 완전히 해석하지 못함"]);
+    if (trace.runeUnknownLines?.length || trace.runeNamesUnknown?.length) {
+      // Preserve native PoB's verdict. Surface the exact offending native
+      // strings instead of inventing a rune mapping or suppressing the guard.
+      const issues = ["PoB 원본 룬 검증 실패 · 계산 결과 표시 보류"];
+      for (const name of trace.runeNamesUnknown ?? []) issues.push(`PoB 룬 이름 미등록: ${name}`);
+      for (const line of trace.runeUnknownLines ?? []) issues.push(`PoB 룬 효과 미해석: ${line}`);
+      equipmentTrace.push(`${slot}: PoB 원본 룬 진단 · 이름 미등록 ${trace.runeNamesUnknown?.length ?? 0}건 / 효과 미해석 ${trace.runeUnknownLines?.length ?? 0}건`);
+      for (const detail of (trace.runeLineDetails ?? [])) {
+        equipmentTrace.push(`${slot}: native rune ${detail.line} · modifier ${detail.modifierCount} · extra ${detail.parserExtra || "없음"} · bonded ${detail.bonded}`);
+      }
+      return blocked(slot, issues);
+    }
     // An inactive set is not an error: we explicitly calculate both sets next.
     if (trace && !trace.inactiveWeaponSet && trace.calculatedItemMatches === false)
       throw new Error(`${slot}: 활성 PoB 계산 장비가 교체 아이템과 불일치`);

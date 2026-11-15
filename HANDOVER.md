@@ -2,7 +2,7 @@
 
 ## 1. 프로젝트 목적과 현재 유효한 설계 원칙
 - **사용자 확정**: `poe2.fixlgs.com`에서 Path of Exile 2 아이템 필터와 PoB 도구를 통합 운영한다. 구주소 `poe.fixlgs.com`은 폐기하고 301 리디렉션은 만들지 않는다(미색인 여부는 Search Console에서 별도 확인 필요). 일상 관리 0, 유지비 0을 우선하며, 본체 `fixlgs.com`과 독립된 서브도메인 구조를 유지한다.
-- **사용자 확정**: 캐릭터 장비·스킬·주스킬·원본 표시는 `poe.ninja` 원본을 따른다. DPS/STATS 및 장비 교체 변화 계산은 공식 Path of Building(PoB2)의 계산 결과를 따른다. FIXLGS가 임의 DPS·STATS를 만들어 보정하거나 PoB 계산 공식을 대체하지 않는다.
+- **사용자 확정**: 캐릭터 장비·스킬·주스킬·원본 표시는 poe.ninja 상세 데이터가 실제 수신되면 그 원본을 따른다. poe.ninja 상세 API가 403 등으로 제공되지 않는 경우에는 사용자가 직접 제공한 PoB Export XML을 대체 원본으로 사용한다. DPS/STATS 및 장비 교체 변화 계산은 공식 Path of Building(PoB2) 계산엔진 결과를 따른다. FIXLGS가 임의 DPS·STATS를 만들어 보정하거나 PoB 계산 공식을 대체하지 않는다.
 - **사용자 확정**: 기존 POE2 아이템 필터 기능과 NeverSink 원본 기준을 임의로 변경하지 않는다. 브라우저 로컬 프리셋·필터 다운로드·사운드 등의 기존 동작 보존.
 - **2026-10-14 확정 작업 범위**: 등록 완료된 `FIXLGS POE2 Item Export` 확장프로그램의 Chrome 웹스토어 설치 링크를 PoB 사이트에 넣고 방문자용 사용 가이드를 웹스토어 설치 기준으로 변경한다. 기존 계산·확장프로그램 코드는 변경하지 않는다.
 
@@ -12,9 +12,48 @@
 - `src/app/pob/ringSlots.ts`: 반지 1/2 슬롯을 혼동하지 않도록 정확히 매핑하는 규칙.
 - `src/app/filter/`, `public/neversink/`, `public/sounds/`: 기존 필터 기능, NeverSink 0.10.4 0~6 베이스, 효과음 자산.
 - `extension/fixlgs-poe2-item-export/`: V0.4.6 확장프로그램 코드·manifest. Chrome 웹스토어에 공개된 등록본을 별도 소스 수정 없이 사용.
-- `public/data/pob-lua.json`, `public/wasm/lua.wasm`: 기존 PoB Lua 데이터·WASM 런타임.
+- `public/data/pob-lua.json`, `public/wasm/lua.wasm`: 기존 PoB Lua 데이터·WASM 런타임. **V268 예외:** 공식 상류 PoB2의 실제 파서 별칭 누락 및 구형 파싱 캐시만 근거에 따라 수정했고 fingerprint를 갱신했다. 그 외 Lua/WASM 임의 변경은 금지하며 변경 시 원본 파서 WASM 검사와 fingerprint 검증이 필요하다.
 
-## 3. 현재 구현·배포 상태 (2026-11-14 · V266 새소식 001 SEO·공식 이미지 개선 / V266 배포 전)
+## 3. 구현·배포 상태 (2026-11-15 · V271 추가 스킬 그룹 계산 연속 처리 / 미배포)
+### V271 · 추가 스킬 그룹 12개 고정 제한으로 인한 경고 수정
+- **사용자 실제 화면:** PoB2 장비 교체 후 DPS·STATS는 계산되지만 `추가 스킬 그룹 2개는 계산 안전 한도로 인해 DPS 미검증` 표시. 실제 코드를 확인한 결과 PoB 엔진 실패가 아니라 FIXLGS `pobCompare.ts`가 후보 14개 중 앞의 12개만 선택하는 V229 고정 상한이 원인.
+- **변경:** 추가 스킬 그룹을 12개 단위로 이어서 조회하고 각 묶음 이후 원래 무기 세트 복원. 전체 24개 보호 상한은 유지하며 초과 시 제외된 그룹의 index/이름을 경고. 기존 PoB native `getGroupDps`·그룹별 45초 타임아웃·결과 index/weapon set/main group 복원 검사·실패 그룹 DPS 미표시 유지. 원본 PoB 계산식·WASM·룬·필터 변경 없음.
+- **실제 검증:** V271 모의 엔진 14개 보조 그룹 전부 계산·14번째 그룹 결과·무기 세트 II에 결과 혼용 금지·실패 그룹 미표시/경고·원래 무기 세트 복원 PASS. V229 중복 이름·V225 보호장치·V270 실제 WASM 룬 파서 PASS.
+- **미검증:** 사용자 실제 빅맥치킨 Export 전체를 이용한 14개 그룹 WASM 실행 및 실제 브라우저/Next/OpenNext 빌드·배포. 따라서 실제 화면에서 경고 소멸은 아직 확정 불가. 24개 초과 및 개별 PoB 계산 실패 시 경고가 남는 것은 정상 보호 동작.
+
+## 3. 구현·배포 상태 (2026-11-15 · V270 룬 복합 옵션 파서 보완 / 미배포)
+### V270 · 룬의 최대 생명력 기반 Runic Ward 복합 옵션 인식 (2026-11-15 · 소스 수정, 미배포)
+- **사용자 실제 화면:** Runeseeker's Call 교체 시 `Gain 15% of maximum Life as Extra maximum Runic Ward`가 `modifier 1`, `parserExtra=as Extra maximum Runic Ward`로 부분 인식되어 V225 보호장치가 AFTER DPS/STATS를 차단. 원본 파싱·장착은 통과.
+- **원인·수정:** 번들 PoB2 `ModParser.lua`에 해당 복합 문구의 완전한 패턴이 없었다. PoB `Ward`/`Life`/`PercentStat`을 이용해 `Gain N% of maximum Life as Extra maximum Runic Ward`를 하나의 `Ward BASE`로 계산하도록 파서 패턴 1개 추가. FIXLGS 별도 계산식·검증 우회·임의 수치 생성 없음. `ModCache.lua`에 동일한 정확한 원문 캐시 없음 확인. `lua.wasm` 유지, fingerprint JSON 해시만 갱신.
+- **실제 검증:** V270 신규 테스트에서 번들 WASM 원본 파서로 해당 15% 옵션이 modifier 1개, 잔여 extra 없음 및 무결성 검사 PASS. V268 4개 Ward 파싱·미지원 옵션 차단 PASS, V227 Runeseeker 실제 장착 룬 6개·12줄 PASS, fingerprint PASS.
+- **한계:** 실제 사용자 Export 전체 AFTER 계산·브라우저·Next/OpenNext 빌드·배포 미검증. 상류 최신 커밋 확인 없이 번들 PoB2 modifier 방식에 맞춘 보완.
+
+### V269 · PoB 원본 룬 진단 보강 (2026-11-15 · 미배포)
+- **확인:** 빅맥치킨 실제 교체는 원본 옵션 13개·미해석 0개·장착 revision 28→29 후 룬 검증에서 차단. 실패 룬은 미확인.
+- **수정:** PoB `Item.lua`의 룬 원본 진단을 출력하도록 `calc-worker.ts`/`calc-client.ts`/`pobCompare.ts` 변경. V227 native 재구성, CURRENT 보존/AFTER 차단 유지.
+- **검증:** V227·V268 실제 WASM PASS. 실캐릭터 AFTER·전체 빌드·배포 미검증. 다음에는 실캐릭터 룬 원문을 대조.
+- **상세 기록:** `V269_POB_RUNE_NATIVE_DIAGNOSTICS_REPORT.md`.
+
+### V268 · PoB2 Runic Ward 원본 옵션 파서 인식 복구 (2026-11-15 · 소스 수정·미배포)
+- **사용자 증거:** 실제 PoB 화면에 `+300 to maximum Runic Ward`와 `maximum Runic Only Runes can be Socketed in this item` 잔여 텍스트가 표시되고, `weapon-set-1` 교체 계산이 V225 원본 파서 검증에서 차단됐다. 캐릭터 장비/주얼/스킬은 표시되므로 데이터 Import와 계산 옵션 파싱 문제를 분리했다.
+- **근본 원인:** `public/data/pob-lua.json`의 `files["src/Modules/ModParser.lua"]` `modNameList`에 `runic ward` 및 `maximum runic ward` → `Ward` 별칭이 누락돼 있었다. 현재 PathOfBuildingCommunity 공식 PoE2 개발 소스에는 이 두 매핑이 존재한다(`https://github.com/PathOfBuildingCommunity/PathOfBuilding-PoE2/blob/dev/src/Modules/ModParser.lua`). 추가로 `files["src/Data/ModCache.lua"]`에 `+40/+50/+100 to maximum Runic Ward` 및 일부 복합 텍스트의 오래된 부분 파싱 캐시 6개가 남아 새 파서를 가리고 있었다.
+- **수정:** `public/data/pob-lua.json` 내 `ModParser.lua`에 공식 상류 매핑 2개를 추가하고 `ModCache.lua`에서 해당 정확한 구형 부분 파싱 캐시 6개만 제거했다. 실제 엔진의 원본 `ModParser`가 `maximum Runic Ward`를 기존 `Ward` 능력치로 인식하도록 했다. 새 계산식·임의 DPS/STATS·옵션 무시 규칙은 추가하지 않았다.
+- **보호:** `public/wasm/lua.wasm`, `src/app/pob/pobCompare.ts`, `src/app/pob/nativeIntegrity.ts`, `src/app/pob/web-engine/`, V267 Export 파서/닌자 경로, 계산 엔진 로직은 변경하지 않았다. V225 미인식 옵션 차단/CURRENT 보존/AFTER 숨김 안전장치는 유지했다. `scripts/pob2-engine-fingerprint.json`의 `pob-lua.json` SHA-256만 실제 새 해시로 갱신했으며 WASM SHA는 동일하다. upstream 특정 커밋은 고정하지 못해 fingerprint `upstreamCommit=UNVERIFIED` 유지.
+- **실제 검증:** `node scripts/test-v268-runic-ward-native-parser.mjs`가 실제 번들 Lua/WASM으로 `+300`, `+40`, `+50`, `+100 Runic Ward`, `Grants Skill`, `Only Runes can be Socketed`, `200% increased effect of Socketed Runes`를 검사했다. 전부 원본 파서 `modifierCount>0`, `extra=""` 및 `validateNativeItemAudit().verified=true` 통과. 가상의 미지원 옵션은 여전히 차단. V210/V211/V225 원본·계산 차단·WASM, V226~V229 룬/반지/스킬, V267 Export, fingerprint, V236 Cloudflare, V257 홈, V259~V266 FILTER/SEO 회귀도 PASS.
+- **검증 한계:** 실제 사용자 `빅맥치킨` Export 전체를 이용한 장착/교체 이후 최종 DPS·STATS 화면, Next 전체 빌드, Cloudflare OpenNext 빌드·배포는 미검증. 기존 V225 WASM 테스트의 `The Unborn Lich` 별도 미해석 효과 2건은 이 수정 대상이 아니며 기존처럼 안전하게 감지된다. poe.ninja 403 우회는 하지 않는다.
+- **재발 방지:** PoB 옵션 명칭/별칭 변경 시 `ModParser.lua`뿐 아니라 `ModCache.lua`의 오래된 부분 파싱 결과도 대조한다. 원본 파서 증거를 확보하기 전에 integrity guard를 완화하거나 미지원 옵션을 허용하지 않는다. 실제 사용자 Export로 교체 전후 계산을 후속 확인한다.
+
+### V267 · PoB poe.ninja 상세 403 대응 및 PoB Export 직접 입력 복구 (2026-11-15 · 소스 제작·미배포)
+- **사용자 보고/실제 증거:** 2026-11-15 사용자 제공 poe.ninja 캐릭터 링크 `runesofaldur / 썩은통닭-2237 / 빅맥치킨`은 URL 형식과 한글 디코딩은 정상이나, 공개 캐릭터 페이지 뒤의 상세 요청이 HTTP 403으로 실패했다. PoB Export는 MISSING, 장비 슬롯과 스탯 영역은 비어 있었다. 이는 URL 인식 성공과 실제 빌드 상세 수신 실패가 분리된 상태다.
+- **과거 이력 적용:** `V219_NINJA_PROFILE_UNICODE_FIX_REPORT.txt` 원문을 재열람해 `/poe2/builds/{league}/character/{account}/{character}`와 `/poe2/profile/{account}/{league}/character/{character}` 두 경로, 언어 prefix, 한글/일본어/중국어 경로를 한 번만 디코딩하는 규칙을 확인했다. V262/V266 소스 대조 결과 V266에서는 profile 형식 지원이 누락되어 있어 V219 결정대로 복원했다. strict HTTPS 및 `poe.ninja` host allowlist는 유지한다. 사용자가 전달한 실제 builds URL 파싱 결과: 리그 `runesofaldur`, 계정 `썩은통닭-2237`, 캐릭터 `빅맥치킨`.
+- **근본 원인/경계:** 현재 `import-ninja` 기본 경로는 poe.ninja의 문서화되지 않은 내부 `index-state`/캐릭터 상세 API를 호출하며 HTTP 403에 의존할 수 있다. 403을 우회하기 위한 헤더 위조·차단 우회·프록시/스크래핑은 추가하지 않는다. 기존 링크 자동 확인 시도는 유지하되 실제 장비/스킬 데이터가 없으면 성공 화면으로 진입하지 않고 사용자가 Export 코드를 제공하도록 안내한다. 사용자가 PoB Export 코드를 함께 입력한 경우 `skipInternalDetails=true`로 내부 상세 API를 아예 호출하지 않는다.
+- **신규 Export 파서:** `src/app/pob/pobExport.ts`에 Base64/URL-safe Base64 정리, zlib inflate(압축 8MiB·해제 XML 32MiB 상한), `PathOfBuilding`/`PathOfBuilding2` XML 검증 및 읽기 전용 파싱을 구현했다. 활성 `ItemSet`의 무기 세트 I/II·장비·반지·호신부·생명력/마나 플라스크, 활성 `Tree/Spec`의 주얼 소켓, 활성 `Skills/SkillSet`의 기본 젬과 보조 젬을 원본 XML에서 복원한다. `Build.mainSocketGroup`을 이용해 실제 선택된 주스킬을 찾는다. PoB Export의 실제 XML은 변경하지 않고 기존 엔진에 그대로 전달한다.
+- **연결/화면:** `src/app/api/pob/prepare-export/route.ts`가 해독 결과의 메타데이터·표시용 장비/주얼/스킬과 원본 XML을 반환한다. `/pob` 화면에 Export 코드 입력란을 추가하고, 해독이 완료된 경우에만 캐릭터 화면으로 진입한다. 장비·주얼·스킬 표시와 계산은 기존 `CalcClient` 및 `calculateComparison()` → V210 PoB2 WASM 경로를 그대로 재사용한다. `mainSkill`은 Ninja 데이터가 없을 때 PoB XML의 실제 선택 스킬을 사용한다. 실패 시 DPS/스탯을 추정해 만들지 않는다.
+- **보호/변경 범위:** `pobCompare.ts`, `web-engine/`, WASM/Lua 데이터, 교체 장비 검증·링/플라스크/호신부 매핑, FILTER·NeverSink, 홈/V019 디자인, GA4·SEO·Cloudflare 구성은 변경하지 않았다. `src/app/pob/ninjaImport.ts`, `src/app/api/pob/import-ninja/route.ts`, `src/app/api/pob/prepare-export/route.ts`, `src/app/pob/pobExport.ts`, `src/app/pob/page.tsx`, PoB 입력 CSS, 신규 검사 스크립트 및 인수인계만 변경.
+- **실제 검사:** `node scripts/test-v267-pob-export-recovery.cjs` PASS. 사용자의 정확한 한글 builds URL, V219 profile URL 및 여러 언어 세그먼트, 잘못된 URL·퍼센트 인코딩 거부, 보관된 V210 PoB2 Export fixture 해독, 레벨 100/Mercenary/Gemling Legionnaire, 활성 장비 16개, 주얼 3개, 스킬 그룹 21개, 실제 mainSocketGroup의 `Twister`, `Frost Nexus` 보조 젬 연결, 잘못된 Export 거부, 수정 TS/TSX 구문 및 기존 엔진 연결을 확인. 추가로 V210 export contract, V229 스킬/무기, V226 반지(정식 `--experimental-strip-types` 명령), V236 Cloudflare 설정, V257 홈, V259~V262 회귀, V264 사이트맵, V265/V266 뉴스 검사를 통과했다.
+- **검증 한계:** 테스트 fixture는 프로젝트에 보관된 V210 검증용 Export 샘플이며 사용자의 실제 계정 Export가 아니다. 사용자가 실제로 복사한 Export 코드의 해독과 화면 표시, 실제 PoB2 WASM 계산 결과, Next 전체 타입 검사/빌드, Cloudflare OpenNext 빌드·배포, poe.ninja 라이브 상세 API 성공은 미검증이다. 이 작업 환경에는 `node_modules`가 없어 Next 전체 빌드를 실행하지 못했다. 사용자 PC 로그에 표시된 반복 `UND_ERR_HEADERS_OVERFLOW`는 외부 fetch 실패로 별도 원인이 미확정이며 이번 수정이 해결했다고 주장하지 않는다.
+- **재발 방지:** 링크 검사 성공을 캐릭터 데이터 수신 성공으로 취급하지 않는다. `HTTP 403`은 실제 상세 수신 실패로 명시하며, Export XML에서 데이터가 확인되지 않으면 계산 화면을 열지 않는다. PoB Export 원본 XML이 장비/스킬의 기준이며, PoB2 WASM 계산 결과 외 임의 DPS/STATS를 만들지 않는다. 사용자의 실제 Export 코드를 받아 배포 전 수신·계산을 다시 검증한다.
+
 ### V266 · 새소식 001 SEO·공식 이미지 교체 (2026-11-14, 소스 제작·배포 전)
 - **사용자 최신 확정:** 첫 기사는 POE2 1.0 발표 심층 기사를 유지하고 SEO 및 이미지부터 개선한다. 신규 스타터/빌드 키워드 단독 기사는 다음 편으로 미룬다. 실제 게임을 다루는 기사에 AI 생성 판타지 이미지를 사용하지 않고 GGG 공식 이미지를 우선한다. V019 홈 레이아웃·FILTER·PoB 기능은 변경 금지.
 - **구현:** `/news/poe2-1-0-full-release`의 SEO 제목을 `POE2 1.0 정식 출시 총정리｜12월 12일 신규 리그·직업·핵심 변경점`으로 통일하고 페이지 설명, canonical, Open Graph/Twitter 이미지, NewsArticle 스키마의 headline·image 및 검색 초반 핵심답변을 정리했다. `dateCreated=2026-11-14` 유지, 미공개이므로 `datePublished` 미기재. 원래 비교표 3개와 분석 본문, 자체 출처/불확실성 구분을 보존. FILTER·PoB 내부 링크 추가. 메인·목록 첫 뉴스 카드 텍스트/이미지만 연동.
@@ -147,104 +186,49 @@
 - **실제 검사**: `scripts/test-v244-jsx-syntax.cjs`에서 TypeScript 파서를 사용해 `page.tsx`의 구문 오류 0건 확인. V243/V242/V241/V240/V237, 필터 회귀, V235 도메인 및 V236 Cloudflare 계약 검사 통과. 기존 V243 검사에서는 이 오류를 놓쳤으므로 이후 TSX 수정 시 반드시 문법 파서를 포함할 것.
 - **미검증·별개 이슈**: 현재 환경에 프로젝트 `node_modules`가 없어 Next 개발 서버 전체 빌드와 실제 사용자의 Windows 환경 `Watchpack EINVAL` 재현은 미실시. 로그의 `D:\System Volume Information` 접근 경고는 JSX 구문 오류와 별개의 파일 감시 문제이며, 이번 패치로 해결했다고 주장하지 않음. 배포 미수행. 기존 V236 `package-lock.json` 정합성 이슈는 그대로 유지.
 
-### V236: Cloudflare 빌드 반복 제거 준비 (소스만, 운영 미반영)
-- **실제 V235 배포 로그 확인**: `npm run build:cloudflare`로 Next.js를 한 번 빌드한 후 배포 명령 `npx wrangler deploy`가 Wrangler를 즉석 설치하고 자동 OpenNext 마이그레이션·패키지 설치·Next.js 두 번째 빌드를 진행. 경과 약 5분 7초. 초기 빌드에는 Next.js 캐시가 없고 OpenNext도 캐시 구성 실패를 경고함.
-- **V236 변경**: `wrangler.jsonc`와 `open-next.config.ts`를 프로젝트에 명시적으로 추가하여 자동 설정 반복을 차단하고, `build:cloudflare`를 **원본 PoB 데이터 임시 gzip staging → OpenNext 직접 빌드(Next 빌드 한 번) → 원본 복구** 스크립트로 바꿈. `deploy:cloudflare`는 생성된 `.open-next` 번들만 배포. 기존 Cloudflare 대시보드 배포 명령 `npx wrangler deploy`도 명시적 설정 파일과 설치된 Wrangler가 있으면 마이그레이션 없이 동작하도록 설계. Worker 자기참조 `fixlgs-poe2` 일치 유지. R2/KV/유료 캐시를 새로 추가하지 않음. `build`=`next build` 및 기능·디자인 코드는 그대로.
-- **버전 호환성**: V235 `next@16.3.5`는 최신 `@opennextjs/cloudflare@1.20.16` 피어 요구사항(`Next >=16.4.5`)을 만족하지 못하며 보안 수정 이전 버전. V236은 Next와 `eslint-config-next`를 `16.4.5`, OpenNext `1.20.16`, Wrangler `4.157.0`으로 **정확한 버전 고정**(package.json). 빌드·기능 회귀는 실제 설치 후 재확인 필요.
-- **검증된 사실**: npm 미사용 Node 기반 Worker 설정·주소·gzip 회귀 검사는 통과했고, 빌드 래퍼를 성공/실패 모의 실행해 두 경우 모두 45,082,029바이트 PoB 원본 SHA가 보존·복원되는 것을 확인함. **미검증**: 실제 `npm ci`, 최신 Next+OpenNext 번들 생성, 프로덕션 배포, 빌드 시간 개선량, 기능.
-- **접근 제약**: ChatGPT 컨테이너의 npm registry 네트워크는 `EAI_AGAIN`으로 막혔고, 연결된 GitHub 연동에서 시험 브랜치 생성은 HTTP 403으로 거부됨. **따라서 이번 V236 전달 ZIP의 `package-lock.json`은 아직 V235 상태이며 package.json과 동기화되지 않음.** 그 상태에서 `npm ci` 또는 Cloudflare 자동 배포를 시작하면 실패할 수 있음. 반드시 `npm install --package-lock-only --ignore-scripts --no-audit --no-fund`로 lockfile을 생성하고 정합성을 확인한 후에만 push. 이를 돕는 `scripts/verify-v236-cloudflare.ps1`를 제공함. 운영 V235는 그대로 유지.
-- **캐시**: Cloudflare 대시보드 `Workers 및 Pages → fixlgs-poe2 → 설정 → 빌드 → Build cache` 활성화는 별도 UI 작업. R2 없이 제공되는 빌드 캐시이며, 이 작업에서 활성화 여부는 확인하지 못함. 실제 속도 효과도 미측정.
-
-### V235 당시에 확인된 사항 (과거 기준, 상단 최신 운영기록 우선)
-### 현재 유효한 기준 및 확인 수준
-- **사용자 확정**: `poe2.fixlgs.com` 하나만 정식 서비스로 운영하며 `/filter`, `/pob` 등을 함께 제공한다. 구주소 `poe.fixlgs.com`은 폐기하고 별도 Worker 복제·운영 또는 301 리디렉션을 하지 않는다. `fixlgs.com`(왓이즈)과 다른 서브도메인은 변경하지 않는다.
-- **화면으로 확인**: Cloudflare `fixlgs.com` 영역 활성화, `fixlgs-poe2` Worker 버전 `fa105dca` 프로덕션 배포 성공(브랜치 `cloudflare-poe2-assetfix-v233`; 코드 V234), `poe2.fixlgs.com` 사용자 지정 도메인 등록. 사용자가 정식 도메인 접속 성공을 보고했다. 필터 다운로드·PoB 계산·모바일·실제 게임 기능은 검증하지 않았다.
-- **2026-11-05 사용자 보고**: 실수로 구주소 `poe.fixlgs.com`도 동일 Worker에 잠시 연결했으나, 최종적으로 해당 도메인 연결만 제거했다. **Cloudflare DNS에서 `poe` Worker 레코드가 함께 제거됐는지는 별도 확인 필요**. 운영 Worker와 `poe2.fixlgs.com`은 유지한다. Vercel의 기존 프로젝트/배포본은 그대로 보존하며 해제·삭제하지 않았다.
-- **이번 V235 소스 정리**: `src/app/layout.tsx`의 `metadataBase`, `src/app/sitemap.ts`의 사이트맵 URL, `src/app/robots.ts`의 Sitemap URL, `src/app/privacy/site/page.tsx`의 적용 도메인을 **`https://poe2.fixlgs.com` 기준으로 갱신**했다. 개인정보처리방침에 기재된 현 호스팅 사업자 설명을 Cloudflare로 정정했다. 필터·PoB 계산, NeverSink 데이터·사운드·확장프로그램, 페이지 디자인·라우팅은 변경하지 않았다.
-- **배포와 검증 구분**: 이 ZIP의 V235 수정 사항은 로컬 파일에만 적용했다. GitHub 브랜치에 푸시하거나 Cloudflare에 새 배포를 하지 않았으므로 **현재 정식 운영 사이트에는 구주소 메타데이터가 남아 있을 수 있다.** 따라서 V235 재배포 후 `/robots.txt`, `/sitemap.xml`, HTML 메타데이터 및 개인정보처리방침 표시 확인이 필요하다. V234 배포 로그와 사용자 접속 보고를 이번 V235 빌드·기능 검증으로 간주하지 않는다.
-- **로컬 저장 데이터 주의**: 구주소와 신주소는 브라우저 저장소가 분리된다. 기존 구주소에 있던 개인 필터 프리셋을 자동 이전하지 않기로 한 사용자 결정을 유지한다.
-- **SEO 보완의 한계**: 이 작업에서 301·새로운 `noindex`를 설정하지 않았다. `poe2.fixlgs.com`은 소스상 정상 색인 가능한 상태로 유지한다. 구주소의 실제 색인 여부 및 외부 링크 잔존은 미검증이다.
-
-### 보존된 과거 Cloudflare 이전 오류·대응 (2026-10-26 기준, 당시 기록)
-- 43MiB PoB Lua 원본이 Cloudflare 단일 자산 25MiB 한도에 걸려 업로드 실패 → V233에서 Cloudflare 빌드 전용 gzip/DecompressionStream으로 분리하고 원본 JSON을 보존함.
-- OpenNext `WORKER_SELF_REFERENCE`가 실제 `fixlgs-poe2`가 아닌 `fix-pob`를 참조해 오류 10143 → V234 시험 브랜치에서 package 이름을 일치시킴. **이후 2026-10-26 V234 프로덕션 배포가 성공한 것은 위의 실제 배포 화면으로 확인.** 다만 런타임 API/WASM 기능까지 입증되지는 않음.
-
-### 이전 시점 기록
-### 2026-10-26 당시 최신 구현 상태 (V234 배포 전 기록, 현재 운영 상태 아님)
-### 과거 V234 운영·배포 실패 상세 원문은 `docs/handover/HISTORY_V009.md`로 보관. 이후 V234 성공 이력 및 V263/264 현행이 우선.
-
-### Cloudflare 이전의 현재 기준
-- **사용자 확정**: 기존 `gunsoo0003-dev/poe`의 웹사이트를 Cloudflare Workers 시험 배포한 후 `poe2.fixlgs.com`으로 연결한다. Vercel의 별도 `fixlgs-poe2` 프로젝트/도메인은 정상 검증 전까지 건드리지 않는다. 현재 Cloudflare 배포는 **실패 상태이며 아직 성공하지 않았다**.
-- **실제 실패 로그**: 2026-10-26 Cloudflare `fixlgs-poe2` 빌드에서 Next.js 및 OpenNext 변환은 성공. 배포 중 `public/data/pob-lua.json` 크기 43MiB가 정적 파일 한도 25MiB를 초과하여 `Asset too large` 발생. Next.js 16.3.5 ↔ OpenNext 1.20.13 버전 경고와 서버 측 headless 동적 파일 트레이싱 경고도 있으나, 이 실패의 직접 원인은 자산 용량이다.
-- **이번 변경 범위**: `scripts/prepare-cloudflare-assets.cjs`가 Cloudflare 빌드에 한해 원본 PoB Lua JSON을 gzip(약 4.6MiB)으로 생성하고 원본을 빌드 작업 디렉터리 바깥에 임시 보관한다. `src/app/pob/web-engine/calc-worker.ts`는 gzip 파일을 우선 가져와 브라우저 Web Worker의 `DecompressionStream`으로 복원하며, 기존 호스트에는 원본 JSON 조회를 유지한다. `package.json`의 원래 `build` 명령은 변경하지 않고 별도 `build:cloudflare`만 추가했다.
-- **검증 필요**: GitHub에 변경된 코드 반영, Cloudflare Workers 빌드 설정의 명령을 `npm run build:cloudflare`로 변경, 시험 배포 재시도, `workers.dev`의 PoB/필터/API/모바일 실동작 확인. 자동 OpenNext 마이그레이션은 원격 빌드 중 수행되므로 실제 배포 성공은 보장되지 않음.
-- Cloudflare 문서 기준: 개별 Worker 정적 자산은 25MiB까지 허용. 브라우저 gzip DecompressionStream은 널리 지원되지만 구형 브라우저는 별도 검증 필요. 근거: https://developers.cloudflare.com/workers/platform/limits/ ; https://developer.mozilla.org/en-US/docs/Web/API/DecompressionStream
-- 신규 코드 경로: `scripts/prepare-cloudflare-assets.cjs`, `scripts/test-v233-cloudflare-assets.cjs`. 기존 계산·필터·확장프로그램 규칙/원본 엔진 및 데이터 바이트는 변경하지 않았다.
-- 보관 자료/과거 보고서 색인: `docs/handover/INDEX.md` (기존 보고서 145개 색인, 루트 143개 및 엔진 내부 2개). 현재 확정 보관 이력은 `docs/handover/HISTORY_V001.md`(V232~V238)이며 최신 운영 기준은 본 문서 상단을 따른다.
-
-### 이전 V232(2026-10-14) 상세 원문은 `docs/handover/HISTORY_V009.md`로 보관(최신 원칙은 상단).
 
 ## 4. 검증 결과와 미검증 항목
-### 실행·통과
-- `node scripts/test-v232-extension-guide.cjs`: 9개 확인, 공개 링크·안전 속성·레거시 ZIP 링크 제거·가이드 설명/라우트·manifest 버전 PASS.
-- V210 export contract, V211 rune contract, V225 comparison guard, V226 ring slot(29 checks), V227 condition/integrity, V228 skill display, V229/V230 main skill regression: 모두 PASS.
-- V225 Native WASM parser와 V231 Breach Ring Native WASM equip/STATS/audit 테스트: PASS. 일부 PoB 런타임 자산 이미지 누락 로그가 있었지만 해당 검사들은 성공 종료했다.
-- TypeScript 5.8.3의 `transpileModule`로 변경된 TS/TSX 파일 3개의 **구문** 검사 PASS(전체 타입 검사 아님).
+### V268 실행·통과
+- `node scripts/test-v268-runic-ward-native-parser.mjs`: 실제 번들 PoB2 WASM에서 Runic Ward +40/+50/+100/+300 인식, Grants Skill/Only Runes/Socketed Runes 옵션, nativeIntegrity 검증 PASS. 미지원 임의 옵션 차단 유지. 세부 내용은 `V268_RUNIC_WARD_NATIVE_PARSER_REPORT.md`.
+- `node scripts/check-pob2-fingerprint.cjs`: Lua 997개 파일 및 변경된 `pob-lua.json` SHA-256 일치, WASM SHA-256 불변 확인. upstreamCommit은 UNVERIFIED.
+
+### 실행·통과 (V267 작업 환경)
+- `node scripts/test-v267-pob-export-recovery.cjs`: 실제 제공 URL builds/profile 파싱·UTF-8 경로·PoB Export Base64/zlib/XML·활성 장비 16개·주얼 3개·스킬 그룹 21개·주스킬 선택·보조 젬 연결·잘못된 코드 거부·TS/TSX 구문/PoB2 엔진 연결 검사 PASS.
+- `node scripts/test-v210-contract.cjs`: 기존 V210 Export 어댑터 계약 PASS.
+- `node scripts/test-v229-weapon-skill.cjs`: V229/V230 스킬 그룹 및 무기 세트 회귀 PASS.
+- `node --experimental-strip-types scripts/test-v226-ring-slots.cjs`: 29개 반지 슬롯 회귀 PASS. (이 프로젝트는 이 테스트에 TypeScript strip 플래그가 필요하다.)
+- `node scripts/test-v236-cloudflare-pipeline.cjs`: Worker/OpenNext 설정 및 원본 자산 보호 검사 PASS.
+- `node scripts/test-v257-home-integration.cjs`, V259~V262, V264, V265, V266 검사 PASS. PoB UI 변경으로 홈·FILTER·뉴스·검색 파일 계약이 깨지지 않았음을 확인했다.
 
 ### 실행하지 못함 / 추가 확인 필요
-- `npm ci --no-audit --no-fund --prefer-offline` 중 npm registry 네트워크 DNS 실패(`EAI_AGAIN`)로 필요한 패키지를 설치하지 못함. 따라서 전체 Next.js `npm run build`, 실제 브라우저 렌더링, 설치 버튼 클릭, 프로덕션 배포는 **미검증**.
-- 다른 브라우저·모바일에서 웹스토어 노출은 Chrome 정책/환경에 따라 달라질 수 있음. PC Chrome에서 확인 권장.
+- 전체 Next.js 타입 검사·`npm run build`·`npm run build:cloudflare`는 이 작업 환경에 `node_modules`가 없어 미실행. 정적 transpile/구문 검사 PASS를 전체 빌드 PASS로 간주하지 않는다.
+- 실제 사용자의 PoB Export 코드로 가져오기·장비 슬롯 화면·스킬 표시·Set I/II·기존 PoB2 WASM 계산 결과를 아직 검증하지 않았다. 테스트 fixture 성공은 실제 사용자 캐릭터 성공의 증거가 아니다.
+- poe.ninja 내부 상세 API는 사용자의 화면에서 HTTP 403이 확인됐다. 일반 링크만 입력할 경우 계속 실패할 수 있다. Export 코드를 함께 입력하면 해당 비공개 API를 호출하지 않는 대체 경로를 사용한다.
+- Cloudflare 실제 배포와 프로덕션 PoB 동작은 미실행. GitHub 브랜치의 마지막으로 직접 확인된 커밋은 V264 `f0fd006`이며 V266/V267은 아직 푸시 성공 로그가 없다.
+- 사용자가 제공한 2026-11-15 로컬 Next 개발 로그에서 `/`, `/news`, `/filter`, `/pob`, 관련 가이드 경로가 HTTP 200으로 응답했으나 외부 fetch에서 `UND_ERR_HEADERS_OVERFLOW`가 반복됐다. 원인과 이 현상에 대한 이번 PoB 수정의 영향은 미확인.
 
 ## 5. 다음 작업과 우선순위
-**V264 출시 후 검색 탐색 확인(새 현행 우선순위)**
-1. 사용자 기존 Git 작업 브랜치에 V264 전체 소스를 반영하되 `.git`, 로컬 환경변수, 최신 `package-lock.json`은 보존한다. 원격 배포 명령과 잠금파일 상태를 다시 확인한 뒤 Cloudflare 배포 성공 여부를 확인한다.
-2. `https://poe2.fixlgs.com/robots.txt`의 허용/제외 규칙과 사이트맵 경로, `https://poe2.fixlgs.com/sitemap.xml`의 19 URL·HTTP 200·유효 XML을 실제 배포 후 확인한다. FILTER·PoB 페이지 접근 및 GA4 Main 집계도 재검증한다.
-3. Google Search Console의 `poe2.fixlgs.com` 속성에 해당 사이트맵 제출. 색인 수·노출은 시간이 지나 실제 콘솔에서 확인하며 성공을 미리 단정하지 않는다.
-
-**V257 통합본 후속 필수 검증(사용자 우선 기준)**
-1. 정상 네트워크에서 **현재 package.json 기준** `package-lock.json`을 npm으로 재생성하고 `npm ci`, `npm run build` 및 `npm run build:cloudflare`(검증용, 외부 배포 금지)를 실행. 기존 V236 `Cloudflare` 스크립트의 Lua 데이터 백업/복원을 확인한다. lockfile을 임의 텍스트 치환하거나 구 버전 Next로 무단 다운그레이드하지 않는다.
-2. 실제 Next 홈에서 FILTER/POB/사용법/푸터 링크 접근, 데이터·다운로드·프리셋 저장/복원, PoB 원본 스킬·반지 두 슬롯·거래소 장비 DPS 계산 검증. 원본 계산·NeverSink 파일 임의 변경 금지.
-3. 3개 공식 영상의 음소거 자동재생·1→2→3 반복·Referer 오류·30일 목록 갱신을 **HTTPS 환경**에서 확인. 외부 GitHub 아이템 이미지 8개는 로컬 WebP로 교체 가능할 때 신뢰성 검증. 뉴스 더미 기사는 실제 게시글을 받은 뒤에만 연결.
-4. V019 확정 디자인을 PC 1920/1440/1024 및 모바일 390/320 실앱 화면에서 비교한 후 시험 브랜치에만 배포한다. 운영 `poe2.fixlgs.com`은 사용자 확인 전 유지. 공통 FIXLGS 법적 페이지 최종 목적지는 별도 확정 후 연결.
-
-**V236 작업 우선순위(2026-11-05 · 운영 미반영)**
-1. ZIP 전체를 `fix-pob/`에 덮어쓰되 `.git`/로컬 `.env*`를 보존. **package.json과 package-lock.json이 달라 현재 이 ZIP 자체는 즉시 npm ci 가능한 배포 완료본이 아님.**
-2. 기존 Git 작업 브랜치에서 Windows PowerShell `powershell -ExecutionPolicy Bypass -File scripts/verify-v236-cloudflare.ps1` 실행. 이 스크립트가 최신 lockfile을 생성, npm ci, 설정 테스트, 실제 OpenNext 번들 빌드, PoB 데이터 SHA 복원을 검증함. Git push/실서비스 배포는 실행하지 않음.
-3. 위 검증 성공 후에만 `package-lock.json`을 포함해 브랜치에 커밋·푸시. Cloudflare 기존 Build command `npm run build:cloudflare`, Deploy command `npx wrangler deploy` 그대로 사용할 수 있어야 하나 **이후 실제 배포 성공으로 검증해야 함**. 실패 시 운영 V235를 유지하고 기존 `ba106f3` 배포 롤백 가능.
-4. 배포 후 로그에서 *자동 migration / 두 번째 Next build 없음*, `poe2.fixlgs.com/robots.txt`, `/sitemap.xml`, `/filter`, `/pob` 응답을 검사. 사용자 결정대로 상세 필터·PoB 기능 테스트는 추후 홈페이지 수정 때 수행.
-
-**현재 V235 우선순위(과거 시점 참고)**
-1. 구주소 `poe.fixlgs.com`의 Cloudflare Worker 사용자 지정 도메인 제거 후 DNS `poe` 레코드 잔존 여부를 확인. 301은 추가하지 않음.
-2. 이 V235 소스를 **기존 Worker가 연결된 GitHub 시험 브랜치에 반영하여 재배포**. 운영 `main`은 임의로 수정하지 않음.
-3. 배포 후 `poe2.fixlgs.com/robots.txt`와 `/sitemap.xml`, 기본 페이지 메타데이터·개인정보처리방침의 구주소 제거를 확인. 필터·PoB 기능 검증은 향후 홈페이지 수정과 함께 수행하기로 사용자 확정.
-4. Cloudflare 자동 배포가 기존 브랜치에 연결된 사실을 다시 확인. 브랜치 전환·Worker 삭제·Vercel 도메인 해제는 별도 검증 없이 실시하지 않음.
-
-**2026-10-26 당시 구 우선순위(이후 V234 성공으로 상황 변경)**
-0. Cloudflare Workers `fixlgs-poe2`의 **Build command를 `npm run build:cloudflare`로 설정**, 자동 OpenNext 변환 구조 유지. 배포 명령은 현재 성공적으로 자동 OpenNext를 호출한 `npx wrangler deploy`를 우선 유지. GitHub에 수정이 반영된 후 새 빌드를 실행. `poe2.fixlgs.com` 연결은 기능 검증 후.
-1. 로컬/CI에서 정상 인터넷으로 `npm ci` 후 `npm run build` 실행. `/pob`와 `/guides/pob/getting-started` 및 가이드 하위 경로가 정상 렌더링되는지 확인.
-2. `/pob`의 웹스토어 설치 버튼이 실제 공개 페이지로 열리는지 검증하고 Vercel 배포 후 실사이트에도 반영됐는지 확인.
-3. 사용자가 별도로 요청하기 전에는 이번 작업 범위 밖의 PoB 계산 로직·NeverSink 필터·기존 확장프로그램 V0.4.6 소스를 변경하지 않음.
+1. 사용자 PC의 기존 `D:\WebProjects\fix-pob`와 V267 전체 ZIP을 대조해 적용한다. `.git`, 사용자 `node_modules`, 갱신된 `package-lock.json`, `.env*`, `.dev.vars`는 보존하며 `git reset --hard` 등 초기화 명령을 사용하지 않는다.
+2. 사용자 실제 poe.ninja 캐릭터 링크와 Path of Building 앱의 `Import/Export Build → Export to Code`에서 복사한 코드를 넣어 `/pob`에서 가져오기 실행. 장비·주얼·활성 스킬·주스킬 이름을 실제 캐릭터와 대조한다.
+3. 기존 PoB2 브라우저 엔진이 Export XML을 로드하고 Set I/II의 생명력·저항·DPS를 계산하는지 확인한다. 계산값이 없거나 엔진이 지원하지 않는 항목은 경고/미검증으로 표시하고 임의 수치로 보정하지 않는다.
+4. 실제 Export 검사 후 Next 16.4.5 환경에서 `npm run build`와 `npm run build:cloudflare`를 실행한다. 기존 사용자 lockfile이 package.json과 맞는지 확인하고 임의 갱신/다운그레이드하지 않는다.
+5. 빌드 및 브라우저 확인 후 사용자 승인에 따라 GitHub 브랜치 `cloudflare-poe2-assetfix-v233`에 푸시하고 Cloudflare `fixlgs-poe2` 배포 성공 및 실제 PoB 동작을 확인한다.
 
 ## 6. 실행 및 확인 방법
-- **V264 정적 계약 확인(프로젝트 루트):** `node scripts/test-v264-search-discovery.cjs`, `node scripts/test-v235-poe2-domain.cjs`, `node scripts/test-v258-build-readiness.cjs`; V259~V263 회귀 검사에서 오래된 robots/sitemap 부재 기대값은 최신 기준으로 갱신됨.
-- **배포 후 확인:** `https://poe2.fixlgs.com/robots.txt`, `https://poe2.fixlgs.com/sitemap.xml`; 실제 HTTP 성공과 XML 구조는 로컬 소스 검사와 구분한다.
-- **V257 코드 계약:** 프로젝트 루트 `fix-pob/`에서 `node scripts/test-v257-home-integration.cjs`. Next 전체 빌드가 아닌 파일/경로 검사.
-- **정상 네트워크에서 설치·테스트할 경우:** `npm install --package-lock-only`로 현재 package.json에 맞게 잠금파일 재생성 후 `npm ci` → `npm run build` → `npm run build:cloudflare`. 이번에는 외부 접속 차단으로 미실행.
-- **V019 레이아웃 보호:** `docs/design-reference/V019/index.html` 및 WebP/CSS/HANDOVER는 원문 보관. 변경 대상은 `src/app/home-v019-markup.ts`, `home-v019.css`와 관련 코드이며 `src/app/globals.css` 기존 도구 스타일은 그대로 둔다. 실제 Next 브라우저 확인 전 CSS 충돌이 없다고 보장하지 말 것.
-
-- **V236 실제 빌드 준비(Windows PowerShell, 기존 Git 루트)**: `powershell -ExecutionPolicy Bypass -File scripts/verify-v236-cloudflare.ps1`. `package-lock.json` 자동 재생성 후 의존성 설치/테스트/빌드까지 수행하며 push/배포 없음.
-- **Cloudflare 자동 배포 설정(추후)**: GitHub 브랜치 `cloudflare-poe2-assetfix-v233`에서 Build `npm run build:cloudflare`, Deploy `npx wrangler deploy` 유지 가능하도록 설계. 직접 명령은 `npm run deploy:cloudflare`(사전에 빌드 후)이며 기능 검증 전 실행하지 말 것.
-- V235 도메인 변경 검사(프로젝트 루트): `node scripts/test-v235-poe2-domain.cjs`.
-- V235 Cloudflare 배포 후 실제 확인 주소: `https://poe2.fixlgs.com/robots.txt`, `https://poe2.fixlgs.com/sitemap.xml`, `https://poe2.fixlgs.com/privacy/site`. 메타데이터는 실제 HTML `metadataBase` 영향 확인. 구주소에 대한 301은 설정하지 않음.
-- 프로젝트 루트에서 `npm ci` → `npm run dev` → 브라우저 `http://localhost:3000/pob` 및 `http://localhost:3000/guides/pob/getting-started`.
-- 빌드: `npm run build`.
-- 링크·가이드 회귀 검사: `node scripts/test-v232-extension-guide.cjs`.
-- 기존 계산 관련 회귀 검사: `node scripts/test-v210-contract.cjs`, `node scripts/test-v211-rune-contract.cjs`, `node scripts/test-v225-comparison-guard.cjs`, `node --experimental-strip-types scripts/test-v226-ring-slots.cjs`, `node scripts/test-v228-skill-display.cjs`, `node scripts/test-v229-weapon-skill.cjs`.
-- Native WASM 테스트: `node scripts/test-v225-native-wasm.mjs`, `node scripts/test-v231-breach-ring-wasm.mjs`.
+- **V267 import 회귀 검사(프로젝트 루트):** `node scripts/test-v267-pob-export-recovery.cjs`
+- **기존 Export 계약:** `node scripts/test-v210-contract.cjs`
+- **무기/스킬 회귀:** `node scripts/test-v229-weapon-skill.cjs`
+- **반지 슬롯 회귀:** `node --experimental-strip-types scripts/test-v226-ring-slots.cjs`
+- **로컬 실행:** `npm run dev` 후 `http://localhost:3000/pob`. URL만 넣으면 링크/공개페이지 확인을 시도하고, 상세 데이터 API가 실패하면 화면에 Export 코드 입력을 안내한다. URL과 Export 코드를 동시에 입력하면 비공개 상세 API를 건너뛰고 Export를 검증한다.
+- **Export 코드 발급:** Path of Building 앱에서 `Import/Export Build` → `Export to Code`로 생성한 코드 전체를 복사한다. 코드가 준비되면 poe.ninja 캐릭터 링크와 함께 FIXLGS 입력란에 붙여넣는다.
+- **기존 PoB 계산 검증:** `node scripts/test-v210-contract.cjs`, `node scripts/test-v225-comparison-guard.cjs`, `node --experimental-strip-types scripts/test-v226-ring-slots.cjs`, `node scripts/test-v229-weapon-skill.cjs`; 실제 WASM 계산은 브라우저에서 별도로 확인한다.
+- **Cloudflare 설정 계약:** `node scripts/test-v236-cloudflare-pipeline.cjs`. 실제 빌드/배포 성공과 구분한다.
 
 ## 7. 주요 파일 및 과거 기록
+- **V267 PoB 가져오기:** `src/app/pob/ninjaImport.ts`, `src/app/pob/pobExport.ts`, `src/app/api/pob/import-ninja/route.ts`, `src/app/api/pob/prepare-export/route.ts`, `src/app/pob/page.tsx`, `scripts/test-v267-pob-export-recovery.cjs`, `V267_POB_NINJA_EXPORT_RECOVERY_AUDIT.md`. poe.ninja builds/profile URL 및 UTF-8 파싱, 사용자 제공 PoB Export 원본 XML 복원, 내부 상세 API 생략 옵션, 기존 PoB2 계산엔진 인계. 해당 기능 변경 전 V219·V210 원문과 V154/V156/V158/V170 감사 파일을 다시 읽는다.
+- Cloudflare V236/V235 과거 세부 이력은 `docs/handover/HISTORY_V012.md`로 분리했다. 현재 배포/도메인 기준은 이 문서 상단 V263~V267 및 사용자 최신 배포 로그가 우선한다.
 - V266 기사: `src/app/news/OfficialArtwork.tsx`, `preview/news-001/index.html`(로컬 확인용), `scripts/test-v266-news-seo-official-images.cjs`; V265 기사: `src/app/news/page.tsx`, `src/app/news/poe2-1-0-full-release/page.tsx`, `src/app/news/news.module.css`, `public/news/poe2-1-0/`(WebP 5개), `scripts/test-v265-news-article.cjs`. V019 참고 원본은 `docs/design-reference/V019/` 그대로 유지.
-- 보관 이력 `docs/handover/HISTORY_V001.md`~`HISTORY_V010.md`; 별도 설명·재열람 조건 `docs/handover/INDEX.md`. V011은 V243 공식 로고·V242 기존 불꽃 재현 이력(원문 보존), V010은 V237/238/240/241 구형 홈 구성 이력이며 최신 V019 디자인으로 재적용하면 안 된다.
+- 보관 이력 `docs/handover/HISTORY_V001.md`~`HISTORY_V012.md`; 별도 설명·재열람 조건 `docs/handover/INDEX.md`. V011은 V243 공식 로고·V242 기존 불꽃 재현 이력, V010은 V237/238/240/241 구형 홈 구성 이력, V012는 V236/V235 Cloudflare 이전 이력이다. 구형 홈 구성은 최신 V019 디자인으로 재적용하면 안 된다. 확정 HISTORY 원본은 재정제·덮어쓰기하지 않는다.
 
 - **현재 홈:** `src/app/page.tsx`, `src/app/home-v019-markup.ts`, `src/app/home-v019.css`, `src/app/V019Interactions.tsx`, `public/poe-home/`, `scripts/test-v257-home-integration.cjs`. 디자인 전용 기준 보관본: `docs/design-reference/V019/` (V001~V019 결정·실패·검증 원문 포함).
 - **적용한 교훈:** V019은 디자인 회의 외 수정 금지·로컬 WebP 보호·V013 영상 빈 프레임 제거·V014 빈 ID/153 오류 사례. V256은 V238~V241 실제 디자인이 시안과 달랐던 오류, V233 정적 자산 25MiB/원본 복원, V234 Worker 이름, V226 Ring 1/2 정확히 구별, V137 필터 저장 순서 보존. 본 통합은 홈만 교체하고 엔진은 바꾸지 않는 식으로 반영.
@@ -254,25 +238,18 @@
 - 새 가이드 라우트: `src/app/guides/pob/[slug]/page.tsx`.
 
 ## 8. 누적 작업 이력
-### 2026-11-14 · V265 · POE2 1.0 「새소식」 001
-- **결정/이유**: 아이템 시세만의 좁은 범위보다 `새소식`으로 확장하고 1.0 출시·신규 리그 기사를 첫 콘텐츠로 발행 준비. 애드센스 광고 대상 서비스이므로 1차 공식 발표와 Q&A 해설을 구분하고 직접 제작한 비교표·이미지로 독립 가치 확보.
-- **변경 전후·영향**: V264 홈에는 `아이템 새소식`과 실제 게시물이 없는 더미 기사 6개, `#news` 가짜 링크만 존재했다. V265는 뉴스 섹션명 `새소식`, 실제 기사 1개, `/news` 목록·상세 페이지 2개, 5개 로컬 이미지, 3개 정보표, 4개 도식, 사이트맵 2개 URL을 추가. 동일 그리드·공식 영상·FILTER/POB/V019 나머지 디자인과 전체 데이터 보존. 더미 후속 슬롯은 구조 유지하며 '준비 중' 명기.
-- **오류·재발 방지**: 이전 더미 카드를 실제 기사로 오인하는 문제와 이미지가 게임 장면으로 보일 위험을 제거. 새 `test-v265-news-article.cjs`와 V257(더미 기대값 → 실제 기사 기대값), V264(19 → 21 URL) 회귀 검사를 업데이트. 잠금파일/실배포를 검증 없이 성공 처리하지 않음. 최초 공개일은 배포를 확인하기 전에는 기록하지 않음.
-- **검증**: TSX·CSS 구문, 로컬 이미지 5개, 표 3개, 도식 4개, 기사/홈 링크, 21개 사이트맵, V257·V258~V264·필터/Cloudflare 회귀 PASS. Chromium 정적 미리보기 1440/390px 내용 표시·가로 넘침 0·JS 오류 0. V244/V252/V253 레거시 테스트는 V019와 충돌해 실패(이번 뉴스 관련 회귀 아님). 전체 Next/OpenNext 빌드·실배포 미검증. 완료 검사를 근거 없이 확대하지 않음.
-- **이력 보관**: 주 문서 40,000자 초과 예상에 따라 구형 V241·V240·V238·V237 원문 4개를 `docs/handover/HISTORY_V010.md`에 원형 보관, 기존 HISTORY_V001~V009 불변. 색인 갱신/ZIP 검증은 최종 패키징 검사에서 확인.
+- V265 뉴스 제작 당시 원문은 `docs/handover/HISTORY_V013.md`에 보관. 뉴스 UI·SEO·발행일·미검증을 재검토할 때 읽는다.
 
+### 2026-11-15 · V267 · PoB poe.ninja 403 대응 및 Export 입력 복구
+- **문제/원인:** 사용자가 전달한 `poe.ninja/ko/poe2/builds/.../character/...`는 URL 확인이 성공했으나 상세 캐릭터 API가 HTTP 403, PoB Export는 MISSING으로 표시되고 장비·스킬·스탯이 비어 있었다. V262/V266의 관련 상세 API·화면 코드는 최근 GA4/뉴스 통합에서 변경되지 않았으며, 기존 구현이 문서화되지 않은 poe.ninja 내부 API에 의존하는 구조 자체가 취약했다.
+- **사용자 기준/범위:** 기존 PoB 계산엔진과 원본 XML을 유지하고, 서버 차단 우회는 하지 않는다. 사용자가 직접 생성/복사한 PoB Export 코드를 대체 입력으로 제공해 기존 계산엔진에서 계산한다. FILTER·NeverSink·홈·Cloudflare·계산 함수 본체는 보호.
+- **변경:** V219에서 확정한 Builds/Profile URL 형식과 UTF-8 한 번 디코딩 복원. PoB Export용 Base64/zlib/XML 파서 신규, 활성 ItemSet 장비/무기 세트·Tree Spec 주얼·Skills SkillSet 젬/보조 젬·Build.mainSocketGroup 주스킬 추출. `prepare-export`가 원본 XML과 표시 데이터 제공. 화면 Export 코드 입력/실패 안내/실제 데이터가 없으면 캐릭터 화면 미진입. 수동 코드를 함께 보내면 `import-ninja` 공개 페이지 확인만 수행하고 내부 상세 API는 skip. 기존 `CalcClient`·`calculateComparison`·V210 PoB2 WASM 경로 그대로 사용.
+- **검증:** 신규 `test-v267-pob-export-recovery.cjs` PASS(사용자 URL/profile Unicode, Export fixture 16 장비·3 주얼·21 스킬, Twister main skill, Frost Nexus support, malformed code 거부, TS/TSX syntax 및 계산엔진 연결). V210/V229/V226/V236/V257/V259~V262/V264~V266 회귀 PASS.
+- **미검증:** 실제 사용자 Export code 및 실캐릭터의 PoB2 WASM 계산, 전체 Next/Cloudflare 빌드, 프로덕션 배포 미실시. 403 API 자체를 해소하거나 우회하지 않는다.
+- **재발 방지:** URL 확인/프로필 페이지 응답/상세 데이터 수신/PoB Export 해독/엔진 계산은 별도 상태로 다룬다. `HTTP 403`은 상세 데이터 성공이 아니다. XML 원본과 계산엔진 외 추정 DPS/STATS를 생성하지 않는다.
 
-### 2026-11-14 · V263 · Main GA4 통합
-- **전후:** 기존 `G-SSC964HMHS` → Main 측정 ID 교체, 사이트 주소·홈·필터·PoB·법적 고지 보호.
-- **교훈:** V167~V169 태그·V235 도메인 기록 반영. 실수집 확인 전 구 속성 삭제 금지.
+### 2026-11-15 · V270 작업
+- 위 V270 원인·수정·검증·미검증 기준을 최신 상태로 반영. V265 과거 작업 이력은 HISTORY_V013으로 원문 보관, 기존 확정 HISTORY 불변.
 
-### 2026-11-14 · V264 · SEO 탐색 메타데이터 복원
-- **전후/이유:** V258 당시 robots/sitemap 비제공 → 사용자 요청으로 다시 제공; 운영 메인·도구·가이드 원본 및 GA4 그대로. `robots.ts`는 크롤링 공개/진단 제외와 사이트맵 위치, `sitemap.ts`는 19개 실재 공개 URL과 자동 가이드 반영.
-- **수정 파일:** 검색 메타데이터 2개 신규, V235/V258/V259/V260/V261/V262 검사 갱신, V264 독립 검사 신규, 본 문서 및 `docs/handover/INDEX.md`. 구 규칙이 남아 테스트만 실패하는 회귀를 예방하며 Next 16 임의 page export를 재발시키지 않음.
-- **검증:** 9개 Node 메타데이터/정적 회귀 통과; 실빌드·실배포·Search Console 미실시. 과거 확정 HISTORY 변경 금지.
-
-
-### 2026-11-14 · V266 신규 작업 기록
-- 기존 V265는 생성형 그림과 정보 도식 5개를 기사에 노출했고, 사용자가 공식 게임 이미지·검색 유입 중심으로 변경을 지시했다. 기사/홈/목록의 링크·제목·그림을 함께 교체하고 공식 출처를 기재했다. 고유 기능·도구·필터/PoB 계산은 수정하지 않았다.
-- 공식 보도자료에서 이미지 출처와 날짜를 웹으로 확인했으나 작업 환경 네트워크가 차단되어 PR 이미지 실파일 다운로드·라이브 렌더는 못 했다. 이 제약 때문에 정적 원격 이미지+로컬 공식 아트 폴백으로 처리했으며, 사용자 운영 원칙의 무관리/외부 의존성 최소화와 완전히 동일한 것은 아니다. 나중에 이미지 실파일을 전달받을 경우 로컬화하면 된다. 정적 브라우저 렌더 검사는 로컬 폴백으로 했으므로 공식 1.0 홍보 이미지가 표시된 화면의 시각 검증이라고 보고하지 않는다.
-- 이전 V019 디자인의 `index.html`을 단순 미리보기였다고 잘못 설명했던 사례를 반영하여, 실제 기사 Next.js 소스와 **별개**로 간단한 기사 확인용 `preview/news-001/index.html`을 추가했다. 이것이 실제 운영 사이트가 정적 HTML로 변경됐다는 뜻은 아니다. 배포는 사용자 승인 전 진행하지 않는다.
+### 2026-11-15 · V271 · 보조 스킬 계산 제한 복구
+- V229에서 추가 스킬 최대 12개로 제한했던 이유는 Lua 그룹 전환 비용·무한 실행 방지였으나, 실제 14개 후보에서 2개가 누락되었다. 단순히 경고를 지우지 않고 12개씩 순차 조회·무기 세트 복원·24개 상한 및 미검증 명시를 유지했다. `src/app/pob/pobCompare.ts`, `scripts/test-v271-secondary-group-continuation.cjs` 변경. V225/V229/V270 회귀와 모의 14그룹 검증 통과, 실캐릭터 전체 WASM·실브라우저 미검증.

@@ -369,3 +369,29 @@
     gap: clamp(10px, .85vw, 16px);
   }
 }
+
+/* V267 — explicit PoB Export fallback. Keep the existing PoB landing layout and palette. */
+.pob-v259-root .pob-export-fallback-input {
+  display: block;
+  width: 100%;
+  min-height: 104px;
+  margin-top: 8px;
+  padding: 12px 14px;
+  resize: vertical;
+  color: #f1e4d4;
+  border: 1px solid rgba(187, 152, 112, .39);
+  border-radius: 4px;
+  background: rgba(8, 8, 8, .73);
+  font: 12px/1.55 ui-monospace, SFMono-Regular, Consolas, monospace;
+  overflow-wrap: anywhere;
+}
+.pob-v259-root .pob-export-fallback-input:focus-visible {
+  outline: 2px solid #c18d5b;
+  outline-offset: 1px;
+}
+.pob-v259-root .ninja-import-hint {
+  margin: 8px 0 0;
+  color: #e2c18f;
+  font-size: 12px;
+  line-height: 1.5;
+}
