@@ -1,0 +1,11 @@
+const fs=require('fs'),assert=require('node:assert/strict');
+const s=fs.readFileSync('src/app/news/poe2-1-0-atlas-passive-rework/page.tsx','utf8');
+const c=fs.readFileSync('src/app/news/poe2-1-0-atlas-passive-rework/AtlasScreenshot.tsx','utf8');
+const sources=[...s.matchAll(/<AtlasScreenshot\s+src="([^"]+)"/g)].map(m=>m[1]);
+assert.equal(sources.length,4,'four screenshots must remain');
+assert.equal(new Set(sources).size,4,'no screenshot URL duplicates');
+assert(!s.includes('fallbackSrc='),'no cross-referencing fallbacks');
+assert(!c.includes('fallbackSrc')&&!c.includes('attempt === 0'),'no fallback or cycling');
+assert(c.includes('setFailed(true)')&&c.includes('role="status"'),'failure is shown, not replaced');
+assert(!s.includes('/images/poe2/official-'),'no homepage image reuse');
+console.log('PASS V277 four unique URLs, no cross-fallbacks, explicit error state');

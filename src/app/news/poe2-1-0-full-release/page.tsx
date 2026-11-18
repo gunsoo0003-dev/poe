@@ -118,6 +118,6 @@ export default function ReleaseArticle(){return <div className={styles.root}>
       <li>보조 취재: 사용자가 제공한 국내 해설 영상의 발화 대본. 상세 수치 중 공식 문서로 개별 대조하지 못한 내용은 확정하지 않음</li>
     </ul><p>기준일: 2026년 11월 14일. 기사 이미지는 GGG가 배포한 공식 보도자료 이미지이며, 자체 제작 AI 콘셉트 그림이나 가상의 게임 장면을 사용하지 않았습니다. 서버 개시 시각, 최종 패치 수치, 제작 성공률 및 파밍 수익은 미검증 사항입니다.</p></section>
   </article>
-  <Link href="/news" className={styles.back}>← 새소식 전체보기</Link>
+  <nav className={styles.articleReturn} aria-label="기사 하단 이동"><Link href="/news" className={styles.back}>← 새소식 전체보기</Link><Link href="/" className={styles.back}>⌂ 홈으로 돌아가기</Link></nav>
   </main><script type="application/ld+json" dangerouslySetInnerHTML={{__html: JSON.stringify(schema).replace(/</g,'\\u003c')}} />
  </div>}

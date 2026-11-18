@@ -38,7 +38,8 @@ check('real news article replaces sample and pending slots are honest',()=>{
  assert.match(markup,/href="\/news"/);
  assert.match(markup,/<h2>새소식<\/h2>/);
  assert.doesNotMatch(markup,/시세 분석 예시|더미 기사/);
- assert.equal((markup.match(/news-row-placeholder/g)||[]).length,4);
+ assert.match(markup,/href="\/news\/poe2-1-0-atlas-passive-rework"/);
+ assert.equal((markup.match(/news-row-placeholder/g)||[]).length,3);
 });
 check('8 filter tabs and 2 PoB tabs remain',()=>{
  assert.equal((markup.match(/data-class="/g)||[]).length,8);

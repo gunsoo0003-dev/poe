@@ -19,6 +19,7 @@ const publicPages = [
   "/terms",
   "/news",
   "/news/poe2-1-0-full-release",
+  "/news/poe2-1-0-atlas-passive-rework",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

@@ -67,7 +67,7 @@
 .poe-v019-root .news-feature:hover{transform:translateY(-3px);border-color:#9f6748}
 .poe-v019-root .news-image{height:310px;background-color:#2f1111}
 .poe-v019-root .news-expansion .news-image{background-image:url("/poe-home/assets/poe2-ranger-classes.webp");background-position:center 50%}
-.poe-v019-root .news-season .news-image{background-image:url("/poe-home/assets/poe2-character-combat.webp")}
+.poe-v019-root .news-season .news-image{background-image:url("/news/atlas/atlas-cover-v281.svg");background-position:center;background-size:cover}
 .poe-v019-root .news-copy{padding:30px 33px 38px}
 .poe-v019-root .tag{font-size:12px;letter-spacing:.14em;color:#dcb795;font-weight:700}
 .poe-v019-root .news-copy h3{font-size:34px;margin:10px 0 12px;color:#f1e7d9}

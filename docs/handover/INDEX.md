@@ -1,3 +1,18 @@
+- **HISTORY_V026.md (2026-11-18 V281):** `docs/handover/HISTORY_V026.md`; NEWS 002 대표 이미지 홈·목록 동기화, 신규 SVG와 검증 한계 원문 보관. 관련 홈/뉴스 이미지. 재열람: 대표 이미지 불일치·원본 변경 시.
+- **2026-11-18 V284 개별 기사 하단 이동:** 기사 001/002에 새소식 전체보기와 홈 복귀 링크 추가. `src/app/news/*/page.tsx`, `src/app/news/news.module.css`, `scripts/test-v284-article-return-links.cjs`, `HANDOVER.md`. 재열람: 기사 내비게이션·모바일 링크·공통 CSS 회귀 시. 전체 빌드/브라우저 미검증.
+- **HISTORY_V025.md (2026-11-14 V265):** `docs/handover/HISTORY_V025.md`; 뉴스 001 초기 제작·이미지/SEO·검증 한계 원문 보존. 관련 `src/app/news/`, 홈 뉴스 카드. 재열람: NEWS 001 초기 제작/이미지 정책·SEO 변경 시.
+- **2026-11-18 V283 새소식 전체보기:** `/news` PC 2열·모바일 1열 카드, 기사 목록 아래 홈 링크. `src/app/news/page.tsx`, `src/app/news/news.module.css`, `scripts/test-v283-news-archive.cjs`, `HANDOVER.md`. 재열람: 새소식 카드 크기·반응형·홈 복귀·기사 CSS 회귀 시. 브라우저/빌드 미검증.
+- **2026-11-18 V282 AtlasVisuals Hydration 안정화:** `src/app/news/poe2-1-0-atlas-passive-rework/AtlasVisuals.tsx`, `scripts/test-v282-atlas-hydration.cjs`, `HANDOVER.md`. 서버/클라이언트 삼각함수 SVG 좌표 소수점 차이로 Hydration 오류 발생, 고정 4자리 좌표 문자열로 해결 시도. **재열람:** 뉴스 002 SSR/Hydration 경고·그래픽 좌표·브라우저 콘솔 오류 재발 시. 정적 검사 PASS, 실브라우저 미검증.
+- **2026-11-18 V280 프리미엄 아틀라스 그래픽:** `src/app/news/poe2-1-0-atlas-passive-rework/AtlasVisuals.tsx`, `atlas-visuals.module.css`, `page.tsx`, `scripts/test-v280-atlas-visual-lab.cjs`, `HANDOVER.md`. 기존 SVG 3개를 기사에서 미사용 처리하고 발광 노드·데이터 밀도·진행 연출로 교체. 그래픽/반응형/애니메이션/이미지 회귀 시 재열람. 실제 브라우저·빌드 미검증.
+- **2026-11-18 V280 HISTORY_V024 보관:** `docs/handover/HISTORY_V024.md`, 2026-11-06~08 V244~V247 과거 홈/모바일/JSX 오류·해결·검증 원문. JSX 파싱 오류, 모바일 차단, 홈 시각화 재발 시 재열람. 원문 보존·확정본 변경 금지.
+- **2026-11-18 V279 HISTORY_V023 보관**: `docs/handover/HISTORY_V023.md`, V278~V279 사용자 제공 로컬 이미지 적용과 교체 원문. 이미지 변경·검증 시 재열람. 확정본 불변.
+- **2026-11-18 V279 HISTORY_V022 보관**: `docs/handover/HISTORY_V022.md`, V277 교차 폴백 중복 방지 원문. 이미지 중복 재발 시 재열람. 확정본 불변.
+- **2026-11-18 V279 HISTORY_V021 보관**: `docs/handover/HISTORY_V021.md`, V276 아틀라스 외부 이미지 직접 URL 실패·미검증 원문. 이미지 URL·로딩 오류·로컬화 재발 시 다시 읽는다. V279에서 40,000자 초과로 분리, 확정본 불변.
+- **2026-11-18 HISTORY_V020 확정 보관:** `docs/handover/HISTORY_V020.md`, V273~V275 작업 원문. 뉴스 002 이미지 이용 판단·도식·무관한 폴백 재발 시 읽는다. V278 40,000자 초과에 따라 1회 분리.
+- **2026-11-18 V278 아틀라스 이미지 로컬화:** `HANDOVER.md`, `src/app/news/poe2-1-0-atlas-passive-rework/page.tsx`, `public/news/atlas/atlas-*.png`, `scripts/test-v278-local-atlas-images.cjs`. 사용자 제공 PNG 3개, 외부 로딩 실패 해결. 재열람: 뉴스 002 이미지 교체·권리·중복/로딩 문제 재발 시.
+- **2026-11-18 HISTORY_V019 확정 보관:** `docs/handover/HISTORY_V019.md`, 2026-11-15~18 V270~V272 작업 원문. Runic Ward/스킬 그룹 검증 및 아틀라스 기사 최초 제작·불확실성 확인 시 재열람. V277에서 40,000자 초과로 분리, 원문 대조 보존.
+- **2026-11-18 V277 아틀라스 이미지 중복 방지:** `HANDOVER.md`, 뉴스 002 `page.tsx`·`AtlasScreenshot.tsx`, `scripts/test-v277-atlas-no-duplicates.cjs`. 교차 폴백으로 동일 이미지 중복 노출 위험 제거. 다시 읽을 조건: 뉴스 이미지 URL·오류 표시·중복 재발 시. 실제 원본 시각 검증 미실시.
+- **2026-11-18 V276 아틀라스 원격 이미지 경로 수정:** `src/app/news/poe2-1-0-atlas-passive-rework/page.tsx`, `AtlasScreenshot.tsx`, `scripts/test-v276-atlas-image-sources.cjs`, `HANDOVER.md`. 직접 CDN 경로·관련 화면 재시도; 원격 수신 미검증. **재열람:** 이미지 로딩 실패·로컬 원본 확보 시.
 - **2026-11-15 HISTORY_V015 확정 보관**: `docs/handover/HISTORY_V015.md`, V266(2026-11-14) 공식 이미지·SEO/독립 HTML 미리보기·외부 CDN 의존 및 실제 배포 미검증 작업 이력 원문. **재열람:** POE2 새소식 기사 SEO/공식 이미지/미리보기·외부 이미지 접근 실패 시. 원문 재정제·수정 금지.
 - **2026-11-15 V271 추가 스킬 그룹 12개 고정 제한 복구 (현재)**: `src/app/pob/pobCompare.ts`, `scripts/test-v271-secondary-group-continuation.cjs`, `HANDOVER.md`. 14개 후보 중 2개가 빠지는 FIXLGS 자체 상한 원인, 12개 묶음 연속 계산·무기 세트 복원·24개 보호 상한, 모의 엔진 PASS/실캐릭터 미검증. **재열람:** 추가 스킬 미검증 경고, 그룹 중복·세트 혼용·계산 시간 초과 시.
 - **2026-11-15 HISTORY_V014 확정 보관**: `docs/handover/HISTORY_V014.md`, V263~V264(2026-11-14) GA4 메인 통합·robots/sitemap 복원 작업 이력 원문. **재열람:** GA4 측정 ID 교체, SEO 크롤링/사이트맵, 과거 검색 파일 삭제 재발 시. 확정 원문 재정제·수정 금지.
@@ -223,3 +238,17 @@
 | `engine/pob2/V185_README.txt` | V185 · Windows 로컬 캐릭터 계산 시험 절차, 웹 연결 미완료 한계 | 원문 날짜 미확인 | native headless/Cloudflare 호환성·캐릭터 가져오기 변경 시 |
 
 - 2026-11-05 · V239 · 메인 히어로 재구성 2차 (시안 비율 재반영, 배경/폭/균형 재조정)
+
+- **2026-11-18 V272 현재 이력:** 주 문서 `HANDOVER.md` 상단 및 하단에 뉴스 002 작업 기록. V267 과거 이력을 HISTORY_V016으로 1회 분리. 기존 HISTORY_V001~V015 확정본 변경 없음. 재열람 조건: 뉴스 002 수정·SEO/홈 카드/사이트맵 회귀.
+
+- **HISTORY_V016.md (2026-11-15, V267):** `docs/handover/HISTORY_V016.md`; PoB poe.ninja 403·Export 원본 파싱·안전장치·회귀·미검증. 관련 파일 `src/app/pob/pobExport.ts`, `src/app/api/pob/prepare-export/route.ts`. **재열람:** poe.ninja 링크/Export 파서·403·PoB 계산 진입 수정 전. V272에서 주 문서 40,000자 초과에 따라 원문을 그대로 보존하여 분리함.
+
+- **2026-11-18 V273:** 뉴스 002 자체 SVG 3종·외부 GGG 게임 이미지 재게시 권한 미확보·홈 002 우선. 주 문서 `HANDOVER.md` 상단/하단 기록. 재열람: 새소식 이미지 교체·저작권·홈 정렬 변경 시. 기존 HISTORY_V001~V016 불변.
+
+- **HISTORY_V017.md (2026-11-15, V271):** `docs/handover/HISTORY_V017.md`; 추가 스킬 그룹 12개 상한·연속 계산·24개 보호·모의 테스트. 관련 `src/app/pob/pobCompare.ts`. **재열람:** 추가 스킬 DPS 그룹 누락/무기 세트 혼용·24개 보호 상한 재검토 시. V273에서 40,000자 초과로 V271 원문을 1회 분리·보존.
+
+- **HISTORY_V018.md (2026-11-15, V268~V270):** `docs/handover/HISTORY_V018.md`; Runic Ward 별칭·구형 캐시·복합 옵션·진단, 원본 WASM 검증·미검증. 관련 `public/data/pob-lua.json`, `scripts/pob2-engine-fingerprint.json`, `src/app/pob/`. **재열람:** Runic Ward/룬 파서·미해석 옵션·원본 PoB 계산 재발 시. V273에서 주 문서 40,000자 초과로 원문 1회 분리.
+
+- **2026-11-18 V274:** NEWS 002 실제 게임 스크린샷 4개 원격 URL·원본 크레딧·로컬 폴백, 정적 검사 통과/실브라우저 미검증. `src/app/news/poe2-1-0-atlas-passive-rework/page.tsx`, `scripts/test-v274-real-game-screenshots.cjs`. 재열람: 이미지 수신·권리·뉴스 이미지 교체 시.
+
+- **2026-11-18 V275:** NEWS 002에서 무관한 홈페이지/NEWS 001 이미지 폴백 제거, 아틀라스 원본만 시도하고 실패 시 명시적 안내. `src/app/news/poe2-1-0-atlas-passive-rework/page.tsx`, `AtlasScreenshot.tsx`, `scripts/test-v275-atlas-only.cjs`. 재열람: 기사 이미지 오류·원격 파일 로컬화·이미지 출처 교체 시. HISTORY_V001~V018 확정본 불변.

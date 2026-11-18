@@ -1,0 +1,14 @@
+const fs=require('fs'),assert=require('assert');
+const s=fs.readFileSync('src/app/news/poe2-1-0-atlas-passive-rework/page.tsx','utf8');
+const c=fs.readFileSync('src/app/news/poe2-1-0-atlas-passive-rework/AtlasScreenshot.tsx','utf8');
+const urls=[...s.matchAll(/<AtlasScreenshot\s+src="([^"]+)"/g)].map(m=>m[1]);
+assert.equal(urls.length,4);
+assert.equal(new Set(urls).size,4,'Atlas screenshots must have distinct source URLs');
+assert(!s.includes('fallbackSrc='));
+assert(!s.includes('/images/poe2/official-'));
+assert(!s.includes('Special:Redirect/file'));
+assert(c.includes('referrerPolicy="no-referrer"'));
+assert(c.includes('onError={() => setFailed(true)}'));
+assert(!c.includes('fallbackSrc')&&!c.includes('attempt'));
+for(const u of ['cdn.mobalytics.gg','cdn.gamerch.com','staticg.sportskeeda.com','poe2wiki.net/images/thumb']) assert(s.includes(u));
+console.log('PASS V276 sources under V277 non-duplicate policy; remote HTTP not tested');

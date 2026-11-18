@@ -9,7 +9,7 @@ const pages = [
   '/', '/filter', '/pob', '/filter/guide', '/guides',
   '/guides/filter-troubleshooting', '/about', '/contact',
   '/privacy', '/privacy/site', '/terms',
-  '/news', '/news/poe2-1-0-full-release'
+  '/news', '/news/poe2-1-0-full-release', '/news/poe2-1-0-atlas-passive-rework'
 ];
 const site = 'https://poe2.fixlgs.com';
 const guideCode = read('src/lib/pobGuides.ts');
